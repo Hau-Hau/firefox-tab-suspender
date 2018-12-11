@@ -1,0 +1,31 @@
+@import './firefox.scss';
+
+body {
+  max-width: 800px;
+  padding: 4px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  align-items: center;
+  padding-bottom: 8px;
+}
+
+.card {
+  background: #fff;
+  font-size: 13px;
+  padding: 16px;
+  transition: box-shadow 150ms;
+}
+
+.card:hover {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
+}

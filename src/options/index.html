@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="options-styles.css">
+  </head>
+  <body>
+    <form class="card">
+        <ul>
+          <li>
+              Automatically suspend tabs after (seconds): 
+              <input type="number" id="time_to_suspend" min="1" value="60">
+          </li>
+          <li>
+              Never suspend pinned tabs: 
+              <input type="checkbox" id="never_suspend_pinned">
+          </li>
+          <li>
+            Never suspend tabs that are playing audio: 
+            <input type="checkbox" id="never_suspend_playing_audio">
+        </li>
+        </ul>
+       <div class="addon-target-actions">
+          <input type="submit" name="action" value="Reset" class="addon-target-button"/>
+          <input type="submit" name="action" value="Save" class="addon-target-button"/>
+      </div>
+    </form>
+    <script src="options.js"></script>
+  </body>
+</html>

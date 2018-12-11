@@ -1,0 +1,45 @@
+.addon-target-actions {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.addon-target-button {
+  background: none;
+  border: none;
+  color: #0087ff;
+  font-size: 13px;
+  margin: 12px 12px 0 0;
+  min-width: auto;
+  padding: 4px 4px 0 0;
+  transition: color 150ms;
+}
+
+.addon-target-info-content {
+  direction: rtl;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.addon-target-info {
+  display: flex;
+}
+
+.addon-target-button:hover {
+  background: none;
+  color: #0052cc;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.addon-target-button:active {
+  text-decoration: none;
+}
+
+.addon-target-button:focus {
+  text-decoration: underline;
+}
+
+.addon-target-info-label {
+  padding-bottom: 8px;
+}
