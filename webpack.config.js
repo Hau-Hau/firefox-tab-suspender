@@ -1,6 +1,5 @@
 const webpack = require('webpack'),
       path = require('path'),
-      CleanDirWebpackPlugin = require("cleandir-webpack-plugin"),
       RemovePlugin = require('remove-files-webpack-plugin'),
       UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
       ZipPlugin = require('zip-webpack-plugin'),
