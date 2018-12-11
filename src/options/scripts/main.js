@@ -2,16 +2,19 @@ document.addEventListener("DOMContentLoaded", function() {
 	let elements = {
 		timeToSuspendElement: this.getElementById('time_to_suspend'),
 		neverSuspendPinnedElement: this.getElementById('never_suspend_pinned'),
+		neverSuspendUnsavedFormInputElement: this.getElementById('never_suspend_unsaved_form_inputs'),
 		neverSuspendPlayingAudioElement: this.getElementById('never_suspend_playing_audio')
 	}
 
 	browser.storage.local.get({
 		timeToDiscard: 60,
 		neverSuspendPinned: true,
+		neverSuspendUnsavedFormInput: true,
 		neverSuspendPlayingAudio: true
 	}).then(function(value) {
 		elements.timeToSuspendElement.value = value.timeToDiscard;
 		elements.neverSuspendPinnedElement.checked = value.neverSuspendPinned;
+		elements.neverSuspendUnsavedFormInputElement.checked = value.neverSuspendUnsavedFormInput;
 		elements.neverSuspendPlayingAudioElement.checked = value.neverSuspendPlayingAudio;
 	  });
 
@@ -36,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		e.preventDefault();
 		elements.timeToSuspendElement.value = 60;
 		elements.neverSuspendPinnedElement.checked = true;
+		elements.neverSuspendUnsavedFormInputElement.checked = true;
 		elements.neverSuspendPlayingAudioElement.checked = true;
 		saveOptions(e)
 	}
@@ -45,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		browser.storage.local.set({
 			timeToDiscard: parseInt(elements.timeToSuspendElement.value),
 			neverSuspendPinned: elements.neverSuspendPinnedElement.checked === true,
+			neverSuspendUnsavedFormInput: elements.neverSuspendUnsavedFormInputElement.checked === true,
 			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudioElement.checked === true
 		});
 		browser.runtime.reload();

@@ -3,6 +3,7 @@ let settings = {};
 browser.storage.local.get({
 	timeToDiscard: 60,
 	neverSuspendPinned: true,
+	neverSuspendUnsavedFormInput: true,
 	neverSuspendPlayingAudio: true
 }).then(function(value) {
 	settings = value;
