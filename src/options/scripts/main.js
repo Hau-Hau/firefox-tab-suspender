@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
 	let elements = {
-		timeToSuspendElement: this.getElementById('time_to_suspend'),
-		neverSuspendPinnedElement: this.getElementById('never_suspend_pinned'),
-		neverSuspendUnsavedFormInputElement: this.getElementById('never_suspend_unsaved_form_inputs'),
-		neverSuspendPlayingAudioElement: this.getElementById('never_suspend_playing_audio')
+		timeToSuspend: this.getElementById('time_to_suspend'),
+		neverSuspendPinned: this.getElementById('never_suspend_pinned'),
+		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
+		neverSuspendUnsavedFormInput: this.getElementById('never_suspend_unsaved_form_inputs')
 	}
 
 	browser.storage.local.get({
@@ -12,13 +12,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		neverSuspendUnsavedFormInput: true,
 		neverSuspendPlayingAudio: true
 	}).then(function(value) {
-		elements.timeToSuspendElement.value = value.timeToDiscard;
-		elements.neverSuspendPinnedElement.checked = value.neverSuspendPinned;
-		elements.neverSuspendUnsavedFormInputElement.checked = value.neverSuspendUnsavedFormInput;
-		elements.neverSuspendPlayingAudioElement.checked = value.neverSuspendPlayingAudio;
-	  });
+		elements.timeToSuspend.value = value.timeToDiscard;
+		elements.neverSuspendPinned.checked = value.neverSuspendPinned;
+		elements.neverSuspendPlayingAudio.checked = value.neverSuspendPlayingAudio;
+		elements.neverSuspendUnsavedFormInput.checked = value.neverSuspendUnsavedFormInput;
+	});
 
-	elements.timeToSuspendElement.addEventListener('input', function() {
+	elements.timeToSuspend.addEventListener('input', function() {
 		if (isNaN(this.value) || this.value <= 0) {
 			this.value = 60;
 		}
@@ -37,20 +37,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function resetOptions(e) {
 		e.preventDefault();
-		elements.timeToSuspendElement.value = 60;
-		elements.neverSuspendPinnedElement.checked = true;
-		elements.neverSuspendUnsavedFormInputElement.checked = true;
-		elements.neverSuspendPlayingAudioElement.checked = true;
+		elements.timeToSuspend.value = 60;
+		elements.neverSuspendPinned.checked = true;
+		elements.neverSuspendPlayingAudio.checked = true;
+		elements.neverSuspendUnsavedFormInput.checked = true;
 		saveOptions(e)
 	}
 
 	function saveOptions(e) {
 		e.preventDefault();
 		browser.storage.local.set({
-			timeToDiscard: parseInt(elements.timeToSuspendElement.value),
-			neverSuspendPinned: elements.neverSuspendPinnedElement.checked === true,
-			neverSuspendUnsavedFormInput: elements.neverSuspendUnsavedFormInputElement.checked === true,
-			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudioElement.checked === true
+			timeToDiscard: parseInt(elements.timeToSuspend.value),
+			neverSuspendPinned: elements.neverSuspendPinned.checked === true,
+			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
+			neverSuspendUnsavedFormInput: elements.neverSuspendUnsavedFormInput.checked === true
 		});
 		browser.runtime.reload();
 	}
