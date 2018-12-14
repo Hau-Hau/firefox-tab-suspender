@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 				if (!tabs[length].discard && !tabs[length].active) {
 					loadedTabs[tabs[length].windowId] = loadedTabs[tabs[length].windowId] || {};
-					loadedTabs[tabs[length].windowId][tabs[length].id];
+					loadedTabs[tabs[length].windowId][tabs[length].id] = undefined;
 				}
 			}
 		});
@@ -104,21 +104,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 			let found = false;
-
-			// Needed performance check which method is more optimal
-
-			// for (const windowId in windows) {
-			// 	for (const tabId in windows[windowId]) {
-			// 		if (!windows[windowId][tabId].discarded && !windows[windowId][tabId].active) {
-			// 			found = true;
-			// 			break;
-			// 		}
-			// 		if (found) {
-			// 			break;
-			// 		}
-			// 	}
-			// }
-
 			for (const windowId in loadedTabs) {
 				if  (loadedTabs[windowId].length > 0) {
 					found = true;
@@ -128,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (!found) {
 				clearInterval(interval);
 			}
-		}, 1000 * 2);
+		}, 2000);
 	}
 
 	function createTab(tab) {
@@ -142,8 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		if (!tab.discarded && !tab.active) {
 			loadedTabs[tab.windowId] = loadedTabs[tab.windowId] || {};
-			loadedTabs[tab.windowId][tab.id];
+			loadedTabs[tab.windowId][tab.id] = undefined;
 		}
 	}
-
 });
