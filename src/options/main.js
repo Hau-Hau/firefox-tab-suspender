@@ -2,21 +2,18 @@ document.addEventListener("DOMContentLoaded", function() {
 	let elements = {
 		timeToSuspend: this.getElementById('time_to_suspend'),
 		neverSuspendPinned: this.getElementById('never_suspend_pinned'),
-		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
-		neverSuspendUnsavedFormInput: this.getElementById('never_suspend_unsaved_form_inputs')
+		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio')
 	}
 
 	browser.storage.local.get({
 		timeToDiscard: 60,
 		neverSuspendPinned: true,
-		neverSuspendUnsavedFormInput: true,
 		neverSuspendPlayingAudio: true
 	}).then(function(value) {
 		elements.timeToSuspend.value = value.timeToDiscard;
 		elements.neverSuspendPinned.checked = value.neverSuspendPinned;
 		elements.neverSuspendPlayingAudio.checked = value.neverSuspendPlayingAudio;
-		elements.neverSuspendUnsavedFormInput.checked = value.neverSuspendUnsavedFormInput;
-	});
+	  });
 
 	elements.timeToSuspend.addEventListener('input', function() {
 		if (isNaN(this.value) || this.value <= 0) {
@@ -40,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		elements.timeToSuspend.value = 60;
 		elements.neverSuspendPinned.checked = true;
 		elements.neverSuspendPlayingAudio.checked = true;
-		elements.neverSuspendUnsavedFormInput.checked = true;
 		saveOptions(e)
 	}
 
@@ -49,8 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		browser.storage.local.set({
 			timeToDiscard: parseInt(elements.timeToSuspend.value),
 			neverSuspendPinned: elements.neverSuspendPinned.checked === true,
-			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
-			neverSuspendUnsavedFormInput: elements.neverSuspendUnsavedFormInput.checked === true
+			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true
 		});
 		browser.runtime.reload();
 	}
