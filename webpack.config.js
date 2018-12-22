@@ -4,6 +4,7 @@ const webpack = require('webpack'),
       UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
       ZipPlugin = require('zip-webpack-plugin'),
       CopyWebpackPlugin = require('copy-webpack-plugin'),
+      ConcatPlugin = require('webpack-concat-plugin'),
       isProd = (process.env.NODE_ENV == 'production');
 
 function getOutputPath() {
@@ -12,8 +13,8 @@ function getOutputPath() {
 
 module.exports = {
   entry: {
-    'service.js': './src/background/main.js',
-    'options.js': './src/options/scripts/main.js',
+    // 'background.js': './src/background/main.js',
+    'options.js': './src/options/main.js',
     'styles': ['./src/options/styles/options-styles.scss']
   },
   output: {
@@ -53,11 +54,11 @@ module.exports = {
               options: { sourceMap: !isProd } 
             }
         ]
-    },
+      },
       {
         test: /\.(png|ico)$/,
         loader: ['file-loader?publicPath=./&name=[name].[ext]', 'image-webpack-loader']
-      },
+      }
     ]
   },
   plugins: [
@@ -67,6 +68,7 @@ module.exports = {
       }
     }),
     new CopyWebpackPlugin([
+      { from: './src/background/.tmp/service.wasm', to: 'service.wasm' },
       { from: './src/manifest.json', to: 'manifest.json' },
       { from: './src/options/index.html', to: 'options.html' }
     ], {}),
@@ -87,17 +89,30 @@ module.exports = {
         ]
       }
   }),
+  new ConcatPlugin({
+    uglify: isProd,
+    sourceMap: !isProd,
+    name: 'background',
+    fileName: '[name].js',
+    filesToConcat: ['./src/background/.tmp/service.js', './src/background/js/main.js'],
+    attributes: {
+        async: false
+    }
+  }),
     new ZipPlugin({
       filename: 'firefox-tab-suspender.zip',
-      exclude: [/\.tmp$/],
+      exclude: [/\.tmp$/]
     })
   ],
   optimization: {
     minimizer: isProd ? [
       new UglifyJsPlugin()
-    ] : []
+    ] : [],
+  },
+  node: {
+    fs: 'empty'
   },
   resolve: {
-    extensions: ['.js', '.json', '.html']
+    extensions: ['.js', '.json', '.html', '.wasm']
   }
 };

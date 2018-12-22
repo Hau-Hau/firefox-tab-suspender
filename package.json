@@ -11,8 +11,10 @@
   "license": "MIT",
   "email": "piotr.a.michalewicz@gmail.com",
   "scripts": {
-    "dev:build": "NODE_ENV=development & webpack",
-    "dist:build": "NODE_ENV=production webpack -p"
+    "_dev:build_c": "emcc src/background/c/utils/array_utils.c src/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=3 -s EXIT_RUNTIME=1 -o hello.wasm -o src/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/background/js/library.js",
+    "_dist:build_c": "emcc -O2 src/background/c/utils/array_utils.c src/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=3 -s EXIT_RUNTIME=1 -o hello.wasm -o src/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/background/js/library.js",
+    "dev:build": "rm -f -r src/background/.tmp && mkdir src/background/.tmp && npm run _dev:build_c && NODE_ENV=development webpack && rm -f -r src/background/.tmp",
+    "dist:build": "rm -f -r src/background/.tmp && mkdir src/background/.tmp && npm run _dist:build_c && NODE_ENV=production webpack -p && rm -f -r src/background/.tmp"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
@@ -32,6 +34,7 @@
     "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2",
+    "webpack-concat-plugin": "^3.0.0",
     "zip-webpack-plugin": "^3.0.0"
   }
 }
