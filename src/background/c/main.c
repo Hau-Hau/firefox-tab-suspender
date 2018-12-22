@@ -4,23 +4,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "utils/array_utils.h"
-#include "tab.h"
-#include "window.h"
-#include "settings.h"
+#include "models/tab.h"
+#include "models/window.h"
+#include "models/settings.h"
 #include <emscripten.h> 
 #define INITIAL_SIZE 32
-
-extern void jsConsoleLogChar(char *);
-
-extern void jsConsoleLogInt(int);
-
-extern void jsConsoleLogDouble(double);
-
-extern void jsConsoleLogFloat(float);
-
-EMSCRIPTEN_KEEPALIVE char *getCharPtrValue(char *message) {
-  return message;
-}
 
 extern void jsExpiredTabsWatcher(void);
 
