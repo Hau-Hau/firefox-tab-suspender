@@ -5,9 +5,6 @@ browser.storage.local.get({
 	neverSuspendUnsavedFormInput: true
 }).then(function(value) {
 	Module.onRuntimeInitialized = _ => {
-		/* develblock:start */
-			console.log("TEST TEST TEST");
-  		/* develblock:end */
 		const heapMap = {
 			'HEAP8': Int8Array,
 			'HEAPU8': Uint8Array,
