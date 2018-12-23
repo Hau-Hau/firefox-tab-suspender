@@ -1,8 +1,13 @@
 {
   "name": "Tab Suspender",
-  "version": "1.0.0",
-  "description": "Native, lightweight and performant extension that reduce Firefox's memory usage.",
+  "author": "Michalewicz Piotr",
+  "version": "2.0.0",
+  "description": "Native, lightweight and performant open source extension that reduce Firefox's memory usage.",
   "manifest_version": 2,
+  "icons": {
+    "48": "fox-48px.png",
+    "96": "fox-96px.png"
+  },
   "background": {
     "scripts": [ "background.js" ]
   },
@@ -12,7 +17,8 @@
   "permissions": [ "tabs", "storage" ],
   "applications": {
     "gecko": {
-    "id": "addon@example.com"
+      "id": "tabsuspender@michalewiczpiotr",
+      "strict_min_version": "59.0"
     }
   }
 }
