@@ -10,6 +10,21 @@
 #include <emscripten.h> 
 #define INITIAL_SIZE 32
 
+extern void jsConsoleLogChar(char *);
+
+extern void jsConsoleLogInt(int);
+
+extern void jsConsoleLogDouble(double);
+
+extern void jsConsoleLogFloat(float);
+
+EMSCRIPTEN_KEEPALIVE char *getCharPtrValue(char *message) {
+  return message;
+}
+
+
+
+
 extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
@@ -271,6 +286,7 @@ EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint3
             || (settings.neverSuspendPlayingAudio && windows[windowsIndex]->tabs[tabsIndex]->audible)) {
           break;
         }
+        
         if ((bool) tabsBuffer[tabsBufferSize][2] || windows[windowsIndex]->tabs[tabsIndex]->active) {
           windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime = tabsBuffer[tabsBufferSize][6];
         }
@@ -278,6 +294,10 @@ EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint3
         windows[windowsIndex]->tabs[tabsIndex]->discarded = (bool) tabsBuffer[tabsBufferSize][3];
         windows[windowsIndex]->tabs[tabsIndex]->pinned = (bool) tabsBuffer[tabsBufferSize][4];
         windows[windowsIndex]->tabs[tabsIndex]->audible = (bool) tabsBuffer[tabsBufferSize][5];
+        
+				if (!windows[windowsIndex]->tabs[tabsIndex]->discarded && !windows[windowsIndex]->tabs[tabsIndex]->active) {
+          push((void **) loadedTabs, (void **) &windows[windowsIndex]->tabs[tabsIndex], &loadedTabsSize, &loadedTabsCapacity);
+        }
         break;
       }
     }
