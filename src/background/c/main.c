@@ -10,21 +10,6 @@
 #include <emscripten.h> 
 #define INITIAL_SIZE 32
 
-extern void jsConsoleLogChar(char *);
-
-extern void jsConsoleLogInt(int);
-
-extern void jsConsoleLogDouble(double);
-
-extern void jsConsoleLogFloat(float);
-
-EMSCRIPTEN_KEEPALIVE char *getCharPtrValue(char *message) {
-  return message;
-}
-
-
-
-
 extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
