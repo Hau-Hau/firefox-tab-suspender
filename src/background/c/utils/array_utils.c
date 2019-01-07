@@ -49,4 +49,3 @@ void splice(void **array, uint32_t index, uint32_t *size, bool shouldFreePointer
     array[*size] = NULL;
   }
 }
-

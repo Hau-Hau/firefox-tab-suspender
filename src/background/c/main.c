@@ -30,7 +30,7 @@ static uint32_t loadedTabsCapacity = INITIAL_SIZE;
 //1 bool neverSuspendPinned,
 //2 bool neverSuspendPlayingAudio,
 //3 bool neverSuspendUnsavedFormInput
-EMSCRIPTEN_KEEPALIVE void initialize(const int32_t *buffer, int32_t bufferSize) {
+EMSCRIPTEN_KEEPALIVE void initialize(const uint32_t *buffer, uint32_t bufferSize) {
   settings.timeToDiscard = buffer[0];
   settings.neverSuspendPinned = (bool) buffer[1];
   settings.neverSuspendPlayingAudio = (bool) buffer[2];
@@ -63,7 +63,7 @@ EMSCRIPTEN_KEEPALIVE void windowsOnCreatedHandle(uint32_t windowId) {
 //3 bool discarded,
 //4 bool pinned,
 //5 bool audible
-EMSCRIPTEN_KEEPALIVE void tabsOnCreatedHandle(const int32_t *tabBuffer, int32_t bufferSize) {
+EMSCRIPTEN_KEEPALIVE void tabsOnCreatedHandle(const uint32_t *tabBuffer, uint32_t bufferSize) {
   uint32_t windowsIndex = windowsSize;
   while (windowsIndex--) {
     if (windows[windowsIndex]->id == tabBuffer[0]) {
@@ -91,7 +91,7 @@ EMSCRIPTEN_KEEPALIVE void tabsOnCreatedHandle(const int32_t *tabBuffer, int32_t 
   tabsOnCreatedHandle(tabBuffer, bufferSize);
 }
 
-EMSCRIPTEN_KEEPALIVE void tabsInitialization(const int32_t **buffer, int32_t bufferSize, const int32_t segmentSize) {
+EMSCRIPTEN_KEEPALIVE void tabsInitialization(const uint32_t **buffer, uint32_t bufferSize, const uint32_t segmentSize) {
   while (bufferSize--) {
     tabsOnCreatedHandle(buffer[bufferSize], segmentSize);
   }
@@ -208,8 +208,8 @@ EMSCRIPTEN_KEEPALIVE void passTabToNextWindow(const uint32_t newWindowId, struct
 
 //0 uint32_t windowId,
 //1 uint32_t tabId,
-//2 uint32_t pinned,
-//3 uint32_t audible
+//2 uint32_t pinned, states: 0-1 bool, > 1 ingored
+//3 uint32_t audible, states: 0-1 bool, > 1 ingored
 EMSCRIPTEN_KEEPALIVE void tabsOnUpdatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
   uint32_t windowsIndex = windowsSize;
   while (windowsIndex--) {
@@ -254,7 +254,7 @@ EMSCRIPTEN_KEEPALIVE void tabsOnUpdatedHandle(const uint32_t *buffer, uint32_t b
 //4 bool pinned,
 //5 bool audible
 //6 double lastAccessed
-EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBufferSize, const uint32_t tabSize) {
+EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBufferSize, const uint32_t segmentSize) {
   while (tabsBufferSize--) {
     bool found = false;
     uint32_t windowsIndex = windowsSize;
@@ -283,7 +283,7 @@ EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint3
     }
     if (!found) {
       windowsOnCreatedHandle((uint32_t) tabsBuffer[tabsBufferSize][0]);
-      tabsOnCreatedHandle((uint32_t *) tabsBuffer[tabsBufferSize], tabSize - 1);
+      tabsOnCreatedHandle((uint32_t *) tabsBuffer[tabsBufferSize], segmentSize - 1);
     }
   }
   jsExpiredTabsWatcher();
