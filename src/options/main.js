@@ -1,5 +1,7 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
 	const UINT32_MAX = 0xFFFFFFFF;
+
+	document.getElementById('time_to_suspend').max = UINT32_MAX;
 
 	let elements = {
 		timeToSuspend: this.getElementById('time_to_suspend'),
@@ -18,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	  });
 
 	elements.timeToSuspend.addEventListener('input', function() {
-		if (isNaN(this.value) || this.value <= 0 || this.value >= UINT32_MAX) {
+		if (isNaN(this.value) || this.value <= 0 || this.value > UINT32_MAX) {
 			this.value = 60;
 		}
 	});

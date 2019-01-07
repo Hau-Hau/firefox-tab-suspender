@@ -251,7 +251,7 @@ EMSCRIPTEN_KEEPALIVE void tabsOnUpdatedHandle(const uint32_t *buffer, uint32_t b
 //1 uint32_t tabId,
 //2 bool active,
 //3 bool discarded,
-//4 bool pinned,
+//4 bool pinned
 //5 bool audible
 //6 double lastAccessed
 EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBufferSize, const uint32_t segmentSize) {
