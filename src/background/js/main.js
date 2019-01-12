@@ -98,46 +98,76 @@ browser.storage.local.get({
 		});
 
 		chrome.tabs.onCreated.addListener(function(tab) {
-			passArrayToWasm(tabsOnCreatedHandle, [tab.windowId, tab.id, tab.active & 1, tab.discarded & 1, tab.pinned & 1, tab.audible & 1], 'HEAP32');
+			try {
+				passArrayToWasm(tabsOnCreatedHandle, [tab.windowId, tab.id, tab.active & 1, tab.discarded & 1, tab.pinned & 1, tab.audible & 1], 'HEAP32');
+			} catch(e) {
+				console.log({e: e, f: 'chrome.tabs.onCreated'})
+				browser.runtime.reload();
+			}
 		});
 
 		chrome.windows.onCreated.addListener(function(window) {
-			windowsOnCreatedHandle(window.id);
+			try {
+				windowsOnCreatedHandle(window.id);
+			} catch(e) {
+				console.log({e: e, f: 'chrome.windows.onCreated'})
+				browser.runtime.reload();
+			}
 		});
 
 		chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-			passArrayToWasm(tabsOnUpdatedHandle, [
-				tab.windowId, 
-				tab.id, 
-				(changeInfo.pinned === undefined || changeInfo.pinned === null) ? 2 : changeInfo.pinned & 1,
-				(changeInfo.audible === undefined || changeInfo.audible === null) ? 2 : changeInfo.audible & 1
-			], 'HEAP32');
+			try {
+				passArrayToWasm(tabsOnUpdatedHandle, [
+					tab.windowId, 
+					tab.id, 
+					(changeInfo.pinned === undefined || changeInfo.pinned === null) ? 2 : changeInfo.pinned & 1,
+					(changeInfo.audible === undefined || changeInfo.audible === null) ? 2 : changeInfo.audible & 1
+				], 'HEAP32');
+			} catch(e) {
+				console.log({e: e, f: 'chrome.tabs.onUpdated'})
+				browser.runtime.reload();
+			}
 		});
 
 		chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-			tabsOnRemovedHandle(removeInfo.windowId, tabId);
+			try {
+				tabsOnRemovedHandle(removeInfo.windowId, tabId);
+			} catch(e) {
+				console.log({e: e, f: 'chrome.tabs.onRemoved.addListener'})
+				browser.runtime.reload();
+			}
 		});
 
 		chrome.windows.onRemoved.addListener(function(windowId) {
+			try {
 			windowsOnRemovedHandle(windowId);
+			} catch(e) {
+				console.log({e: e, f: 'chrome.windows.onRemoved'})
+				browser.runtime.reload();
+			}
 		});
 
 		chrome.tabs.onActivated.addListener(function(activeInfo) {
-			chrome.tabs.query({}, function(tabs){   
-				const tabsToPass = [];  
-				for (const tab of tabs) {
-					tabsToPass.push([
-						tab.windowId,
-						tab.id, 
-						tab.active & 1, 
-						tab.discarded & 1, 
-						tab.pinned & 1, 
-						tab.audible & 1,
-						Math.floor(tab.lastAccessed / 1000)
-					]);
-				}
-				pass2DArrayToWasm(tabsOnActivatedHandle, tabsToPass, 'HEAPF64');
-			});
+			try {
+				chrome.tabs.query({}, function(tabs){   
+					const tabsToPass = [];  
+					for (const tab of tabs) {
+						tabsToPass.push([
+							tab.windowId,
+							tab.id, 
+							tab.active & 1, 
+							tab.discarded & 1, 
+							tab.pinned & 1, 
+							tab.audible & 1,
+							Math.floor(tab.lastAccessed / 1000)
+						]);
+					}
+					pass2DArrayToWasm(tabsOnActivatedHandle, tabsToPass, 'HEAPF64');
+				});
+			} catch(e) {
+				console.log({e: e, f: 'chrome.tabs.onActivated'})
+				browser.runtime.reload();
+			}
 		});
 	};
 });

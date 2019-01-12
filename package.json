@@ -1,6 +1,6 @@
 {
   "name": "firefox-tab-suspender",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A Firefox extension that automatic suspend tabs and saves memory",
   "url": "https://github.com/Hau-Hau/firefox-tab-suspender",
   "homepage": "https://github.com/Hau-Hau/firefox-tab-suspender",
