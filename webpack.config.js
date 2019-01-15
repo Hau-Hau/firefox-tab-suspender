@@ -13,9 +13,8 @@ function getOutputPath() {
 
 module.exports = {
   entry: {
-    // 'background.js': './src/background/main.js',
-    'options.js': './src/options/main.js',
-    'styles': ['./src/options/styles/options-styles.scss']
+    'options.js': './src/main/options/main.js',
+    'styles': ['./src/main/options/styles/options-styles.scss']
   },
   output: {
     filename: function(chunkData) {
@@ -70,9 +69,9 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: './assets/fox-48px.png', to: 'fox-48px.png' },
       { from: './assets/fox-96px.png', to: 'fox-96px.png' },
-      { from: './src/background/.tmp/service.wasm', to: 'service.wasm' },
-      { from: './src/manifest.json', to: 'manifest.json' },
-      { from: './src/options/index.html', to: 'options.html' },
+      { from: './src/main/background/.tmp/service.wasm', to: 'service.wasm' },
+      { from: './src/main/manifest.json', to: 'manifest.json' },
+      { from: './src/main/options/index.html', to: 'options.html' },
       { from: './LICENSE', to: './LICENSE.txt' },
     ], {}),
     new RemovePlugin({
@@ -97,7 +96,7 @@ module.exports = {
     sourceMap: !isProd,
     name: 'background',
     fileName: '[name].js',
-    filesToConcat: ['./src/background/.tmp/service.js', './src/background/js/main.js'],
+    filesToConcat: ['./src/main/background/.tmp/service.js', './src/main/background/js/main.js'],
     attributes: {
         async: false
     }

@@ -123,21 +123,10 @@ EMSCRIPTEN_KEEPALIVE void tabsOnRemovedHandle(uint32_t windowId, uint32_t tabId)
   }
 }
 
-// Probably firefox automatically call chrome.tabs.onRemoved
 EMSCRIPTEN_KEEPALIVE void windowsOnRemovedHandle(uint32_t windowId) {
   uint32_t windowsIndex = windowsSize;
   while (windowsIndex--) {
     if (windows[windowsIndex]->id == windowId) {
-      while (windows[windowsIndex]->tabsSize--) {
-        free(windows[windowsIndex]->tabs[windows[windowsIndex]->tabsSize]);
-      }
-
-      uint32_t loadedTabsIndex = loadedTabsSize;
-      while (loadedTabsIndex--) {
-        if (loadedTabs[loadedTabsIndex]->windowId == windowId) {
-          splice((void **) loadedTabs, loadedTabsIndex, &loadedTabsSize, false);
-        }
-      }
       free(windows[windowsIndex]->tabs);
       splice((void **) windows, windowsIndex, &windowsSize, true);
       return;
