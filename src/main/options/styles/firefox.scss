@@ -2,17 +2,6 @@
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.addon-target-button {
-  background: none;
-  border: none;
-  color: #0087ff;
-  font-size: 13px;
-  margin: 12px 12px 0 0;
-  min-width: auto;
-  padding: 4px 4px 0 0;
-  transition: color 150ms;
-}
-
 .addon-target-info-content {
   direction: rtl;
   max-width: 100%;
@@ -23,6 +12,17 @@
 
 .addon-target-info {
   display: flex;
+}
+
+.addon-target-button {
+  background: none;
+  border: none;
+  color: #0087ff;
+  font-size: 13px;
+  margin: 12px 12px 0 0;
+  min-width: auto;
+  padding: 4px 4px 0 0;
+  transition: color 150ms;
 }
 
 .addon-target-button:hover {

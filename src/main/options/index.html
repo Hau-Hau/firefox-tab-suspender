@@ -5,20 +5,45 @@
     <link rel="stylesheet" type="text/css" href="options-styles.css">
   </head>
   <body>
-    <form class="card">
-        <ul>
-          <li>
-              Automatically suspend tabs after (seconds): 
+    <form >
+        <ul class="linearlayout 
+                  linearlayout--orientation-horizontal">
+          <li class="linearlayout 
+                      linearlayout--orientation-vertical 
+                      linearlayout--space-between 
+                      linearlayout--padding-bottom-8px
+                      linearlayout--gravity-center">
+              <span class="textview 
+                            textview--size-16px
+                            textview--color-default">
+                Automatically suspend tabs after (seconds):
+              </span>
               <input type="number" id="time_to_suspend" min="1" value="60">
           </li>
-          <li>
-              Never suspend pinned tabs: 
-              <input type="checkbox" id="never_suspend_pinned">
+          <li class="linearlayout 
+                      linearlayout--orientation-vertical 
+                      linearlayout--space-between 
+                      linearlayout--padding-bottom-8px
+                      linearlayout--gravity-center">
+            <span class="textview 
+                          textview--size-16px
+                          textview--color-default">
+                Never suspend pinned tabs:
+            </span> 
+            <input type="checkbox" id="never_suspend_pinned">
           </li>
-          <li>
-            Never suspend tabs that are playing audio: 
+          <li class="linearlayout 
+                      linearlayout--orientation-vertical 
+                      linearlayout--space-between 
+                      linearlayout--padding-bottom-8px
+                      linearlayout--gravity-center">
+            <span class="textview 
+                          textview--size-16px
+                          textview--color-default">
+              Never suspend tabs that are playing audio:
+            </span> 
             <input type="checkbox" id="never_suspend_playing_audio">
-        </li>
+          </li>
         </ul>
        <div class="addon-target-actions">
           <input type="submit" name="action" value="Reset" class="addon-target-button"/>
