@@ -1,0 +1,96 @@
+@mixin generatePaddings($property) {
+  .u-p {
+    &-#{$property} {
+      padding: $property !important;
+    }  
+    &-top {
+      &-#{$property} {
+        padding-top: $property !important;
+      }   
+    }
+    &-right {
+      &-#{$property} {
+        padding-right: $property !important;
+      }  
+    }
+    &-bottom {
+      &-#{$property} {
+        padding-bottom: $property !important;
+      }
+    }
+    &-left {
+      &-#{$property} {
+        padding-left: $property !important;
+      }   
+    }
+  }
+}
+
+@mixin generateMargins($property) {
+  .u-m {
+    &-#{$property} {
+      margin: $property !important;
+    }  
+    &-t {
+      &-#{$property} {
+        margin-top: $property !important;
+      }   
+    }
+    &-r {
+      &-#{$property} {
+        margin-right: $property !important;
+      }  
+    }
+    &-b {
+      &-#{$property} {
+        margin-bottom: $property !important;
+      }
+    }
+    &-l {
+      &-#{$property} {
+        margin-left: $property !important;
+      }   
+    }
+  }
+}
+
+@mixin generateFontSize($property) {
+  .u-fs {
+     &-#{$property} {
+      font-size: $property !important;
+    }
+  }
+}
+
+
+@mixin generateColor($name, $property) {
+  .u-c {
+     &-#{$name} {
+      color: $property !important;
+    }
+  }
+}
+
+@mixin generateWidths($property) {
+  .u-w-#{$property} {
+    width: $property !important;
+  }
+  .u-max-w-#{$property} {
+    max-width: $property !important;
+  }
+  .u-min-w-#{$property} {
+    min-width: $property !important;
+  }
+}
+
+@mixin generateHeights($property) {
+  .u-h-#{$property} {
+    width: $property !important;
+  }
+  .u-max-h-#{$property} {
+    max-width: $property !important;
+  }
+  .u-min-h-#{$property} {
+    min-width: $property !important;
+  }
+}

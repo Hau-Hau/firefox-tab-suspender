@@ -1,0 +1,23 @@
+.Layout {
+  display: flex;
+  flex-wrap: wrap;
+  
+  &--column {
+    flex-direction: column;
+  }
+  &--row {
+    flex-direction: row;
+  }
+  &--center {
+      align-items: center;
+  }
+  &--start {
+      align-items: start;
+  }
+  &--end {
+      align-items: end;
+  }
+  &--space-between {
+    justify-content: space-between;
+  }
+}

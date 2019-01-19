@@ -1,15 +1,14 @@
-@import './firefox.scss';
-
-body {
-  max-width: 800px;
-  padding: 4px;
-}
+@import './reset.scss';
+@import './utils.scss';
+@import './layout.scss';
+@import './link.scss';
 
 ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
+
 
 .card {
   background: #fff;
@@ -20,81 +19,4 @@ ul {
 
 .card:hover {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
-}
-
-.linearlayout {
-  display: flex;
-  &--orientation  {
-    &-vertical {
-      flex-direction: row;
-    }
-    &-horizontal {
-      flex-direction: column;
-    }
-  }
-
-  &--space-between {
-    justify-content: space-between;
-  }
-  &--padding {
-    &-8px {
-      padding: 8px;
-    }  
-    &-top {
-      &-8px {
-        padding-top: 8px;
-      }   
-    }
-    &-right {
-      &-8px {
-        padding-right: 8px;
-      }  
-    }
-    &-bottom {
-      &-8px {
-        padding-bottom: 8px;
-      }
-    }
-    &-left {
-      &-8px {
-        padding-left: 8px;
-      }   
-    }
-  }
-  &--gravity {
-    &-center {
-      align-items: center;
-    }
-    &-start {
-      align-items: start;
-    }
-    &-end {
-      align-items: end;
-    }
-  }
-}
-
-.textview {
-    &--size {
-      &-13px {
-        font-size: 13px;
-      }
-      &-16px {
-        font-size: 16px;
-      }
-    }
-    &--color {
-      &-header {
-        color: #222;
-      }
-      &-default {
-        color: #444;
-      }
-      &-other {
-        color: #777;
-      }
-      &-hyperlink {
-        color: #0087ff;
-      }
-    }
 }

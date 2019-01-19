@@ -1,0 +1,19 @@
+.Link {
+  @extend .u-fs-13px;
+  all: initial;
+  @extend .u-c-hyperlink;
+
+  &:hover {          
+    @extend .u-c-hyperlink-dark;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  &:active {
+    text-decoration: none;
+  }
+
+  &:focus {
+   text-decoration: underline;
+  }   
+}

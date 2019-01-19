@@ -4,50 +4,31 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="options-styles.css">
   </head>
-  <body>
-    <form >
-        <ul class="linearlayout 
-                  linearlayout--orientation-horizontal">
-          <li class="linearlayout 
-                      linearlayout--orientation-vertical 
-                      linearlayout--space-between 
-                      linearlayout--padding-bottom-8px
-                      linearlayout--gravity-center">
-              <span class="textview 
-                            textview--size-16px
-                            textview--color-default">
+  <body class="u-max-w-800px u-p-4px u-m-8px">
+    <form>
+        <ul class="Layout Layout--column">
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+              <span class="u-fs-16px u-c-default-text">
                 Automatically suspend tabs after (seconds):
               </span>
-              <input type="number" id="time_to_suspend" min="1" value="60">
+              <input type="number" id="time_to_suspend" min="1" value="60"/>
           </li>
-          <li class="linearlayout 
-                      linearlayout--orientation-vertical 
-                      linearlayout--space-between 
-                      linearlayout--padding-bottom-8px
-                      linearlayout--gravity-center">
-            <span class="textview 
-                          textview--size-16px
-                          textview--color-default">
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
                 Never suspend pinned tabs:
             </span> 
-            <input type="checkbox" id="never_suspend_pinned">
+            <input type="checkbox" id="never_suspend_pinned"/>
           </li>
-          <li class="linearlayout 
-                      linearlayout--orientation-vertical 
-                      linearlayout--space-between 
-                      linearlayout--padding-bottom-8px
-                      linearlayout--gravity-center">
-            <span class="textview 
-                          textview--size-16px
-                          textview--color-default">
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
               Never suspend tabs that are playing audio:
             </span> 
-            <input type="checkbox" id="never_suspend_playing_audio">
+            <input type="checkbox" id="never_suspend_playing_audio"/>
           </li>
         </ul>
-       <div class="addon-target-actions">
-          <input type="submit" name="action" value="Reset" class="addon-target-button"/>
-          <input type="submit" name="action" value="Save" class="addon-target-button"/>
+       <div class="Layout Layout--row Layout--start">
+          <input type="submit" name="action" value="Reset" class="Link u-p-t-4px u-p-r-4px u-m-t-12px u-m-r-12px"/>
+          <input type="submit" name="action" value="Save" class="Link u-p-t-4px u-p-r-4px u-m-t-12px u-m-r-12px"/>
       </div>
     </form>
     <script src="options.js"></script>
