@@ -3,18 +3,8 @@
 @import './layout.scss';
 @import './link.scss';
 
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-
-.card {
-  background: #fff;
-  font-size: 13px;
-  padding: 16px;
-  transition: box-shadow 150ms;
+.addon-target-actions {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .card:hover {

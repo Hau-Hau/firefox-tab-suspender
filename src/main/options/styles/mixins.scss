@@ -63,8 +63,13 @@
 }
 
 
-@mixin generateColor($name, $property) {
+@mixin generateColors($name, $property) {
   .u-c {
+     &-#{$name} {
+      color: $property !important;
+    }
+  }
+  .u-bgc {
      &-#{$name} {
       color: $property !important;
     }

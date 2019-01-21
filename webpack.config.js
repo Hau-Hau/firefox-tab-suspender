@@ -1,5 +1,9 @@
 const webpack = require('webpack'),
       path = require('path'),
+      glob = require('glob'),
+      PurgecssPlugin = require('purgecss-webpack-plugin'),
+      MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+      OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"),
       RemovePlugin = require('remove-files-webpack-plugin'),
       UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
       ZipPlugin = require('zip-webpack-plugin'),
@@ -14,7 +18,7 @@ function getOutputPath() {
 module.exports = {
   entry: {
     'options.js': './src/main/options/main.js',
-    'styles': ['./src/main/options/styles/options-styles.scss']
+    'options-styles': './src/main/options/styles/options-styles.scss'
   },
   output: {
     filename: function(chunkData) {
@@ -37,21 +41,13 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: [  
-            {
-              loader: 'file-loader',
-              options: {
-                  name: '[name].css',
-                  context: './',
-                  publicPath: '/'
-                }
-            },
-            { loader: 'extract-loader' },
-            { loader: 'css-loader' },
-            { 
-              loader: 'sass-loader', 
-              options: { sourceMap: !isProd } 
-            }
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader' },
+          {
+            loader: 'sass-loader',
+            options: { sourceMap: !isProd }
+          }
         ]
       },
       {
@@ -61,6 +57,12 @@ module.exports = {
     ]
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+    }),
+    new PurgecssPlugin({
+      paths: glob.sync(`src/main/options/*.html`),
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
@@ -90,17 +92,17 @@ module.exports = {
           }
         ]
       }
-  }),
-  new ConcatPlugin({
-    uglify: isProd,
-    sourceMap: !isProd,
-    name: 'background',
-    fileName: '[name].js',
-    filesToConcat: ['./src/main/background/.tmp/service.js', './src/main/background/js/main.js'],
-    attributes: {
-        async: false
-    }
-  }),
+    }),
+    new ConcatPlugin({
+      uglify: isProd,
+      sourceMap: !isProd,
+      name: 'background',
+      fileName: '[name].js',
+      filesToConcat: ['./src/main/background/.tmp/service.js', './src/main/background/js/main.js'],
+      attributes: {
+          async: false
+      }
+    }),
     new ZipPlugin({
       filename: 'firefox-tab-suspender.zip',
       exclude: [/\.tmp$/]
@@ -108,13 +110,14 @@ module.exports = {
   ],
   optimization: {
     minimizer: isProd ? [
-      new UglifyJsPlugin()
+      new UglifyJsPlugin(),
+      new OptimizeCSSAssetsPlugin({})
     ] : [],
   },
   node: {
     fs: 'empty'
   },
   resolve: {
-    extensions: ['.js', '.json', '.html', '.wasm']
+    extensions: ['.js', '.json', '.html', '.wasm', '.css', 'scss']
   }
 };

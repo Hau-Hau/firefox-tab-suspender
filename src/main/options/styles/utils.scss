@@ -3,12 +3,15 @@
 @include generatePaddings(4px);
 @include generatePaddings(8px);
 @include generatePaddings(12px);
+@include generatePaddings(16px);
 @include generateMargins(4px);
 @include generateMargins(8px);
 @include generateMargins(12px);
+@include generateMargins(16px);
 @include generateFontSize(13px);
 @include generateFontSize(16px);
-@include generateColor(default-text, #222);
-@include generateColor(hyperlink, #0087ff);
-@include generateColor(hyperlink-dark, #0052cc);
+@include generateColors(white, #fff);
+@include generateColors(default-text, #222);
+@include generateColors(hyperlink, #0087ff);
+@include generateColors(hyperlink-dark, #0052cc);
 @include generateWidths(800px);
