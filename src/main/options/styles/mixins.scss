@@ -1,26 +1,18 @@
+$sides: (
+  0: top,
+  1: right,
+  2: bottom,
+  3: left
+);
+
 @mixin generatePaddings($property) {
   .u-p {
-    &-#{$property} {
+     &-#{$property} {
       padding: $property !important;
     }  
-    &-top {
-      &-#{$property} {
-        padding-top: $property !important;
-      }   
-    }
-    &-right {
-      &-#{$property} {
-        padding-right: $property !important;
-      }  
-    }
-    &-bottom {
-      &-#{$property} {
-        padding-bottom: $property !important;
-      }
-    }
-    &-left {
-      &-#{$property} {
-        padding-left: $property !important;
+    @for $i from 0 through 3 {
+      &-#{first(map-get($sides, $i))-$property} {
+        padding-#{map-get($sides, $i)}: $property !important;
       }   
     }
   }
@@ -28,27 +20,12 @@
 
 @mixin generateMargins($property) {
   .u-m {
-    &-#{$property} {
+     &-#{$property} {
       margin: $property !important;
     }  
-    &-t {
-      &-#{$property} {
-        margin-top: $property !important;
-      }   
-    }
-    &-r {
-      &-#{$property} {
-        margin-right: $property !important;
-      }  
-    }
-    &-b {
-      &-#{$property} {
-        margin-bottom: $property !important;
-      }
-    }
-    &-l {
-      &-#{$property} {
-        margin-left: $property !important;
+    @for $i from 0 through 3 {
+      &-#{first(map-get($sides, $i))-$property} {
+        margin-#{map-get($sides, $i)}: $property !important;
       }   
     }
   }
