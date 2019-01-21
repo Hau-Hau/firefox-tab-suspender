@@ -4,4 +4,4 @@ package-lock.json
 /dist
 /.idea
 /.vscode
-npm-debug*
+npm-debug.log
