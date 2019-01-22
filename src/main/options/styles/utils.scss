@@ -5,6 +5,9 @@
     @include generateMargins(4px * $i);
 }
 
+
+@include generateBorders(default, 1px, solid, rgba(0, 0, 0, 0.2));
+
 @include generateFontSize(13px);
 @include generateFontSize(16px);
 

@@ -11,7 +11,7 @@ $sides: (
       padding: $property !important;
     }  
     @for $i from 0 through 3 {
-      &-#{first(map-get($sides, $i))-$property} {
+      &-#{str-slice(map-get($sides, $i), 1, 1)-$property} {
         padding-#{map-get($sides, $i)}: $property !important;
       }   
     }
@@ -24,12 +24,26 @@ $sides: (
       margin: $property !important;
     }  
     @for $i from 0 through 3 {
-      &-#{first(map-get($sides, $i))-$property} {
+      &-#{str-slice(map-get($sides, $i), 1, 1)-$property} {
         margin-#{map-get($sides, $i)}: $property !important;
       }   
     }
   }
 }
+
+@mixin generateBorders($name, $size, $type, $color) {
+  .u-b {
+     &-#{$name} {
+      border: $size $type $color !important;
+    }  
+    @for $i from 0 through 3 {
+      &-#{str-slice(map-get($sides, $i), 1, 1)-$name} {
+        border-#{map-get($sides, $i)}: $size $type $color !important;
+      }   
+    }
+  }
+}
+
 
 @mixin generateFontSize($property) {
   .u-fs {
