@@ -2,3 +2,8 @@
 @import './utils.scss';
 @import './layout.scss';
 @import './link.scss';
+
+/* Global default settings */
+body, input {
+ font-family: Arial,x-locale-body,sans-serif !important; 
+}
