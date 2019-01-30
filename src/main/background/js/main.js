@@ -4,6 +4,7 @@ browser.storage.local.get({
 	neverSuspendPlayingAudio: true,
 	neverSuspendUnsavedFormInput: true
 }).then(function(value) {
+	console.log(browser.extension.getURL(""));
 	Module.onRuntimeInitialized = _ => {
 		const heapMap = {
 			'HEAP8': Int8Array,
@@ -140,7 +141,7 @@ browser.storage.local.get({
 
 		chrome.windows.onRemoved.addListener(function(windowId) {
 			try {
-			windowsOnRemovedHandle(windowId);
+				windowsOnRemovedHandle(windowId);
 			} catch(e) {
 				console.log({e: e, f: 'chrome.windows.onRemoved'})
 				browser.runtime.reload();
