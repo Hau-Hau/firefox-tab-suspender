@@ -35,13 +35,16 @@ mergeInto(LibraryManager.library, {
         context.putImageData(imageData, 0, 0);
         browser.tabs.executeScript(tabId, {
           code:
-            `if (document.querySelector("link[rel~=icon]")) {
-                Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "${canvas.toDataURL('image/png')}"; });
-             }`
+            `if (!document.querySelector("link[rel~=icon]")) {
+              document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');
+            }
+            if (document.querySelector("link[rel~=icon]")) {
+              Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "${canvas.toDataURL('image/png')}"; });
+            }`
         }, function() {
             setTimeout(function() {
               chrome.tabs.discard(tabId);
-            }, 250)
+            }, 150)
         });
       };
     };
