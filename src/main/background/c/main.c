@@ -148,6 +148,7 @@ EMSCRIPTEN_KEEPALIVE void discardTabs() {
       }
 
       jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id);
+      // jsDesaturateFavicon(windows[windowsIndex]->tabs[tabsIndex]->id);
       windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
 			
 			uint32_t loadedTabsIndex = loadedTabsSize;
