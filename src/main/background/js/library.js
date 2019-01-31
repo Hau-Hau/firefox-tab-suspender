@@ -11,7 +11,12 @@ mergeInto(LibraryManager.library, {
     clearInterval(Module['internalInterval']);
     Module['internalInterval'] = undefined;
   },
-  jsChromeTabsDiscard: function(tabId) {
+  jsChromeTabsDiscard: function(tabId, shouldDesaturateFavicon) {
+    if (shouldDesaturateFavicon === 0) {
+      chrome.tabs.discard(tabId);
+      return;
+    }
+
     const desaturateFavicon = function(favIconUrl) {
       const image = new Image();
       image.src = favIconUrl;
@@ -33,18 +38,21 @@ mergeInto(LibraryManager.library, {
         }
 
         context.putImageData(imageData, 0, 0);
-        browser.tabs.executeScript(tabId, {
+        chrome.tabs.executeScript(tabId, {
           code:
-            `if (!document.querySelector("link[rel~=icon]")) {
-              document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');
-            }
-            if (document.querySelector("link[rel~=icon]")) {
-              Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "${canvas.toDataURL('image/png')}"; });
-            }`
+            `(function() {
+              if (!document.querySelector("link[rel~=icon]")) {
+                document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');
+              }
+              if (document.querySelector("link[rel~=icon]")) {
+                Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "${canvas.toDataURL('image/png')}"; });
+              }
+            })();
+            `
         }, function() {
             setTimeout(function() {
               chrome.tabs.discard(tabId);
-            }, 150)
+            }, 300)
         });
       };
     };
@@ -57,11 +65,5 @@ mergeInto(LibraryManager.library, {
         }
       }
     });
-  },
-  jsDesaturateFavicon: function(tabId) {
-
-  },
-  jsRestoreFavicon: function(tabId) {
-    
   }
 });

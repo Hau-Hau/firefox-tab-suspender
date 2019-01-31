@@ -6,17 +6,20 @@ document.addEventListener('DOMContentLoaded', function() {
 	let elements = {
 		timeToSuspend: this.getElementById('time_to_suspend'),
 		neverSuspendPinned: this.getElementById('never_suspend_pinned'),
-		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio')
+		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
+		desaturateFavicon: this.getElementById('desaturate_favicon')
 	}
-
+	
 	browser.storage.local.get({
 		timeToDiscard: 60,
 		neverSuspendPinned: true,
-		neverSuspendPlayingAudio: true
+		neverSuspendPlayingAudio: true,
+		desaturateFavicon: true
 	}).then(function(value) {
 		elements.timeToSuspend.value = value.timeToDiscard;
 		elements.neverSuspendPinned.checked = value.neverSuspendPinned;
 		elements.neverSuspendPlayingAudio.checked = value.neverSuspendPlayingAudio;
+		elements.desaturateFavicon.checked = value.desaturateFavicon;
 	  });
 
 	elements.timeToSuspend.addEventListener('input', function() {
@@ -41,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		elements.timeToSuspend.value = 60;
 		elements.neverSuspendPinned.checked = true;
 		elements.neverSuspendPlayingAudio.checked = true;
+		elements.desaturateFavicon.checked = true;
 		saveOptions(e)
 	}
 
@@ -49,7 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		browser.storage.local.set({
 			timeToDiscard: parseInt(elements.timeToSuspend.value),
 			neverSuspendPinned: elements.neverSuspendPinned.checked === true,
-			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true
+			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
+			desaturateFavicon: elements.desaturateFavicon.checked === true
 		});
 		browser.runtime.reload();
 	}
