@@ -14,7 +14,7 @@ extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
 
-extern void jsChromeTabsDiscard(uint32_t);
+extern void jsChromeTabsDiscard(uint32_t, uint8_t);
 
 struct Settings settings;
 
@@ -30,11 +30,13 @@ static uint32_t loadedTabsCapacity = INITIAL_SIZE;
 //1 bool neverSuspendPinned,
 //2 bool neverSuspendPlayingAudio,
 //3 bool neverSuspendUnsavedFormInput
+//4 bool desaturateFavicon
 EMSCRIPTEN_KEEPALIVE void initialize(const uint32_t *buffer, uint32_t bufferSize) {
   settings.timeToDiscard = buffer[0];
   settings.neverSuspendPinned = (bool) buffer[1];
   settings.neverSuspendPlayingAudio = (bool) buffer[2];
   settings.neverSuspendUnsavedFormInput = (bool) buffer[3];
+  settings.desaturateFavicon = (bool) buffer[4];
 
   windows = malloc(windowsCapacity * sizeof(struct Windows *));
   loadedTabs = malloc(loadedTabsCapacity * sizeof(struct Tab *));
@@ -139,7 +141,7 @@ EMSCRIPTEN_KEEPALIVE void discardTabs() {
   while (windowsIndex--) {
 		uint32_t tabsIndex = windows[windowsIndex]->tabsSize;
     while (tabsIndex--) {
-      if ((double) time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime <= settings.timeToDiscard
+      if ((double) time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime < settings.timeToDiscard
           || windows[windowsIndex]->tabs[tabsIndex]->discarded
           || windows[windowsIndex]->tabs[tabsIndex]->active
           || (settings.neverSuspendPinned && windows[windowsIndex]->tabs[tabsIndex]->pinned)
@@ -147,12 +149,12 @@ EMSCRIPTEN_KEEPALIVE void discardTabs() {
         continue;
       }
 
-      jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id);
+      jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id, (uint8_t) settings.desaturateFavicon);
       windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
 			
 			uint32_t loadedTabsIndex = loadedTabsSize;
       while (loadedTabsIndex--) {
-        if (!loadedTabs[loadedTabsIndex]->discarded || loadedTabs[loadedTabsIndex]->active) {
+        if (loadedTabs[loadedTabsIndex]->discarded || loadedTabs[loadedTabsIndex]->active) {
           splice((void **) loadedTabs, loadedTabsIndex, &loadedTabsSize, false);
 				}
       }
@@ -178,9 +180,7 @@ EMSCRIPTEN_KEEPALIVE void discardTabs() {
 			return;
 		}
   }
-  if (!found) {
-    jsClearInterval();
-  }
+  jsClearInterval();
 }
 
 EMSCRIPTEN_KEEPALIVE void passTabToNextWindow(const uint32_t newWindowId, struct Tab *tab, struct Window *oldWindow, const uint32_t tabIndexInOldWindow)  {

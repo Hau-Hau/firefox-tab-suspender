@@ -11,7 +11,59 @@ mergeInto(LibraryManager.library, {
     clearInterval(Module['internalInterval']);
     Module['internalInterval'] = undefined;
   },
-  jsChromeTabsDiscard: function(tabId) {
-    chrome.tabs.discard(tabId);
+  jsChromeTabsDiscard: function(tabId, shouldDesaturateFavicon) {
+    if (shouldDesaturateFavicon === 0) {
+      chrome.tabs.discard(tabId);
+      return;
+    }
+
+    const desaturateFavicon = function(favIconUrl) {
+      const image = new Image();
+      image.src = favIconUrl;
+
+      image.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+                
+        let context = canvas.getContext('2d');
+        context.drawImage(image, 0, 0);
+
+        let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        let px = imageData.data;
+        let grey;
+        for (let i = px.length; i >= 0; i -= 4) {
+          grey = px[i] * 0.3 + px[i + 1] * 0.59 + px[i + 2] * 0.11;
+          px[i] = px[i + 1] = px[i + 2] = grey;
+        }
+
+        context.putImageData(imageData, 0, 0);
+        chrome.tabs.executeScript(tabId, {
+          code:
+            `(function() {
+              if (!document.querySelector("link[rel~=icon]")) {
+                document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');
+              }
+              if (document.querySelector("link[rel~=icon]")) {
+                Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "${canvas.toDataURL('image/png')}"; });
+              }
+            })();
+            `
+        }, function() {
+            setTimeout(function() {
+              chrome.tabs.discard(tabId);
+            }, 300)
+        });
+      };
+    };
+
+    browser.tabs.query({ active: false, discarded: false }).then((tabs) => {
+      for (let tab of tabs) {
+        if (tab.id === tabId) {
+          desaturateFavicon(tab.favIconUrl);
+          break;
+        }
+      }
+    });
   }
 });
