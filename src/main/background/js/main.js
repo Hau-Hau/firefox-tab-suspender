@@ -2,9 +2,9 @@ browser.storage.local.get({
 	timeToDiscard: 60,
 	neverSuspendPinned: true,
 	neverSuspendPlayingAudio: true,
-	neverSuspendUnsavedFormInput: true
+	neverSuspendUnsavedFormInput: true,
+	desaturateFavicon: true
 }).then(function(value) {
-	console.log(browser.extension.getURL(""));
 	Module.onRuntimeInitialized = _ => {
 		const heapMap = {
 			'HEAP8': Int8Array,
@@ -80,7 +80,8 @@ browser.storage.local.get({
 			value.timeToDiscard,
 			value.neverSuspendPinned & 1, 
 			value.neverSuspendPlayingAudio & 1, 
-			value.neverSuspendUnsavedFormInput & 1 
+			value.neverSuspendUnsavedFormInput & 1,
+			value.desaturateFavicon & 1
 		], 'HEAP32');
 
 		chrome.tabs.query({}, function(tabs){   
@@ -134,7 +135,7 @@ browser.storage.local.get({
 			try {
 				tabsOnRemovedHandle(removeInfo.windowId, tabId);
 			} catch(e) {
-				console.log({e: e, f: 'chrome.tabs.onRemoved.addListener'})
+				console.log({e: e, f: 'chrome.tabs.onRemoved'})
 				browser.runtime.reload();
 			}
 		});

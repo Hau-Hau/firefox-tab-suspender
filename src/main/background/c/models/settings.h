@@ -9,6 +9,7 @@ struct Settings {
   bool neverSuspendPinned;
   bool neverSuspendUnsavedFormInput;
   bool neverSuspendPlayingAudio;
+  bool desaturateFavicon;
 };
 
 #endif
