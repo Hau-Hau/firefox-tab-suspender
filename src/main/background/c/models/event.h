@@ -1,5 +1,5 @@
-#ifndef TESTC_EVENT_H
-#define TESTC_EVENT_H
+#ifndef FTS_EVENT_H
+#define FTS_EVENT_H
 
 #include <stdint.h>
 
