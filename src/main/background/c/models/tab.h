@@ -1,5 +1,5 @@
-#ifndef TESTC_TAB_H
-#define TESTC_TAB_H
+#ifndef FTS_TAB_H
+#define FTS_TAB_H
 
 #include <stdbool.h>
 #include <stdint.h>

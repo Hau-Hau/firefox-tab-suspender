@@ -1,5 +1,5 @@
-#ifndef TESTC_SETTINGS_H
-#define TESTC_SETTINGS_H
+#ifndef FTS_SETTINGS_H
+#define FTS_SETTINGS_H
 
 #include <stdbool.h>
 #include <stdint.h>
