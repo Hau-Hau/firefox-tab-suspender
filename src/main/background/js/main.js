@@ -19,12 +19,8 @@ browser.storage.local.get({
 
 		const initialize = Module.cwrap('initialize', null, ['number', 'number']);
 		const tabsInitialization = Module.cwrap('tabsInitialization', null, ['number', 'number', 'number']);
-		const tabsOnActivatedHandle = Module.cwrap('tabsOnActivatedHandle', null, ['number', 'number', 'number']);
-		const windowsOnCreatedHandle = Module.cwrap('windowsOnCreatedHandle', null, ['number']);
-		const windowsOnRemovedHandle = Module.cwrap('windowsOnRemovedHandle', null, ['number']);
-		const tabsOnCreatedHandle = Module.cwrap('tabsOnCreatedHandle', null, ['number', 'number']);
-		const tabsOnUpdatedHandle = Module.cwrap('tabsOnUpdatedHandle', null, ['number', 'number']);
-		const tabsOnRemovedHandle = Module.cwrap('tabsOnRemovedHandle', null, ['number', 'number']);
+		const pushEvent1D = Module.cwrap('pushEvent1D', null, ['number', 'number', 'number']);
+		const pushEvent2D = Module.cwrap('pushEvent2D', null, ['number', 'number', 'number', 'number']);
 
 		function setHeap(typedArray, ptr, heap) { 
 			switch (heap) {
@@ -43,7 +39,7 @@ browser.storage.local.get({
 			}
 		}
 
-		function pass2DArrayToWasm(fn, arrays, heap) {
+		function pass2DArrayToWasm(eventId, fn, arrays, heap) {
 			const arrayOfPointers = [];
 			let segmentSize = undefined;
 
@@ -59,8 +55,11 @@ browser.storage.local.get({
 			const typedArrayOfPointers = new Int32Array(arrayOfPointers);
 			var ptr = Module._malloc(typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT);
 			Module.HEAP32.set(typedArrayOfPointers, ptr >> 2);
-			fn(ptr, arrayOfPointers.length, segmentSize);
-
+			if (eventId == null) {
+				fn(ptr, arrayOfPointers.length, segmentSize);
+			} else {
+				fn(eventId, ptr, arrayOfPointers.length, segmentSize);
+			}
 			let arrayOfPointersIndex = arrayOfPointers.length;
 			while(arrayOfPointersIndex--) {
 				Module._free(arrayOfPointers[arrayOfPointersIndex]);				
@@ -68,15 +67,20 @@ browser.storage.local.get({
 			Module._free(ptr);
 		}
 
-		function passArrayToWasm(fn, array, heap) {
+		function passArrayToWasm(eventId, fn, array, heap) {
 			const typedArray = new heapMap[heap](array);
 			const ptr = Module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
 			setHeap(typedArray, ptr, heap);
-			fn(ptr, array.length);
+			fn(eventId, ptr, array.length);
+			if (eventId == null) {
+				fn(ptr, array.length);
+			} else {
+				fn(eventId, ptr, array.length);
+			}
 			Module._free(ptr);
 		}
 
-		passArrayToWasm(initialize, [
+		passArrayToWasm(null, initialize, [
 			value.timeToDiscard,
 			value.neverSuspendPinned & 1, 
 			value.neverSuspendPlayingAudio & 1, 
@@ -96,32 +100,41 @@ browser.storage.local.get({
 					tab.audible & 1
 				]);
 			}
-			pass2DArrayToWasm(tabsInitialization, tabsToPass, 'HEAP32');
-		});
-
-		chrome.tabs.onCreated.addListener(function(tab) {
-			try {
-				passArrayToWasm(tabsOnCreatedHandle, [tab.windowId, tab.id, tab.active & 1, tab.discarded & 1, tab.pinned & 1, tab.audible & 1], 'HEAP32');
-			} catch(e) {
-				console.log({e: e, f: 'chrome.tabs.onCreated'})
-				browser.runtime.reload();
-			}
+			pass2DArrayToWasm(null, tabsInitialization, tabsToPass, 'HEAP32');
 		});
 
 		chrome.windows.onCreated.addListener(function(window) {
 			try {
-				windowsOnCreatedHandle(window.id);
+				passArrayToWasm(1, pushEvent1D, [ window.id ], 'HEAP32');
 			} catch(e) {
 				console.log({e: e, f: 'chrome.windows.onCreated'})
 				browser.runtime.reload();
 			}
 		});
 
+		chrome.windows.onRemoved.addListener(function (windowId) {
+			try {
+				passArrayToWasm(2, pushEvent1D, [windowId], 'HEAP32');
+			} catch (e) {
+				console.log({ e: e, f: 'chrome.windows.onRemoved' })
+				browser.runtime.reload();
+			}
+		});
+
+		chrome.tabs.onCreated.addListener(function (tab) {
+			try {
+				passArrayToWasm(3, pushEvent1D, [tab.windowId, tab.id, tab.active & 1, tab.discarded & 1, tab.pinned & 1, tab.audible & 1], 'HEAP32');
+			} catch (e) {
+				console.log({ e: e, f: 'chrome.tabs.onCreated' })
+				browser.runtime.reload();
+			}
+		});
+
 		chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 			try {
-				passArrayToWasm(tabsOnUpdatedHandle, [
-					tab.windowId, 
-					tab.id, 
+				passArrayToWasm(4, pushEvent1D, [
+					tab.windowId,
+					tab.id,
 					(changeInfo.pinned === undefined || changeInfo.pinned === null) ? 2 : changeInfo.pinned & 1,
 					(changeInfo.audible === undefined || changeInfo.audible === null) ? 2 : changeInfo.audible & 1
 				], 'HEAP32');
@@ -133,23 +146,18 @@ browser.storage.local.get({
 
 		chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 			try {
-				tabsOnRemovedHandle(removeInfo.windowId, tabId);
+				passArrayToWasm(5, pushEvent1D, [ removeInfo.windowId, tabId ], 'HEAP32');
 			} catch(e) {
 				console.log({e: e, f: 'chrome.tabs.onRemoved'})
 				browser.runtime.reload();
 			}
 		});
 
-		chrome.windows.onRemoved.addListener(function(windowId) {
-			try {
-				windowsOnRemovedHandle(windowId);
-			} catch(e) {
-				console.log({e: e, f: 'chrome.windows.onRemoved'})
-				browser.runtime.reload();
-			}
-		});
-
+		let lastOnActivatedCall = undefined;
 		chrome.tabs.onActivated.addListener(function(activeInfo) {
+			if (lastOnActivatedCall !== undefined && new Date().getTime() - lastOnActivatedCall < 500) {
+				return;
+			}
 			try {
 				chrome.tabs.query({}, function(tabs){   
 					const tabsToPass = [];  
@@ -164,7 +172,8 @@ browser.storage.local.get({
 							Math.floor(tab.lastAccessed / 1000)
 						]);
 					}
-					pass2DArrayToWasm(tabsOnActivatedHandle, tabsToPass, 'HEAPF64');
+					pass2DArrayToWasm(0, pushEvent2D, tabsToPass, 'HEAPF64');
+					lastOnActivatedCall = new Date().getTime();
 				});
 			} catch(e) {
 				console.log({e: e, f: 'chrome.tabs.onActivated'})
