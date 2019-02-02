@@ -20,7 +20,21 @@ mergeInto(LibraryManager.library, {
       return;
     }
 
-    var desaturateFavicon = function (favIconUrl) {
+    var processFavIconChange = function(tabId, url) {
+      chrome.tabs.executeScript(tabId, {
+        code:
+          '(function() {' +
+          '  if (!document.querySelector("link[rel~=icon]")) {' +
+          '    document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');' +
+          '  }' +
+          '  if (document.querySelector("link[rel~=icon]")) {' +
+          '    Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "' + url + '"; });' +
+          '  }' +
+          '})();'
+      });
+    }
+
+    var changeFavicon = function (favIconUrl) {
       var image = new Image();
       image.src = favIconUrl;
 
@@ -31,7 +45,7 @@ mergeInto(LibraryManager.library, {
 
         var context = canvas.getContext('2d');
         context.drawImage(image, 0, 0);
-
+        
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
         var px = imageData.data;
         var grey;
@@ -41,29 +55,19 @@ mergeInto(LibraryManager.library, {
         }
 
         context.putImageData(imageData, 0, 0);
-        chrome.tabs.executeScript(tabId, {
-          code:
-            '(function() {' +
-            '  if (!document.querySelector("link[rel~=icon]")) {' +
-            '    document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');' +
-            '  }' +
-            '  if (document.querySelector("link[rel~=icon]")) {' +
-            '    Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "' + canvas.toDataURL('image/png') + '"; });' +
-            '  }' +
-            '})();'
-        }, function () {
-          setTimeout(function () {
-            chrome.tabs.discard(tabId);
-          }, 300)
-        });
+        processFavIconChange(tabId, canvas.toDataURL('image/png'));
       };
     };
 
-    browser.tabs.query({ active: false, discarded: false }).then(function (tabs) {
+    browser.tabs.query({}).then(function (tabs) {
       var tabsIndex = tabs.length;
       while (tabsIndex--) {
         if (tabs[tabsIndex].id === tabId) {
-          desaturateFavicon(tabs[tabsIndex].favIconUrl);
+          changeFavicon(tabs[tabsIndex].favIconUrl, tabs[tabsIndex].active);
+          setTimeout(function () {
+            var discarding = browser.tabs.discard(tabId);
+            discarding.then(null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
+          }, 1000);
           break;
         }
       }

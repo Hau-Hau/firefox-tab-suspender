@@ -153,9 +153,11 @@ browser.storage.local.get({
 			}
 		});
 
-
-
+		let lastOnActivatedCall = undefined;
 		chrome.tabs.onActivated.addListener(function(activeInfo) {
+			if (lastOnActivatedCall !== undefined && new Date().getTime() - lastOnActivatedCall < 500) {
+				return;
+			}
 			try {
 				chrome.tabs.query({}, function(tabs){   
 					const tabsToPass = [];  
@@ -171,6 +173,7 @@ browser.storage.local.get({
 						]);
 					}
 					pass2DArrayToWasm(0, pushEvent2D, tabsToPass, 'HEAPF64');
+					lastOnActivatedCall = new Date().getTime();
 				});
 			} catch(e) {
 				console.log({e: e, f: 'chrome.tabs.onActivated'})

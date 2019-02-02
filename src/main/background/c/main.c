@@ -159,19 +159,26 @@ EMSCRIPTEN_KEEPALIVE void windowsOnRemovedHandle(const uint32_t *buffer, uint32_
 EMSCRIPTEN_KEEPALIVE void discardTabs() {
     uint32_t windowsIndex = windowsSize;
     while (windowsIndex--) {
-
         uint32_t tabsIndex = windows[windowsIndex]->tabsSize;
         while (tabsIndex--) {
-            if ((double) time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime < settings.timeToDiscard
-                || windows[windowsIndex]->tabs[tabsIndex]->discarded
-                || windows[windowsIndex]->tabs[tabsIndex]->active
-                || (settings.neverSuspendPinned && windows[windowsIndex]->tabs[tabsIndex]->pinned)
-                || (settings.neverSuspendPlayingAudio && windows[windowsIndex]->tabs[tabsIndex]->audible)) {
-                continue;
+            if ((uint8_t) (time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime >= settings.timeToDiscard
+                && !windows[windowsIndex]->tabs[tabsIndex]->active
+                && (!settings.neverSuspendPinned || !windows[windowsIndex]->tabs[tabsIndex]->pinned)
+                && (!settings.neverSuspendPlayingAudio || !windows[windowsIndex]->tabs[tabsIndex]->audible))){
+                    jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id, (uint8_t) settings.desaturateFavicon);
+                    windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
             }
+            
+            // if ((double) time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime < settings.timeToDiscard
+                // || windows[windowsIndex]->tabs[tabsIndex]->discarded
+                // || windows[windowsIndex]->tabs[tabsIndex]->active
+                // || (settings.neverSuspendPinned && windows[windowsIndex]->tabs[tabsIndex]->pinned)
+                // || (settings.neverSuspendPlayingAudio && windows[windowsIndex]->tabs[tabsIndex]->audible)) {
+                // continue;
+            // }
 
-            jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id, (uint8_t) settings.desaturateFavicon);
-            windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
+            // jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id);
+            // windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
 
             uint32_t loadedTabsIndex = loadedTabsSize;
             while (loadedTabsIndex--) {
@@ -210,20 +217,9 @@ EMSCRIPTEN_KEEPALIVE void passTabToNextWindow(const uint32_t newWindowId, const 
         if (windows[windowsIndex]->id != newWindowId) {
             continue;
         }
-        jsConsoleLog(111111111);
-              jsConsoleLog(6666666);
-              jsConsoleLog(windowsIndex);
-              jsConsoleLog(7777777);
-              jsConsoleLog(windows[windowsIndex]->tabsSize);
-
         windows[oldWindowIndex]->tabs[oldWindowTabIndex]->windowId = newWindowId;
         push((void **) windows[windowsIndex]->tabs, (void **) &windows[oldWindowIndex]->tabs[oldWindowTabIndex], &windows[windowsIndex]->tabsSize, &windows[windowsIndex]->tabsCapacity);
         splice((void **) windows[oldWindowIndex]->tabs, oldWindowTabIndex, &windows[oldWindowIndex]->tabsSize, false);
-       
-                     jsConsoleLog(6666666);
-              jsConsoleLog(windowsIndex);
-              jsConsoleLog(7777777);
-              jsConsoleLog(windows[windowsIndex]->tabsSize);
         return;
     }
 }
@@ -281,10 +277,6 @@ EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint3
         bool found = false;
         uint32_t windowsIndex = windowsSize;
         while (windowsIndex--) {
-              jsConsoleLog(6666666);
-              jsConsoleLog(windowsIndex);
-              jsConsoleLog(7777777);
-              jsConsoleLog(windows[windowsIndex]->tabsSize);
             uint32_t tabsIndex = windows[windowsIndex]->tabsSize;
             while (tabsIndex--) {
                 if (windows[windowsIndex]->tabs[tabsIndex]->id != (uint32_t) tabsBuffer[tabsBufferSize][1]) {
@@ -335,9 +327,6 @@ EMSCRIPTEN_KEEPALIVE void startEventLoop() {
     }
 
     struct Event *event = events[0];
-
-    jsConsoleLog(2222);
-    jsConsoleLog(event->eventId);
     switch (event->eventId) {
         case 0:
             tabsOnActivatedHandle(event->buffer2D, event->bufferSize2D, event->segmentSize2D);
