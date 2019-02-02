@@ -162,28 +162,16 @@ EMSCRIPTEN_KEEPALIVE void discardTabs() {
         uint32_t tabsIndex = windows[windowsIndex]->tabsSize;
         while (tabsIndex--) {
             if ((uint8_t) (time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime >= settings.timeToDiscard
-                && !windows[windowsIndex]->tabs[tabsIndex]->active
-                && (!settings.neverSuspendPinned || !windows[windowsIndex]->tabs[tabsIndex]->pinned)
-                && (!settings.neverSuspendPlayingAudio || !windows[windowsIndex]->tabs[tabsIndex]->audible))){
-                    jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id, (uint8_t) settings.desaturateFavicon);
-                    windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
-            }
-            
-            // if ((double) time(NULL) - windows[windowsIndex]->tabs[tabsIndex]->lastUsageTime < settings.timeToDiscard
-                // || windows[windowsIndex]->tabs[tabsIndex]->discarded
-                // || windows[windowsIndex]->tabs[tabsIndex]->active
-                // || (settings.neverSuspendPinned && windows[windowsIndex]->tabs[tabsIndex]->pinned)
-                // || (settings.neverSuspendPlayingAudio && windows[windowsIndex]->tabs[tabsIndex]->audible)) {
-                // continue;
-            // }
-
-            // jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id);
-            // windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
-
-            uint32_t loadedTabsIndex = loadedTabsSize;
-            while (loadedTabsIndex--) {
-                if (loadedTabs[loadedTabsIndex]->discarded || loadedTabs[loadedTabsIndex]->active) {
-                    splice((void **) loadedTabs, loadedTabsIndex, &loadedTabsSize, false);
+            && !windows[windowsIndex]->tabs[tabsIndex]->active
+            && (!settings.neverSuspendPinned || !windows[windowsIndex]->tabs[tabsIndex]->pinned)
+            && (!settings.neverSuspendPlayingAudio || !windows[windowsIndex]->tabs[tabsIndex]->audible))) {
+                jsChromeTabsDiscard(windows[windowsIndex]->tabs[tabsIndex]->id, (uint8_t) settings.desaturateFavicon);
+                windows[windowsIndex]->tabs[tabsIndex]->discarded = true;
+                uint32_t loadedTabsIndex = loadedTabsSize;
+                while (loadedTabsIndex--) {
+                    if (loadedTabs[loadedTabsIndex]->discarded || loadedTabs[loadedTabsIndex]->active) {
+                        splice((void **) loadedTabs, loadedTabsIndex, &loadedTabsSize, false);
+                    }
                 }
             }
         }
