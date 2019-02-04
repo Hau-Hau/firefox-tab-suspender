@@ -1,5 +1,5 @@
 # Firefox Tab Suspender  ![Firefox Tab Suspender logo](./assets/fox-64px.png "Firefox Tab Suspender Logo") 
-###### status: active | version: 2.0.7
+###### status: active | version: 2.0.8
 ![fox-heart-webassembly](./assets/fox-heart-webassembly.png "fox-heart-webassembly")  
 
 

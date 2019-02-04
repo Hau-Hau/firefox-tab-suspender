@@ -14,7 +14,7 @@
   "options_ui": {
 	  "page": "options.html"
   },
-  "permissions": [ "http://*/*", "https://*/*", "activeTab", "<all_urls>", "tabs", "storage" ],
+  "permissions": [ "<all_urls>", "tabs", "storage" ],
   "applications": {
     "gecko": {
       "id": "tabsuspender@michalewiczpiotr",
