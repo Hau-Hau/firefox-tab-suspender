@@ -18,8 +18,6 @@ extern void jsClearInterval(void);
 
 extern void jsChromeTabsDiscard(uint32_t, uint8_t);
 
-extern void jsConsoleLog(uint32_t);
-
 struct Settings settings;
 
 static struct Window **windows;
