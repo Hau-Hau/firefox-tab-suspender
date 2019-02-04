@@ -308,6 +308,7 @@ EMSCRIPTEN_KEEPALIVE void tabsOnActivatedHandle(const double **tabsBuffer, uint3
 //3 tabsOnCreatedHandle
 //4 tabsOnUpdatedHandle
 //5 tabsOnRemovedHandle
+//6 discardTabs
 EMSCRIPTEN_KEEPALIVE void startEventLoop() {
     if (eventsSize == 0) {
         isEventLoopWorking = false;
@@ -334,6 +335,8 @@ EMSCRIPTEN_KEEPALIVE void startEventLoop() {
         case 5:
             tabsOnRemovedHandle(event->buffer1D[0], event->buffer1D[1]);
             break;
+        case 6:
+            discardTabs();
     }
 
     splice((void **) events, 0, &eventsSize, true);
@@ -345,6 +348,15 @@ EMSCRIPTEN_KEEPALIVE void startEventLoop() {
     startEventLoop();
 }
 
+EMSCRIPTEN_KEEPALIVE void pushEvent(const uint32_t eventId) {
+    struct Event *event = malloc(sizeof(struct Event));
+    event->eventId = eventId;
+    push((void **) events, (void **) &event, &eventsSize, &eventsCapacity);
+    if (!isEventLoopWorking) {
+        isEventLoopWorking = true;
+        startEventLoop();
+    }
+}
 
 EMSCRIPTEN_KEEPALIVE void pushEvent1D(const uint32_t eventId, const uint32_t *buffer, uint32_t bufferSize) {
     struct Event *event = malloc(sizeof(struct Event));

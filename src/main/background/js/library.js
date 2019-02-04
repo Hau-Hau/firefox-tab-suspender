@@ -7,7 +7,7 @@ mergeInto(LibraryManager.library, {
       return;
     }
     Module['internalInterval'] = setInterval(function () {
-      Module.cwrap('discardTabs', null, [])();
+      Module.cwrap('pushEvent', null, ['number'])(6);
     }, 2000);
   },
   jsClearInterval: function () {
