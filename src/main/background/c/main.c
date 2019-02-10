@@ -346,6 +346,10 @@ EMSCRIPTEN_KEEPALIVE void startEventLoop() {
     startEventLoop();
 }
 
+EMSCRIPTEN_KEEPALIVE int checkLastEvent(const uint8_t eventId) {
+    return (int) !(eventsSize == 0 || events[eventsSize - 1]->eventId != eventId);
+}
+
 EMSCRIPTEN_KEEPALIVE void pushEvent(const uint32_t eventId) {
     struct Event *event = malloc(sizeof(struct Event));
     event->eventId = eventId;
