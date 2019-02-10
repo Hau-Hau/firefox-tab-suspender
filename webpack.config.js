@@ -8,7 +8,6 @@ const webpack = require('webpack'),
       UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
       ZipPlugin = require('zip-webpack-plugin'),
       CopyWebpackPlugin = require('copy-webpack-plugin'),
-      ConcatPlugin = require('webpack-concat-plugin'),
       isProd = (process.env.NODE_ENV == 'production');
 
 function getOutputPath() {
@@ -18,6 +17,7 @@ function getOutputPath() {
 module.exports = {
   entry: {
     'options.js': './src/main/options/main.js',
+    'background.js': './src/main/background/.tmp/background.js',
     'options-styles': './src/main/options/styles/options-styles.scss'
   },
   output: {
@@ -72,6 +72,7 @@ module.exports = {
       { from: './assets/fox-48px.png', to: 'fox-48px.png' },
       { from: './assets/fox-96px.png', to: 'fox-96px.png' },
       { from: './src/main/background/.tmp/service.wasm', to: 'service.wasm' },
+
       { from: './src/main/manifest.json', to: 'manifest.json' },
       { from: './src/main/options/index.html', to: 'options.html' },
       { from: './LICENSE', to: './LICENSE.txt' },
@@ -91,16 +92,6 @@ module.exports = {
             }
           }
         ]
-      }
-    }),
-    new ConcatPlugin({
-      uglify: isProd,
-      sourceMap: !isProd,
-      name: 'background',
-      fileName: '[name].js',
-      filesToConcat: ['./src/main/background/.tmp/service.js', './src/main/background/js/main.js'],
-      attributes: {
-          async: false
       }
     }),
     new ZipPlugin({
