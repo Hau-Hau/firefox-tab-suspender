@@ -4,6 +4,9 @@ mergeInto(LibraryManager.library, {
       return;
     }
     Module['internalInterval'] = setInterval(function () {
+      if (!!Module.cwrap('checkLastEvent', 'number', ['number'])(6)) {
+        return;
+      }
       Module.cwrap('pushEvent', null, ['number'])(6);
     }, 2000);
   },
