@@ -5,6 +5,7 @@ browser.storage.local.get({
 	neverSuspendUnsavedFormInput: true,
 	desaturateFavicon: true
 }).then(function(value) {
+	//= ../.tmp/service.js
 	Module.onRuntimeInitialized = _ => {
 		const heapMap = {
 			'HEAP8': Int8Array,
