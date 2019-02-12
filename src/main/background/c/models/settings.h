@@ -5,11 +5,23 @@
 #include <stdint.h>
 
 struct Settings {
-  uint32_t timeToDiscard;
-  bool neverSuspendPinned;
-  bool neverSuspendUnsavedFormInput;
-  bool neverSuspendPlayingAudio;
-  bool desaturateFavicon;
-};
+    void initialize(
+            uint32_t timeToDiscard,
+            bool neverSuspendPinned,
+            bool neverSuspendUnsavedFormInput,
+            bool neverSuspendPlayingAudio,
+            bool desaturateFavicon
+    );
+
+    uint32_t getTimeToDiscard();
+
+    bool getNeverSuspendPinned();
+
+    bool getNeverSuspendUnsavedFormInput();
+
+    bool getNeverSuspendPlayingAudio();
+
+    bool getDesaturateFavicon();
+} Settings;
 
 #endif

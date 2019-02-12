@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 struct Window {
-  uint32_t id;
-  struct Tab **tabs;
-  uint32_t tabsSize;
-  uint32_t tabsCapacity;
+    uint32_t id;
+    struct Tab **tabs;
+    uint32_t tabsSize;
+    uint32_t tabsCapacity;
 };
 
 #endif
