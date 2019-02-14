@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 struct Vector {
-    void **array;
+    void **items;
 
     uint32_t size;
 
@@ -18,8 +18,8 @@ typedef struct {
     void (*const push)(struct Vector *self, void **value);
 
     void (*const splice)(struct Vector *self, uint32_t index, bool shouldFreePointer);
-} dynamic_array_namespace;
+} vector_namespace;
 
-extern dynamic_array_namespace const DynamicArrayOps;
+extern vector_namespace const VectorOps;
 
 #endif

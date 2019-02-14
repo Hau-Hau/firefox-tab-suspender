@@ -27,7 +27,7 @@ static void processEvent() {
     }
     eventLoopWorking = true;
 
-    struct Event *event = Cache.getEvents()->array[0];
+    struct Event *event = Cache.getEvents()->items[0];
     switch (event->eventId) {
         case 0:
             Events.tabsOnActivatedHandle((const double **) event->buffer2D, event->bufferSize2D, event->segmentSize2D);
@@ -51,7 +51,7 @@ static void processEvent() {
             Events.discardTabs();
     }
 
-    DynamicArrayOps.splice(Cache.getEvents(), 0, true);
+    VectorOps.splice(Cache.getEvents(), 0, true);
 
     if (Cache.getEvents()->size == 0) {
         eventLoopWorking = false;

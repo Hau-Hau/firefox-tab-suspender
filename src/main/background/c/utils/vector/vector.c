@@ -10,18 +10,18 @@
 static void constructor(struct Vector *self) {
     self->size = 0;
     self->capacity = INITIAL_SIZE;
-    self->array = malloc(self->capacity * sizeof(void *));
+    self->items = malloc(self->capacity * sizeof(void *));
 }
 
 static void push(struct Vector *self, void **value) {
-    ArrayUtils.push(self->array, value, &self->size, &self->capacity);
+    ArrayUtils.push(self->items, value, &self->size, &self->capacity);
 }
 
 static void splice(struct Vector *self, uint32_t index, bool shouldFreePointer) {
-    ArrayUtils.splice(self->array, index, &self->size, shouldFreePointer);
+    ArrayUtils.splice(self->items, index, &self->size, shouldFreePointer);
 }
 
-dynamic_array_namespace const DynamicArrayOps = {
+dynamic_array_namespace const VectorOps = {
         constructor,
         push,
         splice

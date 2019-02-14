@@ -19,11 +19,11 @@ static void initialize() {
     loadedTabs = malloc(sizeof(struct Vector));
     events = malloc(sizeof(struct Vector));
 
-    DynamicArrayOps.constructor(windows);
+    VectorOps.constructor(windows);
 
-    DynamicArrayOps.constructor(loadedTabs);
+    VectorOps.constructor(loadedTabs);
 
-    DynamicArrayOps.constructor(events);
+    VectorOps.constructor(events);
 }
 
 static struct Vector *getWindows() {

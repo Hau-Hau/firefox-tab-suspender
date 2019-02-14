@@ -43,13 +43,13 @@ cTabsInitialization(const uint32_t **buffer, uint32_t bufferSize, const uint32_t
 
 EMSCRIPTEN_KEEPALIVE int cCheckLastEvent(const uint8_t eventId) {
     return (int) !(Cache.getEvents()->size == 0
-                   || ((struct Event *) Cache.getEvents()->array[Cache.getEvents()->size - 1])->eventId != eventId);
+                   || ((struct Event *) Cache.getEvents()->items[Cache.getEvents()->size - 1])->eventId != eventId);
 }
 
 EMSCRIPTEN_KEEPALIVE void cPushEvent(const uint32_t eventId) {
     struct Event *event = malloc(sizeof(struct Event));
     event->eventId = eventId;
-    DynamicArrayOps.push(Cache.getEvents(), (void **) &event);
+    VectorOps.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
         EventLoop.processEvents();
     }
@@ -60,7 +60,7 @@ EMSCRIPTEN_KEEPALIVE void cPushEvent1D(const uint32_t eventId, uint32_t *buffer,
     event->eventId = eventId;
     event->buffer1D = buffer;
     event->bufferSize1D = bufferSize;
-    DynamicArrayOps.push(Cache.getEvents(), (void **) &event);
+    VectorOps.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
         EventLoop.processEvents();
     }
@@ -73,7 +73,7 @@ cPushEvent2D(const uint32_t eventId, double **buffer, uint32_t bufferSize, const
     event->buffer2D = buffer;
     event->bufferSize2D = bufferSize;
     event->segmentSize2D = segmentSize;
-    DynamicArrayOps.push(Cache.getEvents(), (void **) &event);
+    VectorOps.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
         EventLoop.processEvents();
     }
