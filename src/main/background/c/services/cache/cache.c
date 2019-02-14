@@ -3,21 +3,21 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "cache.h"
-#include "../../models/dynamic_array.h"
+#include "../../utils/vector/vector.h"
 #include "../../models/window.h"
 #include "../../models/tab.h"
 #include "../../models/event.h"
 
-static struct DynamicArray *windows;
+static struct Vector *windows;
 
-static struct DynamicArray *loadedTabs;
+static struct Vector *loadedTabs;
 
-static struct DynamicArray *events;
+static struct Vector *events;
 
 static void initialize() {
-    windows = malloc(sizeof(struct DynamicArray));
-    loadedTabs = malloc(sizeof(struct DynamicArray));
-    events = malloc(sizeof(struct DynamicArray));
+    windows = malloc(sizeof(struct Vector));
+    loadedTabs = malloc(sizeof(struct Vector));
+    events = malloc(sizeof(struct Vector));
 
     DynamicArrayOps.constructor(windows);
 
@@ -26,15 +26,15 @@ static void initialize() {
     DynamicArrayOps.constructor(events);
 }
 
-static struct DynamicArray *getWindows() {
+static struct Vector *getWindows() {
     return windows;
 }
 
-static struct DynamicArray *getLoadedTabs() {
+static struct Vector *getLoadedTabs() {
     return loadedTabs;
 }
 
-static struct DynamicArray *getEvents() {
+static struct Vector *getEvents() {
     return events;
 }
 

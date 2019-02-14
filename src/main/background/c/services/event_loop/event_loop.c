@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "event_loop.h"
 #include "../../models/event.h"
-#include "../../models/dynamic_array.h"
+#include "../../utils/vector/vector.h"
 #include "../../events/events.h"
 #include "../cache/cache.h"
 

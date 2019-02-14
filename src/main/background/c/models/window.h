@@ -2,11 +2,11 @@
 #define FTS_WINDOW_H
 
 #include <stdint.h>
-#include "dynamic_array.h"
+#include "../utils/vector/vector.h"
 
 struct Window {
     uint32_t id;
-    struct DynamicArray tabs;
+    struct Vector tabs;
 };
 
 #endif

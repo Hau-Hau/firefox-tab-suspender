@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "events.h"
-#include "../models/dynamic_array.h"
+#include "../utils/vector/vector.h"
 #include "../models/window.h"
 #include "../models/tab.h"
 #include "../services/cache/cache.h"
