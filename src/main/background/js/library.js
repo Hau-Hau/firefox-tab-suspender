@@ -1,4 +1,7 @@
 mergeInto(LibraryManager.library, {
+  jsConsoleLog: function (num) {
+    console.log(num)
+  },
   jsExpiredTabsWatcher: function () {
     if (Module['internalInterval'] !== undefined && Module['internalInterval'] !== null) {
       return;

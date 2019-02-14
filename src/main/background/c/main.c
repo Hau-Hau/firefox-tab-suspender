@@ -16,6 +16,8 @@ extern void jsClearInterval(void);
 
 extern void jsChromeTabsDiscard(uint32_t, uint8_t);
 
+extern void jsConsoleLog(uint32_t);
+
 //0 uint32_t timeToDiscard,
 //1 bool neverSuspendPinned,
 //2 bool neverSuspendPlayingAudio,
@@ -23,7 +25,7 @@ extern void jsChromeTabsDiscard(uint32_t, uint8_t);
 //4 bool desaturateFavicon
 EMSCRIPTEN_KEEPALIVE void cInitialize(const uint32_t *buffer, uint32_t bufferSize) {
     Cache.initialize();
-    JavaScriptProvider.initialize(jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard);
+    JavaScriptProvider.initialize(jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard, jsConsoleLog);
     SettingsProvider.initialize(
             buffer[0],
             (bool) buffer[1],
@@ -31,12 +33,14 @@ EMSCRIPTEN_KEEPALIVE void cInitialize(const uint32_t *buffer, uint32_t bufferSiz
             (bool) buffer[3],
             (bool) buffer[4]
     );
+    JavaScriptProvider.consoleLog(0);
 }
 
 EMSCRIPTEN_KEEPALIVE void
 cTabsInitialization(const uint32_t **buffer, uint32_t bufferSize, const uint32_t segmentSize) {
     while (bufferSize--) {
-//        Events.tabsOnCreatedHandle(buffer[bufferSize], segmentSize);
+        JavaScriptProvider.consoleLog(1);
+        Events.tabsOnCreatedHandle(buffer[bufferSize], segmentSize);
     }
     jsExpiredTabsWatcher();
 }

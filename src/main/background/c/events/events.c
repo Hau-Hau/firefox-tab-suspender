@@ -64,6 +64,7 @@ static void windowsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) 
         }
     }
     struct Window *window = malloc(sizeof(struct Window));
+    window->id = buffer[0];
     VectorOps.constructor(&window->tabs);
     VectorOps.push(Cache.getWindows(), (void **) &window);
 }
@@ -87,7 +88,9 @@ static void windowsOnRemovedHandle(const uint32_t *buffer, uint32_t bufferSize) 
 //4 bool pinned,
 //5 bool audible
 static void tabsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
+    JavaScriptProvider.consoleLog(2);
     uint32_t windowsIndex = Cache.getWindows()->size;
+    JavaScriptProvider.consoleLog(windowsIndex);
     while (windowsIndex--) {
         uint32_t tabsIndex = ((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs.size;
         while (tabsIndex--) {
