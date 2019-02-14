@@ -50,4 +50,8 @@ static void splice(void **array, uint32_t index, uint32_t *size, bool shouldFree
     }
 }
 
-array_utils_namespace const ArrayUtils = {push, splice}
+array_utils_namespace const ArrayUtils = {
+        swap,
+        push,
+        splice
+};

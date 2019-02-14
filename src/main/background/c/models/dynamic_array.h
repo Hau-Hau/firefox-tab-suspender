@@ -1,18 +1,25 @@
 #ifndef FTS_DYNAMIC_ARRAY_H
 #define FTS_DYNAMIC_ARRAY_H
 
+#include <stdint.h>
+#include <stdbool.h>
+
 struct DynamicArray {
-    uint32_t getSize();
+    void **array;
 
-    uint32_t getCapacity();
+    uint32_t size;
 
-    void initialize(void **object);
-
-    void **getObject();
-
-    void push(void **value);
-
-    void splice(uint32_t index, bool shouldFreePointer);
+    uint32_t capacity;
 };
+
+typedef struct {
+    void (*const constructor)(struct DynamicArray *self);
+
+    void (*const push)(struct DynamicArray *self, void **value);
+
+    void (*const splice)(struct DynamicArray *self, uint32_t index, bool shouldFreePointer);
+} dynamic_array_namespace;
+
+extern dynamic_array_namespace const DynamicArrayOps;
 
 #endif

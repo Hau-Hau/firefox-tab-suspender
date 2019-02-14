@@ -4,10 +4,10 @@ mergeInto(LibraryManager.library, {
       return;
     }
     Module['internalInterval'] = setInterval(function () {
-      if (!!Module.cwrap('checkLastEvent', 'number', ['number'])(6)) {
+      if (!!Module.cwrap('cCheckLastEvent', 'number', ['number'])(6)) {
         return;
       }
-      Module.cwrap('pushEvent', null, ['number'])(6);
+      Module.cwrap('cPushEvent', null, ['number'])(6);
     }, 2000);
   },
   jsClearInterval: function () {

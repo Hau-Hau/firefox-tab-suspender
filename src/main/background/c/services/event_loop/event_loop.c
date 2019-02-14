@@ -1,19 +1,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "../models/event.h"
-#include "../models/dynamic_array.h"
-#include "../events/events.h"
+#include "event_loop.h"
+#include "../../models/event.h"
+#include "../../models/dynamic_array.h"
+#include "../../events/events.h"
+#include "../cache/cache.h"
 
-static struct DynamicArray events;
 static bool eventLoopWorking = false;
 
-bool isEventLoopWorking() {
+static bool isEventLoopWorking() {
     return eventLoopWorking;
-}
-
-void initialize() {
-    events.initialize(Event * *);
 }
 
 //0 tabsOnActivatedHandle
@@ -23,17 +20,17 @@ void initialize() {
 //4 tabsOnUpdatedHandle
 //5 tabsOnRemovedHandle
 //6 discardTabs
-void processEvent() {
-    if (eventLoopWorking || events.getSize() == 0) {
+static void processEvent() {
+    if (eventLoopWorking || Cache.getEvents()->size == 0) {
         eventLoopWorking = false;
         return;
     }
     eventLoopWorking = true;
 
-    struct Event *event = ((Event **) events.getObject())[0];
+    struct Event *event = Cache.getEvents()->array[0];
     switch (event->eventId) {
         case 0:
-            Events.tabsOnActivatedHandle(event->buffer2D, event->bufferSize2D, event->segmentSize2D);
+            Events.tabsOnActivatedHandle((const double **) event->buffer2D, event->bufferSize2D, event->segmentSize2D);
             break;
         case 1:
             Events.windowsOnCreatedHandle(event->buffer1D, event->bufferSize1D);
@@ -54,11 +51,16 @@ void processEvent() {
             Events.discardTabs();
     }
 
-    events.splice(0, true);
+    DynamicArrayOps.splice(Cache.getEvents(), 0, true);
 
-    if (events.getSize() == 0) {
+    if (Cache.getEvents()->size == 0) {
         eventLoopWorking = false;
         return;
     }
     processEvent();
 }
+
+event_loop_namespace const EventLoop = {
+        isEventLoopWorking,
+        processEvent
+};

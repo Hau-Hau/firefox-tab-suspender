@@ -18,10 +18,10 @@ browser.storage.local.get({
 			'HEAPF64': Float64Array
 		}
 
-		const initialize = Module.cwrap('initialize', null, ['number', 'number']);
-		const tabsInitialization = Module.cwrap('tabsInitialization', null, ['number', 'number', 'number']);
-		const pushEvent1D = Module.cwrap('pushEvent1D', null, ['number', 'number', 'number']);
-		const pushEvent2D = Module.cwrap('pushEvent2D', null, ['number', 'number', 'number', 'number']);
+		const initialize = Module.cwrap('cInitialize', null, ['number', 'number']);
+		const initializeTabs = Module.cwrap('cTabsInitialization', null, ['number', 'number', 'number']);
+		const pushEvent1D = Module.cwrap('cPushEvent1D', null, ['number', 'number', 'number']);
+		const pushEvent2D = Module.cwrap('cPushEvent2D', null, ['number', 'number', 'number', 'number']);
 
 		function setHeap(typedArray, ptr, heap) { 
 			switch (heap) {
@@ -81,18 +81,10 @@ browser.storage.local.get({
 			Module._free(ptr);
 		}
 
-		passArrayToWasm(null, initialize, [
-			value.timeToDiscard,
-			value.neverSuspendPinned & 1, 
-			value.neverSuspendPlayingAudio & 1, 
-			value.neverSuspendUnsavedFormInput & 1,
-			value.desaturateFavicon & 1
-		], 'HEAP32');
-
-		chrome.tabs.query({}, function(tabs){   
-			const tabsToPass = [];  
+		chrome.tabs.query({}, function(tabs) {   
+			const data = [];  
 			for (const tab of tabs) {		
-				tabsToPass.push([
+				data.push([
 					tab.windowId,
 					tab.id, 
 					tab.active & 1, 
@@ -101,8 +93,16 @@ browser.storage.local.get({
 					tab.audible & 1
 				]);
 			}
-			pass2DArrayToWasm(null, tabsInitialization, tabsToPass, 'HEAP32');
+			pass2DArrayToWasm(null, initializeTabs, data, 'HEAP32');
 		});
+
+		passArrayToWasm(null, initialize, [
+			value.timeToDiscard,
+			value.neverSuspendPinned & 1, 
+			value.neverSuspendPlayingAudio & 1, 
+			value.neverSuspendUnsavedFormInput & 1,
+			value.desaturateFavicon & 1
+		], 'HEAP32');
 
 		chrome.windows.onCreated.addListener(function(window) {
 			try {

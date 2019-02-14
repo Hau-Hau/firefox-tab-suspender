@@ -2,36 +2,27 @@
 #include <malloc.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "array_utils.h"
+#include "../utils/array_utils.h"
+#include "dynamic_array.h"
 
 #define INITIAL_SIZE 32
 
-static void **array;
-static uint32_t size = 0;
-static uint32_t capacity = INITIAL_SIZE / 2;
-
-uint32_t getSize() {
-    return size;
+static void constructor(struct DynamicArray *self) {
+    self->size = 0;
+    self->capacity = INITIAL_SIZE;
+    self->array = malloc(self->capacity * sizeof(void *));
 }
 
-uint32_t getCapacity() {
-    return capacity;
+static void push(struct DynamicArray *self, void **value) {
+    ArrayUtils.push(self->array, value, &self->size, &self->capacity);
 }
 
-//TODO check correction of &(array) (should be same as struct Window *)
-void initialize(void **value) {
-    array = value;
-    array = malloc(windowsCapacity * sizeof(&(array)))
+static void splice(struct DynamicArray *self, uint32_t index, bool shouldFreePointer) {
+    ArrayUtils.splice(self->array, index, &self->size, shouldFreePointer);
 }
 
-void **getObject() {
-    return array;
-}
-
-void push(void **value) {
-    ArrayUtils.push(array, value, &size, &capacity);
-}
-
-void splice(uint32_t index, bool shouldFreePointer) {
-    ArrayUtils.splice(array, index, &size, shouldFreePointer);
-}
+dynamic_array_namespace const DynamicArrayOps = {
+        constructor,
+        push,
+        splice
+};
