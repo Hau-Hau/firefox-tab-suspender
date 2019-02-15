@@ -2,12 +2,11 @@
 #define FTS_WINDOW_H
 
 #include <stdint.h>
+#include "../utils/vector/vector.h"
 
 struct Window {
-  uint32_t id;
-  struct Tab **tabs;
-  uint32_t tabsSize;
-  uint32_t tabsCapacity;
+    uint32_t id;
+    struct Vector tabs;
 };
 
 #endif
