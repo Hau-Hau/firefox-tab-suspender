@@ -53,7 +53,7 @@ EMSCRIPTEN_KEEPALIVE int cCheckLastEvent(const uint8_t eventId) {
 EMSCRIPTEN_KEEPALIVE void cPushEvent(const uint32_t eventId) {
     struct Event *event = malloc(sizeof(struct Event));
     event->eventId = eventId;
-    VectorOps.push(Cache.getEvents(), (void **) &event);
+    Vector.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
         EventLoop.processEvents();
     }
@@ -64,7 +64,7 @@ EMSCRIPTEN_KEEPALIVE void cPushEvent1D(const uint32_t eventId, uint32_t *buffer,
     event->eventId = eventId;
     event->buffer1D = buffer;
     event->bufferSize1D = bufferSize;
-    VectorOps.push(Cache.getEvents(), (void **) &event);
+    Vector.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
         EventLoop.processEvents();
     }
@@ -77,7 +77,7 @@ cPushEvent2D(const uint32_t eventId, double **buffer, uint32_t bufferSize, const
     event->buffer2D = buffer;
     event->bufferSize2D = bufferSize;
     event->segmentSize2D = segmentSize;
-    VectorOps.push(Cache.getEvents(), (void **) &event);
+    Vector.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
         EventLoop.processEvents();
     }

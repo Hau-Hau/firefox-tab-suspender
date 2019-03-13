@@ -20,6 +20,6 @@ typedef struct {
     void (*const splice)(struct Vector *self, uint32_t index, bool shouldFreePointer);
 } vector_namespace;
 
-extern vector_namespace const VectorOps;
+extern vector_namespace const Vector;
 
 #endif
