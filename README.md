@@ -26,7 +26,18 @@ Task list for contributors is in plans, for now this list should be enough.
 
 Simplified project structure.
 
-![diagram](./readme_assets/diagram.png "diagram")
+![diagram project structure](./readme_assets/diagram.png "diagram project structure")
+
+#### Build process
+
+![diagram build process](./readme_assets/diagram_build_process.png "diagram build process")
+
+**Details worth to pay attention:**
+* Generating big amounts of styles in development has no cost in production because of that styles are cleaned up in build process. Final stylesheet contains only used styles.
+* CSS convention is highly based on **SUIT** naming and organizing convention
+* If it is possible - instead of writing single style's class, generate full spectrum of possibilities
+* WASM is injected after user settings load in place of **//= ../.tmp/service.js** comment
+* There is no need of multiply or copying images into src folder, final package contains everything in one folder
 
 #### Informations for contributors
 if you are interested in contributing and developmenting of extension there are some tips:
