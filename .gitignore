@@ -5,3 +5,4 @@ package-lock.json
 .idea
 /.vscode
 npm-debug.log
+/src/main/background/c/.idea
