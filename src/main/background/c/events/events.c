@@ -46,7 +46,7 @@ static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBuffer
 
                 if (!((struct Tab *) ((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs.items[tabsIndex])->discarded &&
                     !((struct Tab *) ((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs.items[tabsIndex])->active) {
-                    VectorOps.push(Cache.getLoadedTabs(), (void **) &((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs.items[tabsIndex]);
+                    Vector.push(Cache.getLoadedTabs(), (void **) &((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs.items[tabsIndex]);
                 }
                 break;
             }
@@ -65,8 +65,8 @@ static void windowsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) 
     }
     struct Window *window = malloc(sizeof(struct Window));
     window->id = buffer[0];
-    VectorOps.constructor(&window->tabs);
-    VectorOps.push(Cache.getWindows(), (void **) &window);
+    Vector.constructor(&window->tabs);
+    Vector.push(Cache.getWindows(), (void **) &window);
 }
 
 //0 windowId
@@ -75,7 +75,7 @@ static void windowsOnRemovedHandle(const uint32_t *buffer, uint32_t bufferSize) 
     while (windowsIndex--) {
         if (((struct Window *) Cache.getWindows()->items[windowsIndex])->id == buffer[0]) {
             free(((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs.items);
-            VectorOps.splice(Cache.getWindows(), windowsIndex, true);
+            Vector.splice(Cache.getWindows(), windowsIndex, true);
             return;
         }
     }
@@ -110,10 +110,10 @@ static void tabsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
             tab->audible = (bool) buffer[5];
             tab->lastUsageTime = (double) time(NULL);
 
-            VectorOps.push(&((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs, (void **) &tab);
+            Vector.push(&((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs, (void **) &tab);
 
             if (!tab->discarded && !tab->active) {
-                VectorOps.push(Cache.getLoadedTabs(), (void **) &tab);
+                Vector.push(Cache.getLoadedTabs(), (void **) &tab);
             }
             return;
         }
@@ -129,8 +129,8 @@ static void passTabToNextWindow(const uint32_t newWindowId, const uint32_t oldWi
             continue;
         }
         ((struct Tab *) ((struct Window *) Cache.getWindows()->items[oldWindowIndex])->tabs.items[oldWindowTabIndex])->windowId = newWindowId;
-        VectorOps.push(Cache.getWindows(), (void **) &((struct Window *) Cache.getWindows()->items[oldWindowIndex])->tabs.items[oldWindowTabIndex]);
-        VectorOps.splice(&((struct Window *) Cache.getWindows()->items[oldWindowIndex])->tabs, oldWindowTabIndex, false);
+        Vector.push(Cache.getWindows(), (void **) &((struct Window *) Cache.getWindows()->items[oldWindowIndex])->tabs.items[oldWindowTabIndex]);
+        Vector.splice(&((struct Window *) Cache.getWindows()->items[oldWindowIndex])->tabs, oldWindowTabIndex, false);
         return;
     }
 }
@@ -196,11 +196,11 @@ static void tabsOnRemovedHandle(const uint32_t *buffer, uint32_t bufferSize) {
             while (loadedTabsIndex--) {
                 if (((struct Tab *) Cache.getLoadedTabs()->items[loadedTabsIndex])->windowId == buffer[0] &&
                         ((struct Tab *) Cache.getLoadedTabs()->items[loadedTabsIndex])->id == buffer[1]) {
-                    VectorOps.splice(Cache.getLoadedTabs(), loadedTabsIndex, false);
+                    Vector.splice(Cache.getLoadedTabs(), loadedTabsIndex, false);
                     break;
                 }
             }
-            VectorOps.splice(&((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs, tabsIndex, true);
+            Vector.splice(&((struct Window *) Cache.getWindows()->items[windowsIndex])->tabs, tabsIndex, true);
             return;
         }
     }
@@ -223,7 +223,7 @@ static void discardTabs() {
                 uint32_t loadedTabsIndex = Cache.getLoadedTabs()->size;
                 while (loadedTabsIndex--) {
                     if (((struct Tab *) Cache.getLoadedTabs()->items[loadedTabsIndex])->discarded || ((struct Tab *) Cache.getLoadedTabs()->items[loadedTabsIndex])->active) {
-                        VectorOps.splice(Cache.getLoadedTabs(), loadedTabsIndex, false);
+                        Vector.splice(Cache.getLoadedTabs(), loadedTabsIndex, false);
                     }
                 }
             }

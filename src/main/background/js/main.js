@@ -23,7 +23,7 @@ browser.storage.local.get({
 		const pushEvent1D = Module.cwrap('cPushEvent1D', null, ['number', 'number', 'number']);
 		const pushEvent2D = Module.cwrap('cPushEvent2D', null, ['number', 'number', 'number', 'number']);
 
-		function setHeap(typedArray, ptr, heap) { 
+		function setHeap(typedArray, ptr, heap) {
 			switch (heap) {
 				case 'HEAP8': case 'HEAPU8':
 					Module[heap].set(typedArray, ptr);
@@ -49,7 +49,7 @@ browser.storage.local.get({
 				if (segmentSize === undefined) {
 					segmentSize = arrays[arraysIndex].length;
 				}
-				const typedArray = new heapMap[heap](arrays[arraysIndex]); 
+				const typedArray = new heapMap[heap](arrays[arraysIndex]);
 				arrayOfPointers.push(Module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT));
 				setHeap(typedArray, arrayOfPointers[arrayOfPointers.length - 1], heap);
 			}
@@ -63,7 +63,7 @@ browser.storage.local.get({
 			}
 			let arrayOfPointersIndex = arrayOfPointers.length;
 			while(arrayOfPointersIndex--) {
-				Module._free(arrayOfPointers[arrayOfPointersIndex]);				
+				Module._free(arrayOfPointers[arrayOfPointersIndex]);
 			}
 			Module._free(ptr);
 		}
@@ -81,15 +81,15 @@ browser.storage.local.get({
 			Module._free(ptr);
 		}
 
-		chrome.tabs.query({}, function(tabs) {   
-			const data = [];  
-			for (const tab of tabs) {		
+		chrome.tabs.query({}, function(tabs) {
+			const data = [];
+			for (const tab of tabs) {
 				data.push([
 					tab.windowId,
-					tab.id, 
-					tab.active & 1, 
-					tab.discarded & 1, 
-					tab.pinned & 1, 
+					tab.id,
+					tab.active & 1,
+					tab.discarded & 1,
+					tab.pinned & 1,
 					tab.audible & 1
 				]);
 			}
@@ -98,8 +98,8 @@ browser.storage.local.get({
 
 		passArrayToWasm(null, initialize, [
 			value.timeToDiscard,
-			value.neverSuspendPinned & 1, 
-			value.neverSuspendPlayingAudio & 1, 
+			value.neverSuspendPinned & 1,
+			value.neverSuspendPlayingAudio & 1,
 			value.neverSuspendUnsavedFormInput & 1,
 			value.desaturateFavicon & 1
 		], 'HEAP32');
@@ -160,15 +160,15 @@ browser.storage.local.get({
 				return;
 			}
 			try {
-				chrome.tabs.query({}, function(tabs){   
-					const tabsToPass = [];  
+				chrome.tabs.query({}, function(tabs){
+					const tabsToPass = [];
 					for (const tab of tabs) {
 						tabsToPass.push([
 							tab.windowId,
-							tab.id, 
-							tab.active & 1, 
-							tab.discarded & 1, 
-							tab.pinned & 1, 
+							tab.id,
+							tab.active & 1,
+							tab.discarded & 1,
+							tab.pinned & 1,
 							tab.audible & 1,
 							Math.floor(tab.lastAccessed / 1000)
 						]);
