@@ -33,13 +33,11 @@ EMSCRIPTEN_KEEPALIVE void cInitialize(const uint32_t *buffer, uint32_t bufferSiz
             (bool) buffer[3],
             (bool) buffer[4]
     );
-    JavaScriptProvider.consoleLog(0);
 }
 
 EMSCRIPTEN_KEEPALIVE void
 cTabsInitialization(const uint32_t **buffer, uint32_t bufferSize, const uint32_t segmentSize) {
     while (bufferSize--) {
-        JavaScriptProvider.consoleLog(1);
         Events.tabsOnCreatedHandle(buffer[bufferSize], segmentSize);
     }
     jsExpiredTabsWatcher();
@@ -51,7 +49,7 @@ EMSCRIPTEN_KEEPALIVE int cCheckLastEvent(const uint8_t eventId) {
 }
 
 EMSCRIPTEN_KEEPALIVE void cPushEvent(const uint32_t eventId) {
-    struct Event *event = malloc(sizeof(struct Event));
+    struct Event *event = malloc(sfizeof(struct Event));
     event->eventId = eventId;
     Vector.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {

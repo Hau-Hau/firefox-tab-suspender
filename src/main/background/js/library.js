@@ -48,7 +48,7 @@ mergeInto(LibraryManager.library, {
 
         var context = canvas.getContext('2d');
         context.drawImage(image, 0, 0);
-        
+
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
         var px = imageData.data;
         var grey;
