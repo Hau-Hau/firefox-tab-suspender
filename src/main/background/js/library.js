@@ -21,7 +21,7 @@ mergeInto(LibraryManager.library, {
     Module["internalInterval"] = undefined;
   },
   jsChromeTabsDiscard: function(tabId, option) {
-    const contrastImage = function (imageData) {
+    const contrastImage = function(imageData) {
       const data = imageData.data;
       const contrast = -59 / 100 + 1;
       const intercept = 128 * (1 - contrast);
@@ -33,7 +33,7 @@ mergeInto(LibraryManager.library, {
       return imageData;
     };
 
-    const desaturateImage = function (imageData) {
+    const desaturateImage = function(imageData) {
       const data = imageData.data;
       for (let i = data.length; i >= 0; i -= 4) {
         let grey = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
@@ -42,7 +42,7 @@ mergeInto(LibraryManager.library, {
       return imageData;
     };
 
-    const processFavIconChange = function (tabId, url) {
+    const processFavIconChange = function(tabId, url) {
       chrome.tabs.executeScript(tabId, {
         code:
           "(function() {" +
@@ -58,11 +58,11 @@ mergeInto(LibraryManager.library, {
       });
     };
 
-    const changeFavicon = function (url) {
+    const changeFavicon = function(url) {
       const image = new Image();
       image.src = url;
 
-      image.onload = function () {
+      image.onload = function() {
         const canvas = document.createElement("canvas");
         canvas.width = image.width;
         canvas.height = image.height;
