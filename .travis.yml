@@ -8,12 +8,12 @@ addons:
     packages:
       - binutils-mingw-w64-i686
       - binutils-mingw-w64-x86-64
-      - g++-7
+      - gcc-7
       - gcc-mingw-w64-i686
       - gcc-mingw-w64-x86-64
       - mingw-w64
       - mingw-w64-tools
-      - libstdc++-7-dev
+      - libstdc++7
 install:
   - npm install;
   - git clone https://github.com/emscripten-core/emsdk.git
