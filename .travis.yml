@@ -12,5 +12,6 @@ branches:
   only:
     - master
     - develop
+    - travis
 script: npm run build:dist
 
