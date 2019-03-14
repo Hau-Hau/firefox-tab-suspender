@@ -3,8 +3,6 @@
 
 ![build@master](https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/master.svg?label=build@master "build@master") ![build@develop](https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/develop.svg?label=build@develop "build@develop")
 
-https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/master.svg?label=build@master
-
 ![fox-heart-webassembly](./assets/fox-heart-webassembly.png "fox-heart-webassembly")
 
 [![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png)](https://www.mozilla.org/pl/firefox/new/) |
