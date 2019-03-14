@@ -1,6 +1,10 @@
 language: node_js
 node_js:
-  - "node"
+  - node
+install:
+  - git clone --recursive https://github.com/marco-c/emscripten-sdk.git;
+    cd emscripten-sdk && ./emsdk activate latest && cd ..;
+    source emscripten-sdk/emsdk_env.sh;
 branches:
   only:
     - master
