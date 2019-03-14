@@ -49,7 +49,7 @@ EMSCRIPTEN_KEEPALIVE int cCheckLastEvent(const uint8_t eventId) {
 }
 
 EMSCRIPTEN_KEEPALIVE void cPushEvent(const uint32_t eventId) {
-    struct Event *event = malloc(sfizeof(struct Event));
+    struct Event *event = malloc(sizeof(struct Event));
     event->eventId = eventId;
     Vector.push(Cache.getEvents(), (void **) &event);
     if (!EventLoop.isEventLoopWorking()) {
