@@ -1,9 +1,10 @@
 language: node_js
 node_js:
-  - node
+  - "0.10"
 before_script:
-  - npm install
+  - npm update -q
 install:
+  - npm install;
   - git clone --recursive https://github.com/marco-c/emscripten-sdk.git;
     cd emscripten-sdk && ./emsdk activate latest && cd ..;
     source emscripten-sdk/emsdk_env.sh;
