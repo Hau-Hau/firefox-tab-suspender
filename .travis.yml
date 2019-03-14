@@ -1,8 +1,9 @@
 language: node_js
 node_js:
-  - "10.15"
-before_script:
-  - npm update -q
+  - "10"
+  - "8"
+  - "6"
+  - "4"
 install:
   - npm install;
   - git clone --recursive https://github.com/marco-c/emscripten-sdk.git;
