@@ -13,6 +13,7 @@ addons:
       - gcc-mingw-w64-x86-64
       - mingw-w64
       - mingw-w64-tools
+      - libstdc++-4.9-dev
 
 install:
   - npm install;
