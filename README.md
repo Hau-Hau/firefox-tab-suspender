@@ -1,7 +1,5 @@
 # Firefox Tab Suspender  ![Firefox Tab Suspender logo](./assets/fox-64px.png "Firefox Tab Suspender Logo")
-![status](https://img.shields.io/static/v1.svg?label=status&message=active&color=green "status")
-
-![version@amo](https://img.shields.io/amo/v/ff-tab-suspender.svg "version@amo") ![version@master](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/master.svg "version@master") ![version@develop](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/develop.svg "version@develop")
+![status](https://img.shields.io/static/v1.svg?label=status&message=active&color=green "status") ![version@master](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/master.svg "version@master") ![version@develop](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/develop.svg "version@develop")
 
 ![build@master](https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/master.svg?label=build@master "build@master") ![build@develop](https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/develop.svg?label=build@develop "build@develop")
 
