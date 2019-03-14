@@ -13,7 +13,7 @@ addons:
       - gcc-mingw-w64-x86-64
       - mingw-w64
       - mingw-w64-tools
-      - libstdc++7
+      - libstdc++-7
 install:
   - npm install;
   - git clone https://github.com/emscripten-core/emsdk.git
