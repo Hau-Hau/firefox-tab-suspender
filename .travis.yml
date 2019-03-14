@@ -4,6 +4,17 @@ node_js:
   - "8"
   - "6"
   - "4"
+addons:
+  apt:
+    packages:
+      - binutils-mingw-w64-i686
+      - binutils-mingw-w64-x86-64
+      - g++-4.9
+      - gcc-mingw-w64-i686
+      - gcc-mingw-w64-x86-64
+      - mingw-w64
+      - mingw-w64-tools
+
 install:
   - npm install;
   - git clone --recursive https://github.com/marco-c/emscripten-sdk.git;
