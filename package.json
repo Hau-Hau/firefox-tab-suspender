@@ -1,6 +1,6 @@
 {
   "name": "firefox-tab-suspender",
-  "version": "2.1.2",
+  "version": "3.0.0",
   "description": "A Firefox extension that automatic suspend tabs and saves memory",
   "url": "https://github.com/Hau-Hau/firefox-tab-suspender",
   "homepage": "https://github.com/Hau-Hau/firefox-tab-suspender",
@@ -12,7 +12,7 @@
   "email": "piotr.a.michalewicz@gmail.com",
   "scripts": {
     "_build_c:dev": "emcc src/main/background/c/utils/array_utils/array_utils.c src/main/background/c/utils/vector/vector.c src/main/background/c/services/javascript_provider/javascript_provider.c src/main/background/c/events/events.c src/main/background/c/services/cache/cache.c src/main/background/c/services/event_loop/event_loop.c src/main/background/c/services/settings_provider/settings_provider.c src/main/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=4 -s EXIT_RUNTIME=1 -o hello.wasm -o src/main/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/main/background/js/library.js -s ASSERTIONS=2",
-    "_build_c:dist": "emcc -O3 src/main/background/c/utils/array_utils/array_utils.c src/main/background/c/utils/vector/vector.c src/main/background/c/services/javascript_provider/javascript_provider.c src/main/background/c/events/events.c src/main/background/c/services/cache/cache.c src/main/background/c/services/event_loop/event_loop.c src/main/background/c/services/settings_provider/settings_provider.c src/main/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=4 -s EXIT_RUNTIME=1 -o hello.wasm -o src/main/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/main/background/js/library.js",
+    "_build_c:dist": "emcc -O2 src/main/background/c/utils/array_utils/array_utils.c src/main/background/c/utils/vector/vector.c src/main/background/c/services/javascript_provider/javascript_provider.c src/main/background/c/events/events.c src/main/background/c/services/cache/cache.c src/main/background/c/services/event_loop/event_loop.c src/main/background/c/services/settings_provider/settings_provider.c src/main/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=4 -s EXIT_RUNTIME=1 -o hello.wasm -o src/main/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/main/background/js/library.js",
     "build:dev": "del-cli -f src/main/background/.tmp && make-dir src/main/background/.tmp && npm run _build_c:dev && rig src/main/background/js/main.js > src/main/background/.tmp/background.js && NODE_ENV=development webpack && del-cli -f src/main/background/.tmp",
     "build:dist": "del-cli -f src/main/background/.tmp && make-dir src/main/background/.tmp && npm run _build_c:dist && rig src/main/background/js/main.js > src/main/background/.tmp/background.js && NODE_ENV=production webpack -p && del-cli -f src/main/background/.tmp"
   },

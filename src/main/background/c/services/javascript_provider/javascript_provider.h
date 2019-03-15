@@ -25,3 +25,4 @@ typedef struct {
 extern javascript_provider_namespace const JavaScriptProvider;
 
 #endif
+

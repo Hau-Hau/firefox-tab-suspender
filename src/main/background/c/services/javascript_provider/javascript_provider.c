@@ -45,3 +45,4 @@ javascript_provider_namespace const JavaScriptProvider = {
         chromeTabsDiscard,
         consoleLog
 };
+

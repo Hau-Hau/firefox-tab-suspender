@@ -44,3 +44,4 @@ cache_namespace const Cache = {
     getLoadedTabs,
     getEvents
 };
+

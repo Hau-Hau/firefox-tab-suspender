@@ -49,3 +49,4 @@ settings_provider_namespace const SettingsProvider = {
         getNeverSuspendUnsavedFormInput,
         getDesaturateFavicon
 };
+

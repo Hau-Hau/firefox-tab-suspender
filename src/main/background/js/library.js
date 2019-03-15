@@ -10,7 +10,7 @@ mergeInto(LibraryManager.library, {
       return;
     }
     Module["internalInterval"] = setInterval(function() {
-      if (!!Module.cwrap("cCheckLastEvent", "number", ["number"])(6)) {
+      if (!Module.cwrap("cAbleToPushEvent", "number", ["number"])(6)) {
         return;
       }
       Module.cwrap("cPushEvent", null, ["number"])(6);
@@ -21,17 +21,10 @@ mergeInto(LibraryManager.library, {
     Module["internalInterval"] = undefined;
   },
   jsChromeTabsDiscard: function(tabId, option) {
-<<<<<<< HEAD
-    const contrastImage = function(imageData) {
-      const data = imageData.data;
-      const contrast = -59 / 100 + 1;
-      const intercept = 128 * (1 - contrast);
-=======
     var contrastImage = function(imageData) {
       var data = imageData.data;
-      var contrast = -59 / 100 + 1;
+      var contrast = -55 / 100 + 1;
       var intercept = 128 * (1 - contrast);
->>>>>>> develop
       for (var i = data.length; i >= 0; i -= 4) {
         data[i] = data[i] * contrast + intercept;
         data[i + 1] = data[i + 1] * contrast + intercept;
@@ -40,27 +33,16 @@ mergeInto(LibraryManager.library, {
       return imageData;
     };
 
-<<<<<<< HEAD
-    const desaturateImage = function(imageData) {
-      const data = imageData.data;
-      for (let i = data.length; i >= 0; i -= 4) {
-        let grey = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
-=======
     var desaturateImage = function(imageData) {
       var data = imageData.data;
       for (var i = data.length; i >= 0; i -= 4) {
         var grey = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
->>>>>>> develop
         data[i] = data[i + 1] = data[i + 2] = grey;
       }
       return imageData;
     };
 
-<<<<<<< HEAD
-    const processFavIconChange = function(tabId, url) {
-=======
     var processFavIconChange = function(tabId, url) {
->>>>>>> develop
       chrome.tabs.executeScript(tabId, {
         code:
           "(function() {" +
@@ -76,23 +58,14 @@ mergeInto(LibraryManager.library, {
       });
     };
 
-<<<<<<< HEAD
-    const changeFavicon = function(url) {
-      const image = new Image();
-      image.src = url;
-
-      image.onload = function() {
-        const canvas = document.createElement("canvas");
-=======
     var changeFavicon = function(url) {
       var image = new Image();
       image.src = url;
 
       image.onload = function() {
         var canvas = document.createElement("canvas");
->>>>>>> develop
-        canvas.width = image.width;
-        canvas.height = image.height;
+        canvas.width = Math.max(1, Math.floor(image.width));
+        canvas.height = Math.max(1, Math.floor(image.height));
 
         var context = canvas.getContext("2d");
         context.drawImage(image, 0, 0);
@@ -130,9 +103,12 @@ mergeInto(LibraryManager.library, {
         if (tabs[tabsIndex].id === tabId) {
           changeFavicon(tabs[tabsIndex].favIconUrl);
           setTimeout(function() {
-            browser.tabs
-              .discard(tabId)
-              .then(null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
+            browser.tabs.discard(tabId).then(
+              null,
+              (function() {
+                processFavIconChange(tabId, tabs[tabsIndex].favIconUrl);
+              })()
+            );
           }, 1000);
           break;
         }
@@ -140,4 +116,3 @@ mergeInto(LibraryManager.library, {
     });
   }
 });
-
