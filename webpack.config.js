@@ -72,7 +72,6 @@ module.exports = {
       { from: './assets/fox-48px.png', to: 'fox-48px.png' },
       { from: './assets/fox-96px.png', to: 'fox-96px.png' },
       { from: './src/main/background/.tmp/service.wasm', to: 'service.wasm' },
-
       { from: './src/main/manifest.json', to: 'manifest.json' },
       { from: './src/main/options/index.html', to: 'options.html' },
       { from: './LICENSE', to: './LICENSE.txt' },

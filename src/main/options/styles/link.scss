@@ -3,7 +3,7 @@
   all: initial;
   @extend .u-c-hyperlink;
 
-  &:hover {          
+  &:hover {
     @extend .u-c-hyperlink-dark;
     cursor: pointer;
     text-decoration: underline;
@@ -15,5 +15,6 @@
 
   &:focus {
    text-decoration: underline;
-  }   
+  }
 }
+
