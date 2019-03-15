@@ -24,3 +24,4 @@ typedef struct {
 extern settings_provider_namespace const SettingsProvider;
 
 #endif
+

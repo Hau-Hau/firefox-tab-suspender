@@ -43,9 +43,8 @@ cTabsInitialization(const uint32_t **buffer, uint32_t bufferSize, const uint32_t
     jsExpiredTabsWatcher();
 }
 
-EMSCRIPTEN_KEEPALIVE int cCheckLastEvent(const uint8_t eventId) {
-    return (int) !(Cache.getEvents()->size == 0
-                   || ((struct Event *) Cache.getEvents()->items[Cache.getEvents()->size - 1])->eventId != eventId);
+EMSCRIPTEN_KEEPALIVE int cAbleToPushEvent(const uint8_t eventId) {
+    return (int) Cache.getEvents()->size == 0 || ((struct Event *) Cache.getEvents()->items[Cache.getEvents()->size - 1])->eventId != eventId;
 }
 
 EMSCRIPTEN_KEEPALIVE void cPushEvent(const uint32_t eventId) {

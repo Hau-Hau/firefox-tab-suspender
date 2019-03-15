@@ -64,3 +64,4 @@ event_loop_namespace const EventLoop = {
         isEventLoopWorking,
         processEvent
 };
+

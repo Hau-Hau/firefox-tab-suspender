@@ -16,3 +16,4 @@ typedef struct {
 extern cache_namespace const Cache;
 
 #endif
+

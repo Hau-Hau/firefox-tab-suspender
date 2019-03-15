@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
 		desaturateFavicon: this.getElementById('desaturate_favicon')
 	}
-	
+
 	browser.storage.local.get({
 		timeToDiscard: 60,
 		neverSuspendPinned: true,
@@ -59,3 +59,4 @@ document.addEventListener('DOMContentLoaded', function() {
 		browser.runtime.reload();
 	}
 });
+

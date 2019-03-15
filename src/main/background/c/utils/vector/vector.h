@@ -23,3 +23,4 @@ typedef struct {
 extern vector_namespace const Vector;
 
 #endif
+

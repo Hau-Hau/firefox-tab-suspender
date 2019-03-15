@@ -26,3 +26,4 @@ vector_namespace const Vector = {
         push,
         splice
 };
+

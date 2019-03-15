@@ -10,7 +10,7 @@ mergeInto(LibraryManager.library, {
       return;
     }
     Module["internalInterval"] = setInterval(function() {
-      if (!!Module.cwrap("cCheckLastEvent", "number", ["number"])(6)) {
+      if (!Module.cwrap("cAbleToPushEvent", "number", ["number"])(6)) {
         return;
       }
       Module.cwrap("cPushEvent", null, ["number"])(6);
@@ -23,7 +23,7 @@ mergeInto(LibraryManager.library, {
   jsChromeTabsDiscard: function(tabId, option) {
     var contrastImage = function(imageData) {
       var data = imageData.data;
-      var contrast = -59 / 100 + 1;
+      var contrast = -55 / 100 + 1;
       var intercept = 128 * (1 - contrast);
       for (var i = data.length; i >= 0; i -= 4) {
         data[i] = data[i] * contrast + intercept;
@@ -64,8 +64,8 @@ mergeInto(LibraryManager.library, {
 
       image.onload = function() {
         var canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
+        canvas.width = Math.max(1, Math.floor(image.width));
+        canvas.height = Math.max(1, Math.floor(image.height));
 
         var context = canvas.getContext("2d");
         context.drawImage(image, 0, 0);
@@ -103,9 +103,12 @@ mergeInto(LibraryManager.library, {
         if (tabs[tabsIndex].id === tabId) {
           changeFavicon(tabs[tabsIndex].favIconUrl);
           setTimeout(function() {
-            browser.tabs
-              .discard(tabId)
-              .then(null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
+            browser.tabs.discard(tabId).then(
+              null,
+              (function() {
+                processFavIconChange(tabId, tabs[tabsIndex].favIconUrl);
+              })()
+            );
           }, 1000);
           break;
         }
@@ -113,4 +116,3 @@ mergeInto(LibraryManager.library, {
     });
   }
 });
-
