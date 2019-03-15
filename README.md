@@ -1,8 +1,9 @@
 # Firefox Tab Suspender  ![Firefox Tab Suspender logo](./assets/fox-64px.png "Firefox Tab Suspender Logo")
-![status](https://img.shields.io/static/v1.svg?label=status&message=active&color=green "status") ![version@amo](https://img.shields.io/amo/v/ff-tab-suspender.svg "version@amo") ![version@master](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/master.svg "version@master") ![version@develop](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/develop.svg "version@develop")
+![status](https://img.shields.io/static/v1.svg?label=status&message=active&color=green "status") ![version@master](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/master.svg "version@master") ![version@develop](https://img.shields.io/github/package-json/v/Hau-Hau/Firefox-Tab-Suspender/develop.svg "version@develop")
+
+![build@master](https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/master.svg?label=build@master "build@master") ![build@develop](https://img.shields.io/travis/Hau-Hau/firefox-tab-suspender/develop.svg?label=build@develop "build@develop")
 
 ![fox-heart-webassembly](./assets/fox-heart-webassembly.png "fox-heart-webassembly")
-
 
 [![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png)](https://www.mozilla.org/pl/firefox/new/) |
 :---: |
@@ -21,6 +22,7 @@ Thanks to author of Chrome's
 #### Development Roadmap
 
 Public development roadmap is avaible under this **[link](https://trello.com/b/BbbjVfl4/firefox-tab-suspender-public)**.
+
 Task list for contributors is in plans, for now this list should be enough.
 
 #### Structure
@@ -34,7 +36,7 @@ Simplified project structure.
 ![diagram build process](./readme_assets/diagram_build_process.png "diagram build process")
 
 **Details worth to pay attention:**
-* Generating big amounts of styles in development has no cost in production because of that styles are cleaned up in build process. Final stylesheet contains only used styles.
+* Generating big amounts of styles in development has no cost in production because of that styles are cleaned up in build process. Final stylesheet contains only used styles
 * CSS convention is highly based on **SUIT** naming and organizing convention
 * If it is possible - instead of writing single style's class, generate full spectrum of possibilities
 * WASM is injected after user settings load in place of **//= ../.tmp/service.js** comment
@@ -44,7 +46,7 @@ Simplified project structure.
 if you are interested in contributing and developmenting of extension there are some tips:
 
   * Always request merge to **'develop'** branch - **not to 'master' branch!**
-  * Work on branches which has prefix **'FTS-'** and number as suffix like **'FTS-3'**, exceptions are any small patches or small bugfixes.
+  * Work on branches which has prefix **'FTS-'** and number as suffix like **'FTS-3'**, exceptions are any small patches or small bugfixes
   * List of tasks you can find under this **[link](https://trello.com/b/BbbjVfl4/firefox-tab-suspender-public)**
   * In case of any questions make issue or feel free and ask in way that you prefer
 
