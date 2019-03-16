@@ -3,10 +3,7 @@ mergeInto(LibraryManager.library, {
     console.log(num);
   },
   jsExpiredTabsWatcher: function() {
-    if (
-      Module["internalInterval"] !== undefined &&
-      Module["internalInterval"] !== null
-    ) {
+    if (Module["internalInterval"] !== undefined && Module["internalInterval"] !== null) {
       return;
     }
     Module["internalInterval"] = setInterval(function() {
@@ -104,12 +101,8 @@ mergeInto(LibraryManager.library, {
           changeFavicon(tabs[tabsIndex].favIconUrl);
           setTimeout(function() {
             browser.tabs.discard(tabId).then(
-              null,
-              (function() {
-                processFavIconChange(tabId, tabs[tabsIndex].favIconUrl);
-              })()
-            );
-          }, 1000);
+              null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl)
+          )}, 1000);
           break;
         }
       }
