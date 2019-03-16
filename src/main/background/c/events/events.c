@@ -44,8 +44,11 @@ static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBuffer
                 }
 
                 if (active || tab->active) {
+                    tab->lastUsageTime = (double) time(NULL);
+                } else {
                     tab->lastUsageTime = lastAccessed;
                 }
+
 
                 tab->active = active;
                 tab->discarded = discarded;
