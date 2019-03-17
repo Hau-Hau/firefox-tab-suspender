@@ -51,7 +51,7 @@ static void processEvent() {
             Events.discardTabs();
     }
 
-    VectorOps.splice(Cache.getEvents(), 0, true);
+    Vector.splice(Cache.getEvents(), 0, true);
 
     if (Cache.getEvents()->size == 0) {
         eventLoopWorking = false;
@@ -64,3 +64,4 @@ event_loop_namespace const EventLoop = {
         isEventLoopWorking,
         processEvent
 };
+

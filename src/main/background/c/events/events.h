@@ -20,3 +20,4 @@ typedef struct {
 extern events_namespace const Events;
 
 #endif
+

@@ -19,11 +19,11 @@ static void initialize() {
     loadedTabs = malloc(sizeof(struct Vector));
     events = malloc(sizeof(struct Vector));
 
-    VectorOps.constructor(windows);
+    Vector.constructor(windows);
 
-    VectorOps.constructor(loadedTabs);
+    Vector.constructor(loadedTabs);
 
-    VectorOps.constructor(events);
+    Vector.constructor(events);
 }
 
 static struct Vector *getWindows() {
@@ -44,3 +44,4 @@ cache_namespace const Cache = {
     getLoadedTabs,
     getEvents
 };
+

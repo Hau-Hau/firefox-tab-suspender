@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "../array_utils/array_utils.h"
@@ -21,8 +21,9 @@ static void splice(struct Vector *self, uint32_t index, bool shouldFreePointer) 
     ArrayUtils.splice(self->items, index, &self->size, shouldFreePointer);
 }
 
-vector_namespace const VectorOps = {
+vector_namespace const Vector = {
         constructor,
         push,
         splice
 };
+
