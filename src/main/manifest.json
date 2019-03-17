@@ -9,17 +9,27 @@
     "96": "fox-96px.png"
   },
   "background": {
-    "scripts": [ "background.js" ]
+    "scripts": [
+      "background.js"
+    ]
   },
   "options_ui": {
-	  "page": "options.html"
+    "page": "options.html"
   },
-  "permissions": [ "<all_urls>", "tabs", "storage" ],
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "storage"
+  ],
   "applications": {
     "gecko": {
       "id": "tabsuspender@michalewiczpiotr",
       "strict_min_version": "59.0"
     }
+  },
+  "browser_action": {
+    "default_icon": {
+      "48": "fox-48px.png"
+    }
   }
 }
-
