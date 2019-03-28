@@ -74,6 +74,7 @@ module.exports = {
       { from: './src/main/background/.tmp/service.wasm', to: 'service.wasm' },
       { from: './src/main/manifest.json', to: 'manifest.json' },
       { from: './src/main/options/index.html', to: 'options.html' },
+      { from: './src/main/discarded/index.html', to: 'discarded.html' },
       { from: './LICENSE', to: './LICENSE.txt' },
     ], {}),
     new RemovePlugin({

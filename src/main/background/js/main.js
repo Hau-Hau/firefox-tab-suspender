@@ -120,7 +120,7 @@ browser.storage.local
             tab.windowId,
             tab.id,
             tab.active & 1,
-            tab.discarded & 1,
+            (tab.title.indexOf("- discarded") > 1) & 1,
             tab.pinned & 1,
             tab.audible & 1
           ]);
@@ -168,7 +168,7 @@ browser.storage.local
               tab.windowId,
               tab.id,
               tab.active & 1,
-              tab.discarded & 1,
+              (tab.title.indexOf("- discarded") > 1) & 1,
               tab.pinned & 1,
               tab.audible & 1
             ],
@@ -219,9 +219,13 @@ browser.storage.local
 
       let lastOnActivatedCall = undefined;
       chrome.tabs.onActivated.addListener(function(activeInfo) {
-        if (lastOnActivatedCall !== undefined && new Date().getTime() - lastOnActivatedCall < 500) {
+        if (
+          lastOnActivatedCall !== undefined &&
+          new Date().getTime() - lastOnActivatedCall < 500
+        ) {
           return;
-        } try {
+        }
+        try {
           chrome.tabs.query({}, function(tabs) {
             const tabsToPass = [];
             for (const tab of tabs) {
@@ -229,7 +233,7 @@ browser.storage.local
                 tab.windowId,
                 tab.id,
                 tab.active & 1,
-                tab.discarded & 1,
+                (tab.title.indexOf("- discarded") > 1) & 1,
                 tab.pinned & 1,
                 tab.audible & 1,
                 Math.floor(tab.lastAccessed / 1000)
@@ -245,4 +249,3 @@ browser.storage.local
       });
     };
   });
-
