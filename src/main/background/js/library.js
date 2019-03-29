@@ -25,18 +25,9 @@ mergeInto(LibraryManager.library, {
       chrome.tabs.executeScript(tabId, {
         code:
           "(function() {" +
-          '  window.location.href = "moz-extension://562e4242-6547-4a77-9b6c-e38828d79c7f/discarded.html";' +
+          '  window.location.href = "moz-extension://562e4242-6547-4a77-9b6c-e38828d79c7f/discarded.html?t=' + title + '&u=' + url + '";' +
           "})();"
       });
-        setTimeout(function() {
-          chrome.tabs.executeScript(tabId, {
-          code:
-            "(function() {" +
-            '  document.title = "' + title + '" + " - discarded";' +
-            '  document.addEventListener("focus", function () { window.location.href = "' + url + '"; }, true);' +
-            "})();"
-          })
-        }, 1500);
     };
 
     var contrastImage = function(imageData) {

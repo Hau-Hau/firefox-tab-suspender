@@ -17,6 +17,7 @@ function getOutputPath() {
 module.exports = {
   entry: {
     'options.js': './src/main/options/main.js',
+    'discarded.js': './src/main/discarded/main.js',
     'background.js': './src/main/background/.tmp/background.js',
     'options-styles': './src/main/options/styles/options-styles.scss'
   },
