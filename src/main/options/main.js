@@ -7,19 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
 		timeToSuspend: this.getElementById('time_to_suspend'),
 		neverSuspendPinned: this.getElementById('never_suspend_pinned'),
 		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
-		desaturateFavicon: this.getElementById('desaturate_favicon')
+		desaturateFavicon: this.getElementById('desaturate_favicon'),
+		nonNativeDiscarding: this.getElementById('non_native_discarding')
 	}
 
 	browser.storage.local.get({
 		timeToDiscard: 60,
 		neverSuspendPinned: true,
 		neverSuspendPlayingAudio: true,
-		desaturateFavicon: true
+		desaturateFavicon: true,
+		nonNativeDiscarding: true
 	}).then(function(value) {
 		elements.timeToSuspend.value = value.timeToDiscard;
 		elements.neverSuspendPinned.checked = value.neverSuspendPinned;
 		elements.neverSuspendPlayingAudio.checked = value.neverSuspendPlayingAudio;
 		elements.desaturateFavicon.checked = value.desaturateFavicon;
+		elements.nonNativeDiscarding.checked = value.nonNativeDiscarding;
 	  });
 
 	elements.timeToSuspend.addEventListener('input', function() {
@@ -45,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		elements.neverSuspendPinned.checked = true;
 		elements.neverSuspendPlayingAudio.checked = true;
 		elements.desaturateFavicon.checked = true;
+		elements.nonNativeDiscarding.checked = true;
 		saveOptions(e)
 	}
 
@@ -54,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			timeToDiscard: parseInt(elements.timeToSuspend.value),
 			neverSuspendPinned: elements.neverSuspendPinned.checked === true,
 			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
-			desaturateFavicon: elements.desaturateFavicon.checked === true
+			desaturateFavicon: elements.desaturateFavicon.checked === true,
+			nonNativeDiscarding: elements.nonNativeDiscarding === true
 		});
 		browser.runtime.reload();
 	}

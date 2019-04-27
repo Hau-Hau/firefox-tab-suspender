@@ -4,11 +4,13 @@ browser.storage.local
     neverSuspendPinned: true,
     neverSuspendPlayingAudio: true,
     neverSuspendUnsavedFormInput: true,
-    desaturateFavicon: true
+    desaturateFavicon: true,
+    nonNativeDiscarding: true
   })
   .then(function(value) {
     //= ../.tmp/service.js
     Module.onRuntimeInitialized = _ => {
+      Module["extension_settings"] = value;
       const heapMap = {
         HEAP8: Int8Array,
         HEAPU8: Uint8Array,
@@ -229,6 +231,16 @@ browser.storage.local
           chrome.tabs.query({}, function(tabs) {
             const tabsToPass = [];
             for (const tab of tabs) {
+              if (tab.active && tab.title.indexOf("- discarded") > 1) {
+                chrome.tabs.executeScript(tabId, {
+                  code:
+                    "(function() {" +
+                    "  document.body.addEventListener('click', function () {" +
+                    "    window.location.replace(url);" +
+                    "  }, true);" +
+                    "})();"
+                });
+              }
               tabsToPass.push([
                 tab.windowId,
                 tab.id,

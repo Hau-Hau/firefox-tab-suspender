@@ -22,12 +22,7 @@ mergeInto(LibraryManager.library, {
   },
   jsChromeTabsDiscard: function(tabId, option) {
     var nonNativeDiscard = function(tabId, title, url) {
-      chrome.tabs.executeScript(tabId, {
-        code:
-          "(function() {" +
-          '  window.location.href = "moz-extension://562e4242-6547-4a77-9b6c-e38828d79c7f/discarded.html?t=' + title + '&u=' + url + '";' +
-          "})();"
-      });
+      browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' +title + '&u=' + url });
     };
 
     var contrastImage = function(imageData) {

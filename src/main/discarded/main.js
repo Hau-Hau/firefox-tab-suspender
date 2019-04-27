@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const url = new URL(window.location.href);
-  console.log(url.searchParams.get('t'));
-  console.log(url.searchParams.get('u'));
-  document.title = url.searchParams.get('t') + ' - discarded';
-  document.addEventListener('focus', function () {
-    window.location.href = url.searchParams.get('u');
+  const urlObj = new URL(window.location.href);
+  const title = urlObj.searchParams.get('t');
+  const url = urlObj.searchParams.get('u');
+
+  document.title =  title + ' - discarded';
+  document.getElementById('t').innerHTML = title;
+  document.getElementById('u').innerHTML = url;
+  document.body.addEventListener('click', function () {
+    window.location.replace(url);
   }, true);
 });
-
