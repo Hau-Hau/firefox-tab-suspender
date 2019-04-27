@@ -62,7 +62,7 @@ module.exports = {
       filename: "[name].css",
     }),
     new PurgecssPlugin({
-      paths: glob.sync(`src/main/options/*.html`),
+      paths: glob.sync(`src/main/**/*.html`),
     }),
     new webpack.DefinePlugin({
       'process.env': {
