@@ -4,11 +4,13 @@ browser.storage.local
     neverSuspendPinned: true,
     neverSuspendPlayingAudio: true,
     neverSuspendUnsavedFormInput: true,
-    desaturateFavicon: true
+    desaturateFavicon: true,
+    nonNativeDiscarding: true
   })
   .then(function(value) {
     //= ../.tmp/service.js
     Module.onRuntimeInitialized = _ => {
+      Module["extension_settings"] = value;
       const heapMap = {
         HEAP8: Int8Array,
         HEAPU8: Uint8Array,
@@ -120,7 +122,7 @@ browser.storage.local
             tab.windowId,
             tab.id,
             tab.active & 1,
-            tab.discarded & 1,
+            (tab.title.indexOf("- discarded") > 1) & 1,
             tab.pinned & 1,
             tab.audible & 1
           ]);
@@ -168,7 +170,7 @@ browser.storage.local
               tab.windowId,
               tab.id,
               tab.active & 1,
-              tab.discarded & 1,
+              (tab.title.indexOf("- discarded") > 1) & 1,
               tab.pinned & 1,
               tab.audible & 1
             ],
@@ -219,17 +221,31 @@ browser.storage.local
 
       let lastOnActivatedCall = undefined;
       chrome.tabs.onActivated.addListener(function(activeInfo) {
-        if (lastOnActivatedCall !== undefined && new Date().getTime() - lastOnActivatedCall < 500) {
+        if (
+          lastOnActivatedCall !== undefined &&
+          new Date().getTime() - lastOnActivatedCall < 500
+        ) {
           return;
-        } try {
+        }
+        try {
           chrome.tabs.query({}, function(tabs) {
             const tabsToPass = [];
             for (const tab of tabs) {
+              if (tab.active && tab.title.indexOf("- discarded") > 1) {
+                chrome.tabs.executeScript(tabId, {
+                  code:
+                    "(function() {" +
+                    "  document.body.addEventListener('click', function () {" +
+                    "    window.location.replace(url);" +
+                    "  }, true);" +
+                    "})();"
+                });
+              }
               tabsToPass.push([
                 tab.windowId,
                 tab.id,
                 tab.active & 1,
-                tab.discarded & 1,
+                (tab.title.indexOf("- discarded") > 1) & 1,
                 tab.pinned & 1,
                 tab.audible & 1,
                 Math.floor(tab.lastAccessed / 1000)
@@ -245,4 +261,3 @@ browser.storage.local
       });
     };
   });
-

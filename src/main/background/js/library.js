@@ -3,7 +3,10 @@ mergeInto(LibraryManager.library, {
     console.log(num);
   },
   jsExpiredTabsWatcher: function() {
-    if (Module["internalInterval"] !== undefined && Module["internalInterval"] !== null) {
+    if (
+      Module["internalInterval"] !== undefined &&
+      Module["internalInterval"] !== null
+    ) {
       return;
     }
     Module["internalInterval"] = setInterval(function() {
@@ -18,6 +21,10 @@ mergeInto(LibraryManager.library, {
     Module["internalInterval"] = undefined;
   },
   jsChromeTabsDiscard: function(tabId, option) {
+    var nonNativeDiscard = function(tabId, title, url) {
+      browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' +title + '&u=' + url });
+    };
+
     var contrastImage = function(imageData) {
       var data = imageData.data;
       var contrast = -55 / 100 + 1;
@@ -90,6 +97,7 @@ mergeInto(LibraryManager.library, {
     }
 
     if (Module["faviconFunction"] === null) {
+      // TODO for non native
       chrome.tabs.discard(tabId);
       return;
     }
@@ -97,12 +105,14 @@ mergeInto(LibraryManager.library, {
     browser.tabs.query({}).then(function(tabs) {
       var tabsIndex = tabs.length;
       while (tabsIndex--) {
-        if (tabs[tabsIndex].id === tabId) {
-          changeFavicon(tabs[tabsIndex].favIconUrl);
-          setTimeout(function() {
-            browser.tabs.discard(tabId).then(
-              null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl)
-          )}, 1000);
+        if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].title.indexOf("- discarded") < 1 && tabs[tabsIndex].active === false) {
+          (function(tab) {
+            nonNativeDiscard(tabId, tab.title, tab.url);
+            // changeFavicon(tab.favIconUrl);
+            setTimeout(function() {
+              changeFavicon(tab.favIconUrl)
+            }, 1000);
+          })(tabs[tabsIndex]);
           break;
         }
       }

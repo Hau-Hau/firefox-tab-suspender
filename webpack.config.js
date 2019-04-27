@@ -17,6 +17,7 @@ function getOutputPath() {
 module.exports = {
   entry: {
     'options.js': './src/main/options/main.js',
+    'discarded.js': './src/main/discarded/main.js',
     'background.js': './src/main/background/.tmp/background.js',
     'options-styles': './src/main/options/styles/options-styles.scss'
   },
@@ -61,7 +62,7 @@ module.exports = {
       filename: "[name].css",
     }),
     new PurgecssPlugin({
-      paths: glob.sync(`src/main/options/*.html`),
+      paths: glob.sync(`src/main/**/*.html`),
     }),
     new webpack.DefinePlugin({
       'process.env': {
@@ -74,6 +75,7 @@ module.exports = {
       { from: './src/main/background/.tmp/service.wasm', to: 'service.wasm' },
       { from: './src/main/manifest.json', to: 'manifest.json' },
       { from: './src/main/options/index.html', to: 'options.html' },
+      { from: './src/main/discarded/index.html', to: 'discarded.html' },
       { from: './LICENSE', to: './LICENSE.txt' },
     ], {}),
     new RemovePlugin({
