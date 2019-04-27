@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			neverSuspendPinned: elements.neverSuspendPinned.checked === true,
 			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
 			desaturateFavicon: elements.desaturateFavicon.checked === true,
-			nonNativeDiscarding: elements.nonNativeDiscarding === true
+			nonNativeDiscarding: elements.nonNativeDiscarding.checked === true
 		});
 		browser.runtime.reload();
 	}
