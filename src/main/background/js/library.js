@@ -37,15 +37,6 @@ mergeInto(LibraryManager.library, {
       return imageData;
     };
 
-    var desaturateImage = function(imageData) {
-      var data = imageData.data;
-      for (var i = data.length; i >= 0; i -= 4) {
-        var grey = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
-        data[i] = data[i + 1] = data[i + 2] = grey;
-      }
-      return imageData;
-    };
-
     var processFavIconChange = function(tabId, url) {
       chrome.tabs.executeScript(tabId, {
         code:
@@ -89,15 +80,14 @@ mergeInto(LibraryManager.library, {
           Module["faviconFunction"] = contrastImage;
           break;
         }
-        case 2: {
-          Module["faviconFunction"] = desaturateImage;
-          break;
-        }
       }
     }
 
     if (Module["faviconFunction"] === null) {
-      // TODO for non native
+      if (Module['extension_settings'].nonNativeDiscarding) {
+        nonNativeDiscard(tabId, tab.title, tab.url);
+        return;
+      }
       chrome.tabs.discard(tabId);
       return;
     }
@@ -105,12 +95,28 @@ mergeInto(LibraryManager.library, {
     browser.tabs.query({}).then(function(tabs) {
       var tabsIndex = tabs.length;
       while (tabsIndex--) {
-        if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].title.indexOf("- discarded") < 1 && tabs[tabsIndex].active === false) {
+        if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].active === false) {
           (function(tab) {
-            nonNativeDiscard(tabId, tab.title, tab.url);
-            // changeFavicon(tab.favIconUrl);
+            if (Module['extension_settings'].nonNativeDiscarding) {
+              if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
+                console.log('1')
+                nonNativeDiscard(tabId, tab.title, tab.url);
+              }
+            } else {
+              console.log('2')
+              changeFavicon(tab.favIconUrl);
+            }
             setTimeout(function() {
-              changeFavicon(tab.favIconUrl)
+              if (Module['extension_settings'].nonNativeDiscarding) {
+                if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
+                  console.log('1.1')
+                  changeFavicon(tab.favIconUrl);
+                }
+              } else {
+                console.log('2.2')
+                browser.tabs.discard(tabId).then(
+                  null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
+              }
             }, 1000);
           })(tabs[tabsIndex]);
           break;

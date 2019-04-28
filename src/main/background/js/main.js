@@ -118,16 +118,18 @@ browser.storage.local
       chrome.tabs.query({}, function(tabs) {
         const data = [];
         for (const tab of tabs) {
-          data.push([
-            tab.windowId,
-            tab.id,
-            tab.active & 1,
-            (tab.title.indexOf("- discarded") > 1) & 1,
-            tab.pinned & 1,
-            tab.audible & 1
-          ]);
+          if (tab.url.indexOf("about:") < 0) {
+            data.push([
+              tab.windowId,
+              tab.id,
+              tab.active & 1,
+              (Module["extension_settings"].nonNativeDiscarding ? (tab.title.indexOf("- discarded") > 1) : tab.discarded) & 1,
+              tab.pinned & 1,
+              tab.audible & 1
+            ]);
+          }
+          pass2DArrayToWasm(null, initializeTabs, data, "HEAP32");
         }
-        pass2DArrayToWasm(null, initializeTabs, data, "HEAP32");
       });
 
       passArrayToWasm(
@@ -163,6 +165,9 @@ browser.storage.local
 
       chrome.tabs.onCreated.addListener(function(tab) {
         try {
+          if (tab.url.indexOf("about:") > 1) {
+            return;
+          }
           passArrayToWasm(
             3,
             pushEvent1D,
@@ -170,7 +175,7 @@ browser.storage.local
               tab.windowId,
               tab.id,
               tab.active & 1,
-              (tab.title.indexOf("- discarded") > 1) & 1,
+              (Module["extension_settings"].nonNativeDiscarding ? (tab.title.indexOf("- discarded") > 1) : tab.discarded) & 1,
               tab.pinned & 1,
               tab.audible & 1
             ],
@@ -184,21 +189,23 @@ browser.storage.local
 
       chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         try {
-          passArrayToWasm(
-            4,
-            pushEvent1D,
-            [
-              tab.windowId,
-              tab.id,
-              changeInfo.pinned === undefined || changeInfo.pinned === null
-                ? 2
-                : changeInfo.pinned & 1,
-              changeInfo.audible === undefined || changeInfo.audible === null
-                ? 2
-                : changeInfo.audible & 1
-            ],
-            "HEAP32"
-          );
+          if (tab.url.indexOf("about:") > 1) {
+            passArrayToWasm(
+              4,
+              pushEvent1D,
+              [
+                tab.windowId,
+                tab.id,
+                changeInfo.pinned === undefined || changeInfo.pinned === null
+                  ? 2
+                  : changeInfo.pinned & 1,
+                changeInfo.audible === undefined || changeInfo.audible === null
+                  ? 2
+                  : changeInfo.audible & 1
+              ],
+              "HEAP32"
+            );
+          }
         } catch (e) {
           console.log({ e: e, f: "chrome.tabs.onUpdated" });
           browser.runtime.reload();
@@ -231,28 +238,31 @@ browser.storage.local
           chrome.tabs.query({}, function(tabs) {
             const tabsToPass = [];
             for (const tab of tabs) {
-              if (tab.active && tab.title.indexOf("- discarded") > 1) {
-                chrome.tabs.executeScript(tabId, {
-                  code:
-                    "(function() {" +
-                    "  document.body.addEventListener('click', function () {" +
-                    "    window.location.replace(url);" +
-                    "  }, true);" +
-                    "})();"
-                });
+              if (tab.url.indexOf("about:") < 0) {
+                // TODO needed refactor
+                if (tab.active && tab.title.indexOf("- discarded") > 1) {
+                  chrome.tabs.executeScript(tabId, {
+                    code:
+                      "(function() {" +
+                      "  document.body.addEventListener('click', function () {" +
+                      "    window.location.replace(url);" +
+                      "  }, true);" +
+                      "})();"
+                  });
+                }
+                tabsToPass.push([
+                  tab.windowId,
+                  tab.id,
+                  tab.active & 1,
+                  (Module["extension_settings"].nonNativeDiscarding ? (tab.title.indexOf("- discarded") > 1) : tab.discarded) & 1,
+                  tab.pinned & 1,
+                  tab.audible & 1,
+                  Math.floor(tab.lastAccessed / 1000)
+                ]);
+                pass2DArrayToWasm(0, pushEvent2D, tabsToPass, "HEAPF64");
+                lastOnActivatedCall = new Date().getTime();
               }
-              tabsToPass.push([
-                tab.windowId,
-                tab.id,
-                tab.active & 1,
-                (tab.title.indexOf("- discarded") > 1) & 1,
-                tab.pinned & 1,
-                tab.audible & 1,
-                Math.floor(tab.lastAccessed / 1000)
-              ]);
             }
-            pass2DArrayToWasm(0, pushEvent2D, tabsToPass, "HEAPF64");
-            lastOnActivatedCall = new Date().getTime();
           });
         } catch (e) {
           console.log({ e: e, f: "chrome.tabs.onActivated" });
