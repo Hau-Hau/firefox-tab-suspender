@@ -22,7 +22,7 @@ mergeInto(LibraryManager.library, {
   },
   jsChromeTabsDiscard: function(tabId, option) {
     var nonNativeDiscard = function(tabId, title, url) {
-      browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' +title + '&u=' + url });
+      browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' + encodeURIComponent(title) + '&u=' + encodeURIComponent(url) });
     };
 
     var contrastImage = function(imageData) {
@@ -99,21 +99,17 @@ mergeInto(LibraryManager.library, {
           (function(tab) {
             if (Module['extension_settings'].nonNativeDiscarding) {
               if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
-                console.log('1')
                 nonNativeDiscard(tabId, tab.title, tab.url);
               }
             } else {
-              console.log('2')
               changeFavicon(tab.favIconUrl);
             }
             setTimeout(function() {
               if (Module['extension_settings'].nonNativeDiscarding) {
                 if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
-                  console.log('1.1')
                   changeFavicon(tab.favIconUrl);
                 }
               } else {
-                console.log('2.2')
                 browser.tabs.discard(tabId).then(
                   null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
               }
