@@ -49,7 +49,6 @@ static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBuffer
                     tab->lastUsageTime = lastAccessed;
                 }
 
-
                 tab->active = active;
                 tab->discarded = discarded;
                 tab->pinned = pinned;

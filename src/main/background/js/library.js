@@ -3,7 +3,10 @@ mergeInto(LibraryManager.library, {
     console.log(num);
   },
   jsExpiredTabsWatcher: function() {
-    if (Module["internalInterval"] !== undefined && Module["internalInterval"] !== null) {
+    if (
+      Module["internalInterval"] !== undefined &&
+      Module["internalInterval"] !== null
+    ) {
       return;
     }
     Module["internalInterval"] = setInterval(function() {
@@ -18,6 +21,10 @@ mergeInto(LibraryManager.library, {
     Module["internalInterval"] = undefined;
   },
   jsChromeTabsDiscard: function(tabId, option) {
+    var nonNativeDiscard = function(tabId, title, url) {
+      browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' + encodeURIComponent(title) + '&u=' + encodeURIComponent(url) });
+    };
+
     var contrastImage = function(imageData) {
       var data = imageData.data;
       var contrast = -55 / 100 + 1;
@@ -26,15 +33,6 @@ mergeInto(LibraryManager.library, {
         data[i] = data[i] * contrast + intercept;
         data[i + 1] = data[i + 1] * contrast + intercept;
         data[i + 2] = data[i + 2] * contrast + intercept;
-      }
-      return imageData;
-    };
-
-    var desaturateImage = function(imageData) {
-      var data = imageData.data;
-      for (var i = data.length; i >= 0; i -= 4) {
-        var grey = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
-        data[i] = data[i + 1] = data[i + 2] = grey;
       }
       return imageData;
     };
@@ -82,14 +80,14 @@ mergeInto(LibraryManager.library, {
           Module["faviconFunction"] = contrastImage;
           break;
         }
-        case 2: {
-          Module["faviconFunction"] = desaturateImage;
-          break;
-        }
       }
     }
 
     if (Module["faviconFunction"] === null) {
+      if (Module['extension_settings'].nonNativeDiscarding) {
+        nonNativeDiscard(tabId, tab.title, tab.url);
+        return;
+      }
       chrome.tabs.discard(tabId);
       return;
     }
@@ -97,12 +95,26 @@ mergeInto(LibraryManager.library, {
     browser.tabs.query({}).then(function(tabs) {
       var tabsIndex = tabs.length;
       while (tabsIndex--) {
-        if (tabs[tabsIndex].id === tabId) {
-          changeFavicon(tabs[tabsIndex].favIconUrl);
-          setTimeout(function() {
-            browser.tabs.discard(tabId).then(
-              null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl)
-          )}, 1000);
+        if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].active === false) {
+          (function(tab) {
+            if (Module['extension_settings'].nonNativeDiscarding) {
+              if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
+                nonNativeDiscard(tabId, tab.title, tab.url);
+              }
+            } else {
+              changeFavicon(tab.favIconUrl);
+            }
+            setTimeout(function() {
+              if (Module['extension_settings'].nonNativeDiscarding) {
+                if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
+                  changeFavicon(tab.favIconUrl);
+                }
+              } else {
+                browser.tabs.discard(tabId).then(
+                  null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
+              }
+            }, 1000);
+          })(tabs[tabsIndex]);
           break;
         }
       }
