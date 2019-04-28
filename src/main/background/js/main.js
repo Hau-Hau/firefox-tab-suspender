@@ -118,7 +118,7 @@ browser.storage.local
       chrome.tabs.query({}, function(tabs) {
         const data = [];
         for (const tab of tabs) {
-          if (tab.url.indexOf("about:") < 0) {
+          if (tab.url.indexOf("about:") === -1) {
             data.push([
               tab.windowId,
               tab.id,
@@ -165,7 +165,7 @@ browser.storage.local
 
       chrome.tabs.onCreated.addListener(function(tab) {
         try {
-          if (tab.url.indexOf("about:") > 1) {
+          if (tab.url.indexOf("about:") >= 0) {
             return;
           }
           passArrayToWasm(
@@ -189,23 +189,24 @@ browser.storage.local
 
       chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         try {
-          if (tab.url.indexOf("about:") > 1) {
-            passArrayToWasm(
-              4,
-              pushEvent1D,
-              [
-                tab.windowId,
-                tab.id,
-                changeInfo.pinned === undefined || changeInfo.pinned === null
-                  ? 2
-                  : changeInfo.pinned & 1,
-                changeInfo.audible === undefined || changeInfo.audible === null
-                  ? 2
-                  : changeInfo.audible & 1
-              ],
-              "HEAP32"
-            );
+          if (tab.url.indexOf("about:") >= 0) {
+            return;
           }
+          passArrayToWasm(
+            4,
+            pushEvent1D,
+            [
+              tab.windowId,
+              tab.id,
+              changeInfo.pinned === undefined || changeInfo.pinned === null
+                ? 2
+                : changeInfo.pinned & 1,
+              changeInfo.audible === undefined || changeInfo.audible === null
+                ? 2
+                : changeInfo.audible & 1
+            ],
+            "HEAP32"
+          );
         } catch (e) {
           console.log({ e: e, f: "chrome.tabs.onUpdated" });
           browser.runtime.reload();
@@ -228,17 +229,14 @@ browser.storage.local
 
       let lastOnActivatedCall = undefined;
       chrome.tabs.onActivated.addListener(function(activeInfo) {
-        if (
-          lastOnActivatedCall !== undefined &&
-          new Date().getTime() - lastOnActivatedCall < 500
-        ) {
+        if (lastOnActivatedCall !== undefined && new Date().getTime() - lastOnActivatedCall <= 400) {
           return;
         }
         try {
           chrome.tabs.query({}, function(tabs) {
             const tabsToPass = [];
             for (const tab of tabs) {
-              if (tab.url.indexOf("about:") < 0) {
+              if (tab.url.indexOf("about:") === -1) {
                 // TODO needed refactor
                 if (tab.active && tab.title.indexOf("- discarded") > 1) {
                   chrome.tabs.executeScript(tabId, {

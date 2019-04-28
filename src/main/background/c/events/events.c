@@ -260,11 +260,8 @@ static void discardTabs() {
                     && !tab->active
                     && (!SettingsProvider.getNeverSuspendPinned() || !tab->pinned)
                     && (!SettingsProvider.getNeverSuspendPlayingAudio() || !tab->audible)) {
-                JavaScriptProvider.chromeTabsDiscard(
-                        tab->id,
-                        (uint8_t) SettingsProvider.getDesaturateFavicon()
-                );
 
+                JavaScriptProvider.chromeTabsDiscard(tab->id);
                 tab->discarded = true;
 
                 uint32_t loadedTabsIndex = Cache.getLoadedTabs()->size;

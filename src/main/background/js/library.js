@@ -20,7 +20,7 @@ mergeInto(LibraryManager.library, {
     clearInterval(Module["internalInterval"]);
     Module["internalInterval"] = undefined;
   },
-  jsChromeTabsDiscard: function(tabId, option) {
+  jsChromeTabsDiscard: function(tabId) {
     var nonNativeDiscard = function(tabId, title, url) {
       browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' + encodeURIComponent(title) + '&u=' + encodeURIComponent(url) });
     };
@@ -66,24 +66,12 @@ mergeInto(LibraryManager.library, {
         context.drawImage(image, 0, 0);
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
-        context.putImageData(Module["faviconFunction"](imageData), 0, 0);
+        context.putImageData(contrastImage(imageData), 0, 0);
         processFavIconChange(tabId, canvas.toDataURL("image/png"));
       };
     };
 
-    if (Module["faviconFunction"] === undefined) {
-      switch (option) {
-        case 0: {
-          Module["faviconFunction"] = null;
-        }
-        case 1: {
-          Module["faviconFunction"] = contrastImage;
-          break;
-        }
-      }
-    }
-
-    if (Module["faviconFunction"] === null) {
+    if (!Module['extension_settings'].desaturateFavicon) {
       if (Module['extension_settings'].nonNativeDiscarding) {
         nonNativeDiscard(tabId, tab.title, tab.url);
         return;
