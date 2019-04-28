@@ -15,6 +15,7 @@
 
 @include generateWidths(800px);
 @include generateWidths(100vw);
+@include generateWidths(90vw);
 
 @include generateHeights(100vh);
 
@@ -26,4 +27,8 @@
 
 .u-pointer {
     cursor: pointer;
+}
+
+.u-ww-bw {
+    word-wrap: break-word;
 }
