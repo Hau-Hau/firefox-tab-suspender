@@ -257,14 +257,10 @@ static void discardTabs() {
             struct Tab *tab = window->tabs.items[tabsIndex];
 
             if (time(NULL) - tab->lastUsageTime >= SettingsProvider.getTimeToDiscard()
-                    && !tab->active
-                    && (!SettingsProvider.getNeverSuspendPinned() || !tab->pinned)
-                    && (!SettingsProvider.getNeverSuspendPlayingAudio() || !tab->audible)) {
-                JavaScriptProvider.chromeTabsDiscard(
-                        tab->id,
-                        (uint8_t) SettingsProvider.getDesaturateFavicon()
-                );
-
+                && !tab->active && (!SettingsProvider.getNeverSuspendPinned()
+                || !tab->pinned) && (!SettingsProvider.getNeverSuspendPlayingAudio()
+                || !tab->audible)) {
+                JavaScriptProvider.chromeTabsDiscard(tab->id);
                 tab->discarded = true;
 
                 uint32_t loadedTabsIndex = Cache.getLoadedTabs()->size;

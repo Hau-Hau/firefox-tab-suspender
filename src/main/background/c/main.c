@@ -14,7 +14,7 @@ extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
 
-extern void jsChromeTabsDiscard(uint32_t, uint8_t);
+extern void jsChromeTabsDiscard(uint32_t);
 
 extern void jsConsoleLog(uint32_t);
 
