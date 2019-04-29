@@ -257,10 +257,9 @@ static void discardTabs() {
             struct Tab *tab = window->tabs.items[tabsIndex];
 
             if (time(NULL) - tab->lastUsageTime >= SettingsProvider.getTimeToDiscard()
-                    && !tab->active
-                    && (!SettingsProvider.getNeverSuspendPinned() || !tab->pinned)
-                    && (!SettingsProvider.getNeverSuspendPlayingAudio() || !tab->audible)) {
-
+                && !tab->active && (!SettingsProvider.getNeverSuspendPinned()
+                || !tab->pinned) && (!SettingsProvider.getNeverSuspendPlayingAudio()
+                || !tab->audible)) {
                 JavaScriptProvider.chromeTabsDiscard(tab->id);
                 tab->discarded = true;
 
