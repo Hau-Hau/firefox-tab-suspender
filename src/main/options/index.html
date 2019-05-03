@@ -8,6 +8,16 @@
     <form class="u-fs-13px u-p-16px u-bgc-white">
         <ul class="Layout Layout--column">
           <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Automatic suspend*:
+              <br />
+              <span class="u-fs-13px u-c-default-text">
+                *if disabled it is still possible to suspend tab from tab's context menu
+              </span>
+            </span>
+            <input type="checkbox" id="automatic_suspend" />
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
               <span class="u-fs-16px u-c-default-text">
                 Automatically suspend tabs after (seconds):
               </span>
@@ -33,9 +43,19 @@
           </li>
           <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
             <span class="u-fs-16px u-c-default-text">
-              Non native discarding (Experimental):
+              (Experimental*) Non native discarding:
+              <br />
+              <span class="u-fs-13px u-c-default-text">
+                *improve stability but still not yet finished at all
+              </span>
             </span>
             <input type="checkbox" id="non_native_discarding"/>
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Suspend option in tab's context menu:
+            </span>
+            <input type="checkbox" id="suspend_in_context_menu" />
           </li>
         </ul>
        <div class="Layout Layout--row Layout--start u-p-t-16px u-b-t-default">
