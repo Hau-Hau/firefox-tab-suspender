@@ -70,6 +70,7 @@ module.exports = {
       }
     }),
     new CopyWebpackPlugin([
+      { from: './assets/fox-16px.png', to: 'fox-16px.png' },
       { from: './assets/fox-48px.png', to: 'fox-48px.png' },
       { from: './assets/fox-96px.png', to: 'fox-96px.png' },
       { from: './src/main/background/.tmp/service.wasm', to: 'service.wasm' },

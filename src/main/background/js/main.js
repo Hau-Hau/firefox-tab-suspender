@@ -1,16 +1,38 @@
   browser.storage.local
     .get({
+      automaticSuspend: true,
       timeToDiscard: 60,
       neverSuspendPinned: true,
       neverSuspendPlayingAudio: true,
       neverSuspendUnsavedFormInput: true,
       desaturateFavicon: true,
-      nonNativeDiscarding: true
+      nonNativeDiscarding: true,
+      suspendOptionInContextMenu: true
     })
     .then(function(value) {
       //= ../.tmp/service.js
       Module.onRuntimeInitialized = _ => {
         Module["extension_settings"] = value;
+        //= ./library_functions.js
+
+        if (value.suspendOptionInContextMenu) {
+          browser.menus.create({
+            id: "suspend-tab",
+            contexts: ['tab'],
+            title: "Suspend tab",
+          });
+
+          browser.menus.onClicked.addListener(function (info, tab) {
+            if (info.menuItemId == "suspend-tab") {
+              Module["jsChromeTabsDiscard"](tab.id);
+            }
+          });
+        }
+
+        if (!value.automaticSuspend) {
+          return;
+        }
+
         const heapMap = {
           HEAP8: Int8Array,
           HEAPU8: Uint8Array,
