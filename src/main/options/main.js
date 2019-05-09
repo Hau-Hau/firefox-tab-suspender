@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
 		desaturateFavicon: this.getElementById('desaturate_favicon'),
 		nonNativeDiscarding: this.getElementById('non_native_discarding'),
-		suspendOptionInContextMenu: this.getElementById('suspend_in_context_menu')
+		suspendOptionInContextMenu: this.getElementById('suspend_in_context_menu'),
+		suspendOthersOptionInContextMenu: this.getElementById('suspend_others_in_context_menu'),
+		suspendLeftAndRightOptionsInContextMenu: this.getElementById('suspend_left_right_in_context_menu'),
 	}
 
 	browser.storage.local.get({
@@ -20,7 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		neverSuspendPlayingAudio: true,
 		desaturateFavicon: true,
 		nonNativeDiscarding: true,
-		suspendOptionInContextMenu: true
+		suspendOptionInContextMenu: true,
+		suspendOthersOptionInContextMenu: true,
+		suspendLeftAndRightOptionsInContextMenu: true,
 	}).then(function(value) {
 		elements.automaticSuspend.checked = value.automaticSuspend;
 		elements.timeToSuspend.value = value.timeToDiscard;
@@ -29,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		elements.desaturateFavicon.checked = value.desaturateFavicon;
 		elements.nonNativeDiscarding.checked = value.nonNativeDiscarding;
 		elements.suspendOptionInContextMenu.checked = value.suspendOptionInContextMenu;
+		elements.suspendOthersOptionInContextMenu.checked = value.suspendOthersOptionInContextMenu;
+		elements.suspendLeftAndRightOptionsInContextMenu.checked = value.suspendLeftAndRightOptionsInContextMenu;
 
 		elements.timeToSuspend.disabled = !value.automaticSuspend;
 	});
@@ -63,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		elements.desaturateFavicon.checked = true;
 		elements.nonNativeDiscarding.checked = true;
 		elements.suspendOptionInContextMenu.checked = true;
+		elements.suspendOthersOptionInContextMenu = true;
+		elements.suspendLeftAndRightOptionsInContextMenu = true;
 		saveOptions(e)
 	}
 
@@ -75,7 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
 			desaturateFavicon: elements.desaturateFavicon.checked === true,
 			nonNativeDiscarding: elements.nonNativeDiscarding.checked === true,
-			suspendOptionInContextMenu: elements.suspendOptionInContextMenu.checked === true
+			suspendOptionInContextMenu: elements.suspendOptionInContextMenu.checked === true,
+			suspendOthersOptionInContextMenu: elements.suspendOthersOptionInContextMenu.checked === true,
+			suspendLeftAndRightOptionsInContextMenu: elements.suspendLeftAndRightOptionsInContextMenu.checked === true,
 		});
 		browser.runtime.reload();
 	}

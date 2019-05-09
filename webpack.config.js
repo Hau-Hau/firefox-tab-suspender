@@ -1,14 +1,14 @@
 const webpack = require('webpack'),
-      path = require('path'),
-      glob = require('glob'),
-      PurgecssPlugin = require('purgecss-webpack-plugin'),
-      MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-      OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"),
-      RemovePlugin = require('remove-files-webpack-plugin'),
-      UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
-      ZipPlugin = require('zip-webpack-plugin'),
-      CopyWebpackPlugin = require('copy-webpack-plugin'),
-      isProd = (process.env.NODE_ENV == 'production');
+  path = require('path'),
+  glob = require('glob'),
+  PurgecssPlugin = require('purgecss-webpack-plugin'),
+  MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+  OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"),
+  RemovePlugin = require('remove-files-webpack-plugin'),
+  UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+  ZipPlugin = require('zip-webpack-plugin'),
+  CopyWebpackPlugin = require('copy-webpack-plugin'),
+  isProd = (process.env.NODE_ENV == 'production');
 
 function getOutputPath() {
   return isProd ? './dist/' : './dev/';
@@ -22,7 +22,7 @@ module.exports = {
     'options-styles': './src/main/options/styles/options-styles.scss'
   },
   output: {
-    filename: function(chunkData) {
+    filename: function (chunkData) {
       return chunkData.chunk.name.indexOf('.js') !== -1 ? './[name]' : './[name].tmp';
     },
     path: path.resolve(__dirname, getOutputPath()),
@@ -103,7 +103,19 @@ module.exports = {
   ],
   optimization: {
     minimizer: isProd ? [
-      new UglifyJsPlugin(),
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          warnings: false,
+          parse: {},
+          compress: {},
+          mangle: false,
+          output: null,
+          toplevel: false,
+          nameCache: null,
+          ie8: false,
+          keep_fnames: true,
+        },
+      }),
       new OptimizeCSSAssetsPlugin({})
     ] : [],
   },
