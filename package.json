@@ -1,6 +1,6 @@
 {
   "name": "firefox-tab-suspender",
-  "version": "3.4.1",
+  "version": "3.4.5",
   "description": "A Firefox extension that automatic suspend tabs and saves memory",
   "url": "https://github.com/Hau-Hau/firefox-tab-suspender",
   "homepage": "https://github.com/Hau-Hau/firefox-tab-suspender",
@@ -14,7 +14,9 @@
     "_build_c:dev": "emcc src/main/background/c/utils/array_utils/array_utils.c src/main/background/c/utils/vector/vector.c src/main/background/c/services/javascript_provider/javascript_provider.c src/main/background/c/events/events.c src/main/background/c/services/cache/cache.c src/main/background/c/services/event_loop/event_loop.c src/main/background/c/services/settings_provider/settings_provider.c src/main/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=4 -s EXIT_RUNTIME=1 -o hello.wasm -o src/main/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/main/background/js/library.js -s ASSERTIONS=2",
     "_build_c:dist": "emcc -O2 src/main/background/c/utils/array_utils/array_utils.c src/main/background/c/utils/vector/vector.c src/main/background/c/services/javascript_provider/javascript_provider.c src/main/background/c/events/events.c src/main/background/c/services/cache/cache.c src/main/background/c/services/event_loop/event_loop.c src/main/background/c/services/settings_provider/settings_provider.c src/main/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=4 -s EXIT_RUNTIME=1 -o hello.wasm -o src/main/background/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/main/background/js/library.js",
     "build:dev": "del-cli -f src/main/background/.tmp && make-dir src/main/background/.tmp && npm run _build_c:dev && rig src/main/background/js/main.js > src/main/background/.tmp/background.js && NODE_ENV=development webpack && del-cli -f src/main/background/.tmp",
-    "build:dist": "del-cli -f src/main/background/.tmp && make-dir src/main/background/.tmp && npm run _build_c:dist && rig src/main/background/js/main.js > src/main/background/.tmp/background.js && NODE_ENV=production webpack -p && del-cli -f src/main/background/.tmp"
+    "build:dist": "del-cli -f src/main/background/.tmp && make-dir src/main/background/.tmp && npm run _build_c:dist && rig src/main/background/js/main.js > src/main/background/.tmp/background.js && NODE_ENV=production webpack -p && del-cli -f src/main/background/.tmp",
+    "_build_c:test": "emcc -O2 src/main/background/c/utils/array_utils/array_utils.c src/main/background/c/utils/vector/vector.c src/main/background/c/services/javascript_provider/javascript_provider.c src/main/background/c/events/events.c src/main/background/c/services/cache/cache.c src/main/background/c/services/event_loop/event_loop.c src/main/background/c/services/settings_provider/settings_provider.c src/main/background/c/main.c -s WASM=1 -s RESERVED_FUNCTION_POINTERS=4 -s EXIT_RUNTIME=1 -o hello.wasm -o src/__tests__/.tmp/service.js -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' --js-library src/main/background/js/library.js",
+    "test": "del-cli -f src/__tests__/.tmp && make-dir src/__tests__/.tmp && npm run _build_c:test && rig src/__tests__/main.js > src/__tests__/.tmp/tests.js && jest src/__tests__/.tmp/tests.js"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
@@ -28,6 +30,7 @@
     "file-loader": "^2.0.0",
     "glob": "^7.1.3",
     "image-webpack-loader": "^4.4.0",
+    "jest": "^24.8.0",
     "make-dir": "^2.0.0",
     "make-dir-cli": "^1.0.0",
     "mini-css-extract-plugin": "^0.5.0",
