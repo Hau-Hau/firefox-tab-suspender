@@ -91,3 +91,8 @@ $sides: (
   }
 }
 
+@mixin generateZIndex($property) {
+  .u-zi-#{$property} {
+    z-index: $property !important;
+  }
+}

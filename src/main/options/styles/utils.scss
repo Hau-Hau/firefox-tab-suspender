@@ -19,10 +19,11 @@
 
 @include generateHeights(100vh);
 
-// Paddings and margins
+// Paddings, margins, z-indexses
 @for $i from 1 through 4 {
     @include generatePaddings(4px * $i);
     @include generateMargins(4px * $i);
+    @include generateZIndex($i)
 }
 
 .u-pointer {
@@ -31,4 +32,12 @@
 
 .u-ww-bw {
     word-wrap: break-word;
+}
+
+.u-mbm-difference {
+    mix-blend-mode: difference;
+}
+
+.u-b-white {
+    background-color: white;
 }
