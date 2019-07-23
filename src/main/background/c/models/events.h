@@ -1,0 +1,14 @@
+#ifndef FTS_EVENTS_H
+#define FTS_EVENTS_H
+
+enum Events {
+  TABS_ON_ACTIVATED = 0,
+  WINDOWS_ON_CREATED = 1,
+  WINDOWS_ON_REMOVED = 2,
+  TABS_ON_CREATED = 3,
+  TABS_ON_UPDATED = 4,
+  TABS_ON_REMOVED = 5,
+  DISCARD_TABS = 6
+};
+
+#endif
