@@ -4,302 +4,230 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "events_service.h"
-#include "../../utils/vector/vector.h"
+#include "../../libs/vector/vector.h"
 #include "../../models/window.h"
 #include "../../models/tab.h"
 #include "../cache_service/cache_service.h"
 #include "../javascript_provider_service/javascript_provider_service.h"
 #include "../settings_provider_service/settings_provider_service.h"
+#include "../tabs_service/tabs_service.h"
+#include "../windows_service/windows_service.h"
 
-//0 uint32_t windowId,
-//1 uint32_t tabId,
-//2 bool active,
-//3 bool discarded,
-//4 bool pinned
-//5 bool audible
-//6 double lastAccessed
-static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBufferSize, const uint32_t segmentSize) {
-    while (tabsBufferSize--) {
-        uint32_t tabId = (uint32_t) tabsBuffer[tabsBufferSize][1];
-        bool active = (bool) tabsBuffer[tabsBufferSize][2];
-        bool discarded = (bool) tabsBuffer[tabsBufferSize][3];
-        bool pinned = (bool) tabsBuffer[tabsBufferSize][4];
-        bool audible = (bool) tabsBuffer[tabsBufferSize][5];
-        double lastAccessed = tabsBuffer[tabsBufferSize][6];
+static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBufferSize) {
+  while (tabsBufferSize--) {
+    uint32_t tabId = (uint32_t) tabsBuffer[tabsBufferSize][1];
+    bool active = (bool) tabsBuffer[tabsBufferSize][2];
+    bool discarded = (bool) tabsBuffer[tabsBufferSize][3];
+    bool pinned = (bool) tabsBuffer[tabsBufferSize][4];
+    bool audible = (bool) tabsBuffer[tabsBufferSize][5];
+    double lastAccessed = tabsBuffer[tabsBufferSize][6];
 
-        uint32_t windowsIndex = CacheService.getWindows()->size;
-        while (windowsIndex--) {
-            struct Window *window = CacheService.getWindows()->items[windowsIndex];
-            uint32_t tabsIndex = window->tabs.size;
-            while (tabsIndex--) {
-                struct Tab *tab = window->tabs.items[tabsIndex];
-                if (tab->id != tabId) {
-                    continue;
-                }
-
-                if ((discarded && !active)
-                    || (SettingsProviderService.getNeverSuspendPinned() && tab->pinned)
-                    || (SettingsProviderService.getNeverSuspendPlayingAudio() && tab->audible)) {
-                    break;
-                }
-
-                if (active || tab->active) {
-                    tab->lastUsageTime = (double) time(NULL);
-                } else {
-                    tab->lastUsageTime = lastAccessed;
-                }
-
-                tab->active = active;
-                tab->discarded = discarded;
-                tab->pinned = pinned;
-                tab->audible = audible;
-
-                if (!tab->discarded && !tab->active) {
-                    Vector.push(CacheService.getLoadedTabs(), (void **) &tab);
-                }
-                break;
-            }
-        }
+    struct Tab *tab = TabsService.getTabById(tabId);
+    if (tab == NULL) {
+      continue;
     }
-    JavaScriptProviderService.expiredTabsWatcher();
+    if ((discarded  && !active)
+        || (SettingsProviderService.getNeverSuspendPinned() && tab->pinned)
+        || (SettingsProviderService.getNeverSuspendPlayingAudio() && tab->audible)) {
+      continue;
+    }
+
+    if (active || tab->active) {
+      tab->lastUsageTime = (double) time(NULL);
+    }
+    tab->active = active;
+    tab->discarded = discarded;
+    tab->pinned = pinned;
+    tab->audible = audible;
+
+    if (!tab->active
+        && !tab->discarded
+        && (!SettingsProviderService.getNeverSuspendPinned() || !tab->pinned)
+        && (!SettingsProviderService.getNeverSuspendPlayingAudio() || !tab->audible)) {
+      Vector.push(CacheService.getLoadedTabs(), (void **) &tab, false);
+    }
+  }
+  JavaScriptProviderService.expiredTabsWatcher();
 }
 
-//0 windowId
-static void windowsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
-    uint32_t windowId = (uint32_t) buffer[0];
+static void windowsOnCreatedHandle(const uint32_t *buffer) {
+  uint32_t windowId = (uint32_t) buffer[0];
 
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        if (window->id == windowId) {
-            return;
-        }
-    }
-    struct Window *window = malloc(sizeof(struct Window));
-    window->id = windowId;
-    Vector.constructor(&window->tabs);
-    Vector.push(CacheService.getWindows(), (void **) &window);
+  struct Window *window = WindowsService.getWindowById(windowId);
+  if (window != NULL) {
+    return;
+  }
+
+  window = malloc(sizeof(struct Window));
+  window->id = windowId;
+  window->tabs = Vector.constructor();
+  Vector.push(CacheService.getWindows(), (void **) &window, false);
 }
 
-//0 windowId
-static void windowsOnRemovedHandle(const uint32_t *buffer, uint32_t bufferSize) {
-    uint32_t windowId = (uint32_t)buffer[0];
+static void windowsOnRemovedHandle(const uint32_t *buffer) {
+  uint32_t windowId = (uint32_t) buffer[0];
 
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        if (window->id == windowId) {
-            free(window->tabs.items);
-            Vector.splice(CacheService.getWindows(), windowsIndex, true);
-            return;
-        }
-    }
+  struct Window *window = WindowsService.getWindowById(windowId);
+  if (window == NULL) {
+    return;
+  }
+
+  int32_t index = Vector.getIndex(*CacheService.getWindows(), window);
+  if (index == -1) {
+    return;
+  }
+
+  Vector.deconstructor(window->tabs);
+  Vector.splice(CacheService.getWindows(), (uint32_t) index, true);
+  JavaScriptProviderService.expiredTabsWatcher();
 }
 
-//0 uint32_t windowId,
-//1 uint32_t tabId,
-//2 bool active,
-//3 bool discarded,
-//4 bool pinned,
-//5 bool audible
 static void tabsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
-    uint32_t windowId = (uint32_t) buffer[0];
-    uint32_t tabId = (uint32_t) buffer[1];
-    bool active = (bool) buffer[2];
-    bool discarded = (bool) buffer[3];
-    bool pinned = (bool) buffer[4];
-    bool audbile = (bool) buffer[5];
+  uint32_t windowId = (uint32_t) buffer[0];
+  uint32_t tabId = (uint32_t) buffer[1];
+  bool active = (bool) buffer[2];
+  bool discarded = (bool) buffer[3];
+  bool pinned = (bool) buffer[4];
+  bool audbile = (bool) buffer[5];
 
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        uint32_t tabsIndex = window->tabs.size;
-        while (tabsIndex--) {
-            struct Tab *tab = window->tabs.items[tabsIndex];
-
-            if (window->id == windowId && tab->id == tabId) {
-                return;
-            }
-        }
-
-        if (window->id == windowId) {
-            struct Tab *newTab = malloc(sizeof(struct Tab));
-            newTab->windowId = windowId;
-            newTab->id = tabId;
-            newTab->active = active;
-            newTab->discarded = discarded;
-            newTab->pinned = pinned;
-            newTab->audible = audbile;
-            newTab->lastUsageTime = (double) time(NULL);
-
-            Vector.push(&window->tabs, (void **) &newTab);
-
-            if (!pinned && !discarded && !active) {
-                Vector.push(CacheService.getLoadedTabs(), (void **) &newTab);
-            }
-            return;
-        }
-    }
-    windowsOnCreatedHandle(buffer, 1);
+  struct Window *window = WindowsService.getWindowById(windowId);
+  if (window == NULL) {
+    windowsOnCreatedHandle(buffer);
     tabsOnCreatedHandle(buffer, bufferSize);
+    return;
+  }
+
+  struct Tab *tab = TabsService.getTabByIdAndWindowId(tabId, windowId);
+  if (tab != NULL) {
+    return;
+  }
+
+  tab = malloc(sizeof(struct Tab));
+  tab->windowId = windowId;
+  tab->id = tabId;
+  tab->active = active;
+  tab->discarded = discarded;
+  tab->pinned = pinned;
+  tab->audible = audbile;
+  tab->lastUsageTime = (double) time(NULL);
+
+  Vector.push(&window->tabs, (void **) &tab, false);
+
+  if (!tab->active
+      && (!SettingsProviderService.getNeverSuspendPinned() || !tab->pinned)
+      && (!SettingsProviderService.getNeverSuspendPlayingAudio() || !tab->audible)) {
+    Vector.push(CacheService.getLoadedTabs(), (void **) &tab, false);
+  }
+  JavaScriptProviderService.expiredTabsWatcher();
 }
 
-static void passTabToNextWindow(const uint32_t newWindowId, const uint32_t oldWindowIndex, const uint32_t oldWindowTabIndex) {
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        if (window->id != newWindowId) {
-            continue;
-        }
-        struct Window *oldWindow = CacheService.getWindows()->items[oldWindowIndex];
-        struct Tab *oldWindowTab = oldWindow->tabs.items[oldWindowTabIndex];
+static void passTabToNextWindow(const uint32_t newWindowId,
+                                const uint32_t oldWindowIndex,
+                                const uint32_t oldWindowTabIndex) {
+  struct Window *window = WindowsService.getWindowById(newWindowId);
+  if (window == NULL) {
+    return;
+  }
 
-        oldWindowTab->windowId = newWindowId;
-        Vector.push(&window->tabs, (void **) &oldWindow->tabs.items[oldWindowTabIndex]);
-        Vector.splice(&oldWindow->tabs, oldWindowTabIndex, false);
-        return;
-    }
+  struct Window *oldWindow = CacheService.getWindows()->items[oldWindowIndex];
+  struct Tab *oldWindowTab = oldWindow->tabs.items[oldWindowTabIndex];
+
+  oldWindowTab->windowId = newWindowId;
+  Vector.push(&window->tabs, &oldWindow->tabs.items[oldWindowTabIndex], false);
+  Vector.splice(&oldWindow->tabs, oldWindowTabIndex, false);
+  JavaScriptProviderService.expiredTabsWatcher();
 }
 
-//0 uint32_t windowId,
-//1 uint32_t tabId,
-//2 uint32_t pinned, states: 0-1 bool, > 1 ignored
-//3 uint32_t audible, states: 0-1 bool, > 1 ignored
-static void tabsOnUpdatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
-    uint32_t windowId = (uint32_t) buffer[0];
-    uint32_t tabId = (uint32_t) buffer[1];
-    uint8_t pinned = (uint8_t) buffer[2];
-    uint8_t audible = (uint8_t) buffer[3];
+static void tabsOnUpdatedHandle(const uint32_t *buffer) {
+  uint32_t windowId = (uint32_t) buffer[0];
+  uint32_t tabId = (uint32_t) buffer[1];
+  uint8_t pinned = (uint8_t) buffer[2];
+  uint8_t audible = (uint8_t) buffer[3];
 
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        uint32_t tabsIndex = window->tabs.size;
-        bool found = false;
-        while (tabsIndex--) {
-            struct Tab *tab = window->tabs.items[tabsIndex];
-            if (tab->windowId != windowId && tab->id == tabId) {
-                passTabToNextWindow(windowId, windowsIndex, tabsIndex);
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            break;
-        }
+  struct Tab *tab = TabsService.getTabById(tabId);
+
+  if (tab != NULL && tab->windowId != windowId) {
+    struct Window *window = WindowsService.getWindowById(tab->windowId);
+    const int32_t windowIndex = Vector.getIndex(*CacheService.getWindows(), window);
+    const int32_t tabIndex = Vector.getIndex(window->tabs, tab);
+
+    if (windowIndex == -1 || tabIndex == -1) {
+      return;
     }
 
-    windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        if (window->id == windowId) {
-            uint32_t tabsIndex = window->tabs.size;
-            while (tabsIndex--) {
-                struct Tab *tab = window->tabs.items[tabsIndex];
-                if (tab->id == tabId) {
-                    if (pinned <= 1) {
-                        tab->pinned = (bool) pinned;
-                    }
+    passTabToNextWindow(windowId, (const uint32_t) windowIndex, (const uint32_t) tabIndex);
+  }
 
-                    if (audible <= 1) {
-                        tab->audible = (bool) audible;
-                    }
-                    return;
-                }
-            }
-        }
-    }
+  tab = TabsService.getTabById(tabId);
+  if (tab == NULL) {
+    return;
+  }
+
+  if (pinned <= 1) {
+    tab->pinned = (bool) pinned;
+  }
+
+  if (audible <= 1) {
+    tab->audible = (bool) audible;
+  }
 }
 
-//0 uint32_t windowId,
-//1 uint32_t tabId,
-static void tabsOnRemovedHandle(const uint32_t *buffer, uint32_t bufferSize) {
-    uint32_t windowId = (uint32_t) buffer[0];
-    uint32_t tabId = (uint32_t) buffer[1];
+static void tabsOnRemovedHandle(const uint32_t *buffer) {
+  uint32_t windowId = (uint32_t) buffer[0];
+  uint32_t tabId = (uint32_t) buffer[1];
 
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
+  struct Tab *tab = TabsService.getLoadedTabByIdAndWindowId(tabId, windowId);
+  if (tab == NULL) {
+    return;
+  }
+  struct Window *window = WindowsService.getWindowById(tab->windowId);
+  if (window == NULL) {
+    return;
+  }
 
-        if (window->id != windowId) {
-            continue;
-        }
+  int32_t index = Vector.getIndex(*CacheService.getLoadedTabs(), tab);
+  if (index == -1) {
+    return;
+  }
+  Vector.splice(CacheService.getLoadedTabs(), (uint32_t) index, false);
 
-        uint32_t tabsIndex = window->tabs.size;
-        while (tabsIndex--) {
-            struct Tab *tab = window->tabs.items[tabsIndex];
-
-            if (tab->id != tabId) {
-                continue;
-            }
-
-            uint32_t loadedTabsIndex = CacheService.getLoadedTabs()->size;
-            while (loadedTabsIndex--) {
-                struct Tab *loadedTab = CacheService.getLoadedTabs()->items[loadedTabsIndex];
-
-                if (loadedTab->windowId == windowId && loadedTab->id == tabId) {
-                    Vector.splice(CacheService.getLoadedTabs(), loadedTabsIndex, false);
-                    break;
-                }
-            }
-            Vector.splice(&window->tabs, tabsIndex, true);
-            return;
-        }
-    }
+  index = Vector.getIndex(window->tabs, tab);
+  if (index == -1) {
+    return;
+  }
+  Vector.splice(&window->tabs, (uint32_t) index, true);
+  JavaScriptProviderService.expiredTabsWatcher();
 }
 
 static void discardTabs() {
-    uint32_t windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        uint32_t tabsIndex = window->tabs.size;
-        while (tabsIndex--) {
-            struct Tab *tab = window->tabs.items[tabsIndex];
+  struct Vector tabs = TabsService.getTabsThatShouldBeDiscarded();
+  if (tabs.size == 0 && CacheService.getLoadedTabs()->size != 0) {
+    Vector.deconstructor(tabs);
+    JavaScriptProviderService.expiredTabsWatcher();
+    return;
+  }
 
-            if (time(NULL) - tab->lastUsageTime >= SettingsProviderService.getTimeToDiscard()
-                && !tab->active && (!SettingsProviderService.getNeverSuspendPinned()
-                || !tab->pinned) && (!SettingsProviderService.getNeverSuspendPlayingAudio()
-                || !tab->audible)) {
-                JavaScriptProviderService.chromeTabsDiscard(tab->id);
-                tab->discarded = true;
+  uint32_t index = tabs.size;
+  while (index--) {
+    struct Tab *tab = tabs.items[index];
+    JavaScriptProviderService.chromeTabsDiscard(tab->id);
+    tab->discarded = true;
+    Vector.splice(CacheService.getLoadedTabs(), (uint32_t) Vector.getIndex(tabs, tab), false);
+  }
 
-                uint32_t loadedTabsIndex = CacheService.getLoadedTabs()->size;
-                while (loadedTabsIndex--) {
-                    struct Tab *loadedTab = CacheService.getLoadedTabs()->items[loadedTabsIndex];
-                    if (loadedTab->discarded || loadedTab->active) {
-                        Vector.splice(CacheService.getLoadedTabs(), loadedTabsIndex, false);
-                    }
-                }
-            }
-        }
-    }
-
-    if (CacheService.getLoadedTabs()->size == 0) {
-        JavaScriptProviderService.clearInterval();
-        return;
-    }
-
-    windowsIndex = CacheService.getWindows()->size;
-    while (windowsIndex--) {
-        struct Window *window = CacheService.getWindows()->items[windowsIndex];
-        uint32_t loadedTabsIndex = CacheService.getLoadedTabs()->size;
-        while (loadedTabsIndex--) {
-            struct Tab *loadedTab = CacheService.getLoadedTabs()->items[loadedTabsIndex];
-            if (loadedTab->windowId == window->id) {
-                return;
-            }
-        }
-    }
+  if (CacheService.getLoadedTabs()->size == 0) {
     JavaScriptProviderService.clearInterval();
+  }
+  Vector.deconstructor(tabs);
 }
 
 events_service_namespace const EventsService = {
-        tabsOnActivatedHandle,
-        windowsOnCreatedHandle,
-        windowsOnRemovedHandle,
-        tabsOnCreatedHandle,
-        tabsOnUpdatedHandle,
-        tabsOnRemovedHandle,
-        discardTabs
+    tabsOnActivatedHandle,
+    windowsOnCreatedHandle,
+    windowsOnRemovedHandle,
+    tabsOnCreatedHandle,
+    tabsOnUpdatedHandle,
+    tabsOnRemovedHandle,
+    discardTabs
 };
 

@@ -24,14 +24,20 @@ extern void jsConsoleLog(uint32_t);
 //3 bool neverSuspendUnsavedFormInput
 //4 bool desaturateFavicon
 EMSCRIPTEN_KEEPALIVE void cInitialize(const uint32_t *buffer, uint32_t bufferSize) {
+  uint32_t timeToDiscard = buffer[0];
+  bool neverSuspendPinned = (bool) buffer[1];
+  bool neverSuspendUnsavedFormInput = (bool) buffer[2];
+  bool neverSuspendPlayingAudio = (bool) buffer[3];
+  bool desaturateFavicon = (bool) buffer[4];
+
   CacheService.initialize();
   JavaScriptProviderService.initialize(jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard, jsConsoleLog);
   SettingsProviderService.initialize(
-      buffer[0],
-      (bool) buffer[1],
-      (bool) buffer[2],
-      (bool) buffer[3],
-      (bool) buffer[4]
+      timeToDiscard,
+      neverSuspendPinned,
+      neverSuspendUnsavedFormInput,
+      neverSuspendPlayingAudio,
+      desaturateFavicon
   );
 }
 
@@ -51,7 +57,7 @@ EMSCRIPTEN_KEEPALIVE int cAbleToPushEvent(const uint8_t eventId) {
 EMSCRIPTEN_KEEPALIVE void cPushEvent(const uint32_t eventId) {
   struct Event *event = malloc(sizeof(struct Event));
   event->enumEvents = eventId;
-  Vector.push(CacheService.getEvents(), (void **) &event);
+  Vector.push(CacheService.getEvents(), (void **) &event, true);
   if (!EventLoopService.isEventLoopWorking()) {
     EventLoopService.processEvents();
   }
@@ -62,7 +68,7 @@ EMSCRIPTEN_KEEPALIVE void cPushEvent1D(const uint32_t eventId, uint32_t *buffer,
   event->enumEvents = eventId;
   event->buffer1D = buffer;
   event->bufferSize1D = bufferSize;
-  Vector.push(CacheService.getEvents(), (void **) &event);
+  Vector.push(CacheService.getEvents(), (void **) &event, true);
   if (!EventLoopService.isEventLoopWorking()) {
     EventLoopService.processEvents();
   }
@@ -75,7 +81,7 @@ cPushEvent2D(const uint32_t eventId, double **buffer, uint32_t bufferSize, const
   event->buffer2D = buffer;
   event->bufferSize2D = bufferSize;
   event->segmentSize2D = segmentSize;
-  Vector.push(CacheService.getEvents(), (void **) &event);
+  Vector.push(CacheService.getEvents(), (void **) &event, true);
   if (!EventLoopService.isEventLoopWorking()) {
     EventLoopService.processEvents();
   }

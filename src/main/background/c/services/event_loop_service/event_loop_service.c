@@ -4,7 +4,7 @@
 #include "event_loop_service.h"
 #include "../../models/event.h"
 #include "../../models/events.h"
-#include "../../utils/vector/vector.h"
+#include "../../libs/vector/vector.h"
 #include "../events_service/events_service.h"
 #include "../cache_service/cache_service.h"
 
@@ -24,22 +24,22 @@ static void processEvent() {
   struct Event *event = CacheService.getEvents()->items[0];
   switch (event->enumEvents) {
     case TABS_ON_ACTIVATED:
-      EventsService.tabsOnActivatedHandle((const double **) event->buffer2D, event->bufferSize2D, event->segmentSize2D);
+      EventsService.tabsOnActivatedHandle((const double **) event->buffer2D, event->bufferSize2D);
       break;
     case WINDOWS_ON_CREATED:
-      EventsService.windowsOnCreatedHandle(event->buffer1D, event->bufferSize1D);
+      EventsService.windowsOnCreatedHandle(event->buffer1D);
       break;
     case WINDOWS_ON_REMOVED:
-      EventsService.windowsOnRemovedHandle(event->buffer1D, event->bufferSize1D);
+      EventsService.windowsOnRemovedHandle(event->buffer1D);
       break;
     case TABS_ON_CREATED:
       EventsService.tabsOnCreatedHandle(event->buffer1D, event->bufferSize1D);
       break;
     case TABS_ON_UPDATED:
-      EventsService.tabsOnUpdatedHandle(event->buffer1D, event->bufferSize1D);
+      EventsService.tabsOnUpdatedHandle(event->buffer1D);
       break;
     case TABS_ON_REMOVED:
-      EventsService.tabsOnRemovedHandle(event->buffer1D, event->bufferSize1D);
+      EventsService.tabsOnRemovedHandle(event->buffer1D);
       break;
     case DISCARD_TABS:
       EventsService.discardTabs();
