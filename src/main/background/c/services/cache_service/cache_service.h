@@ -1,7 +1,7 @@
-#ifndef FTS_CACHE_H
-#define FTS_CACHE_H
+#ifndef FTS_SERVICE_CACHE_H
+#define FTS_SERVICE_CACHE_H
 
-#include "../../utils/vector/vector.h"
+#include "../../libs/vector/vector.h"
 
 typedef struct {
     void (*const initialize)();
@@ -11,9 +11,9 @@ typedef struct {
     struct Vector *(*const getLoadedTabs)();
 
     struct Vector *(*const getEvents)();
-} cache_namespace;
+} cache_service_namespace;
 
-extern cache_namespace const Cache;
+extern cache_service_namespace const CacheService;
 
 #endif
 

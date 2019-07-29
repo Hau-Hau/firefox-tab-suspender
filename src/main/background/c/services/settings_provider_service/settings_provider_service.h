@@ -1,5 +1,5 @@
-#ifndef FTS_SETTINGS_PROVIDER_H
-#define FTS_SETTINGS_PROVIDER_H
+#ifndef FTS_SETTINGS_PROVIDER_SERVICE_H
+#define FTS_SETTINGS_PROVIDER_SERVICE_H
 
 typedef struct {
     void (*const initialize)(
@@ -19,9 +19,9 @@ typedef struct {
     bool (*const getNeverSuspendPlayingAudio)();
 
     bool (*const getDesaturateFavicon)();
-} settings_provider_namespace;
+} settings_provider_service_namespace;
 
-extern settings_provider_namespace const SettingsProvider;
+extern settings_provider_service_namespace const SettingsProviderService;
 
 #endif
 

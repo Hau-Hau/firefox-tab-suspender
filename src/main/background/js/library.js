@@ -1,14 +1,14 @@
 mergeInto(LibraryManager.library, {
   jsConsoleLog: function(num) {
-    Module["jsConsoleLog"](num);
+    Module['jsConsoleLog'](num);
   },
   jsExpiredTabsWatcher: function() {
-    Module["jsExpiredTabsWatcher"]();
+    Module['jsExpiredTabsWatcher']();
   },
   jsClearInterval: function() {
-    Module["jsClearInterval"]();
+    Module['jsClearInterval']();
   },
   jsChromeTabsDiscard: function(tabId) {
-    Module["jsChromeTabsDiscard"](tabId);
-  }
+    Module['jsChromeTabsDiscard'](tabId);
+  },
 });

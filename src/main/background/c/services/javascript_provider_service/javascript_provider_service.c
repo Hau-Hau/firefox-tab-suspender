@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "javascript_provider.h"
+#include "javascript_provider_service.h"
 
 static void (*jsExpiredTabsWatcher)(void);
 
@@ -38,11 +38,10 @@ static void consoleLog(uint32_t number) {
     (*jsConsoleLog)(number);
 }
 
-javascript_provider_namespace const JavaScriptProvider = {
+javascript_provider_service_namespace const JavaScriptProviderService = {
         initialize,
         expiredTabsWatcher,
         clearInterval,
         chromeTabsDiscard,
         consoleLog
 };
-

@@ -1,33 +1,36 @@
-Module["jsConsoleLog"] = function() {
+Module['jsConsoleLog'] = function(num) {
   console.log(num);
-}
+};
 
-Module["jsExpiredTabsWatcher"] = function() {
+Module['jsExpiredTabsWatcher'] = function() {
   if (
-    Module["internalInterval"] !== undefined &&
-    Module["internalInterval"] !== null
+      Module['internalInterval'] !== undefined &&
+      Module['internalInterval'] !== null
   ) {
     return;
   }
-  Module["internalInterval"] = setInterval(function () {
-    if (!Module.cwrap("cAbleToPushEvent", "number", ["number"])(6)) {
+  Module['internalInterval'] = setInterval(function() {
+    if (!Module.cwrap('cAbleToPushEvent', 'number', ['number'])(6)) {
       return;
     }
-    Module.cwrap("cPushEvent", null, ["number"])(6);
+    Module.cwrap('cPushEvent', null, ['number'])(6);
   }, 2000);
-}
+};
 
-Module["jsClearInterval"] = function() {
-  clearInterval(Module["internalInterval"]);
-  Module["internalInterval"] = undefined;
-}
+Module['jsClearInterval'] = function() {
+  clearInterval(Module['internalInterval']);
+  Module['internalInterval'] = undefined;
+};
 
-Module["jsChromeTabsDiscard"] = function (tabId) {
-  var nonNativeDiscard = function (tabId, title, url) {
-    browser.tabs.update(tabId, { url: browser.extension.getURL('./discarded.html') + '?t=' + encodeURIComponent(title) + '&u=' + encodeURIComponent(url) });
+Module['jsChromeTabsDiscard'] = function(tabId) {
+  var nonNativeDiscard = function(tabId, title, url) {
+    browser.tabs.update(tabId, {
+      url: browser.extension.getURL('./discarded.html') + '?t=' +
+          encodeURIComponent(title) + '&u=' + encodeURIComponent(url),
+    });
   };
 
-  var contrastImage = function (imageData) {
+  var contrastImage = function(imageData) {
     var data = imageData.data;
     var contrast = -55 / 100 + 1;
     var intercept = 128 * (1 - contrast);
@@ -39,37 +42,37 @@ Module["jsChromeTabsDiscard"] = function (tabId) {
     return imageData;
   };
 
-  var processFavIconChange = function (tabId, url) {
+  var processFavIconChange = function(tabId, url) {
     chrome.tabs.executeScript(tabId, {
       code:
-        "(function() {" +
-        '  if (!document.querySelector("link[rel~=icon]")) {' +
-        "    document.head.insertAdjacentHTML('beforeend', '<link rel=\"icon\">');" +
-        "  }" +
-        '  if (document.querySelector("link[rel~=icon]")) {' +
-        '    Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "' +
-        url +
-        '"; });' +
-        "  }" +
-        "})();"
+          '(function() {' +
+          '  if (!document.querySelector("link[rel~=icon]")) {' +
+          '    document.head.insertAdjacentHTML(\'beforeend\', \'<link rel="icon">\');' +
+          '  }' +
+          '  if (document.querySelector("link[rel~=icon]")) {' +
+          '    Array.prototype.slice.call(document.querySelectorAll("link[rel~=icon]")).forEach(function(l){ l.href = "' +
+          url +
+          '"; });' +
+          '  }' +
+          '})();',
     });
   };
 
-  var changeFavicon = function (url) {
+  var changeFavicon = function(url) {
     var image = new Image();
     image.src = url;
 
-    image.onload = function () {
-      var canvas = document.createElement("canvas");
+    image.onload = function() {
+      var canvas = document.createElement('canvas');
       canvas.width = Math.max(1, Math.floor(image.width));
       canvas.height = Math.max(1, Math.floor(image.height));
 
-      var context = canvas.getContext("2d");
+      var context = canvas.getContext('2d');
       context.drawImage(image, 0, 0);
       var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
       context.putImageData(contrastImage(imageData), 0, 0);
-      processFavIconChange(tabId, canvas.toDataURL("image/png"));
+      processFavIconChange(tabId, canvas.toDataURL('image/png'));
     };
   };
 
@@ -82,26 +85,28 @@ Module["jsChromeTabsDiscard"] = function (tabId) {
     return;
   }
 
-  browser.tabs.query({}).then(function (tabs) {
+  browser.tabs.query({}).then(function(tabs) {
     var tabsIndex = tabs.length;
     while (tabsIndex--) {
-      if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].active === false && tabs[tabsIndex].url.indexOf("about:") === -1) {
-        (function (tab) {
+      if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].active === false &&
+          tabs[tabsIndex].url.indexOf('about:') === -1) {
+        (function(tab) {
           if (Module['extension_settings'].nonNativeDiscarding) {
-            if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
+            if (tabs[tabsIndex].title.indexOf('- discarded') < 1) {
               nonNativeDiscard(tabId, tab.title, tab.url);
             }
           } else {
             changeFavicon(tab.favIconUrl);
           }
-          setTimeout(function () {
+          setTimeout(function() {
             if (Module['extension_settings'].nonNativeDiscarding) {
-              if (tabs[tabsIndex].title.indexOf("- discarded") < 1) {
+              if (tab.title.indexOf('- discarded') < 1) {
                 changeFavicon(tab.favIconUrl);
               }
             } else {
               browser.tabs.discard(tabId).then(
-                null, processFavIconChange(tabId, tabs[tabsIndex].favIconUrl));
+                  null,
+                  processFavIconChange(tabId, tab.favIconUrl));
             }
           }, 1000);
         })(tabs[tabsIndex]);
@@ -109,5 +114,5 @@ Module["jsChromeTabsDiscard"] = function (tabId) {
       }
     }
   });
-}
+};
 

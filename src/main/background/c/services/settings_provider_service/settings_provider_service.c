@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "settings_provider.h"
+#include "settings_provider_service.h"
 #include "../../models/settings.h"
 
 static struct Settings *settings;
@@ -41,7 +41,7 @@ static bool getDesaturateFavicon() {
     return settings->desaturateFavicon;
 }
 
-settings_provider_namespace const SettingsProvider = {
+settings_provider_service_namespace const SettingsProviderService = {
         initialize,
         getTimeToDiscard,
         getNeverSuspendPinned,
@@ -49,4 +49,3 @@ settings_provider_namespace const SettingsProvider = {
         getNeverSuspendUnsavedFormInput,
         getDesaturateFavicon
 };
-
