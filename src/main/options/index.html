@@ -8,6 +8,16 @@
     <form class="u-fs-13px u-p-16px u-bgc-white">
         <ul class="Layout Layout--column">
           <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Automatic suspend*:
+              <br />
+              <span class="u-fs-13px u-c-default-text">
+                *if disabled it is still possible to suspend tab from tab's context menu
+              </span>
+            </span>
+            <input type="checkbox" id="automatic_suspend" />
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
               <span class="u-fs-16px u-c-default-text">
                 Automatically suspend tabs after (seconds):
               </span>
@@ -25,12 +35,40 @@
             </span>
             <input type="checkbox" id="never_suspend_playing_audio"/>
           </li>
-            <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
-              <span class="u-fs-16px u-c-default-text">
-                Desaturate favicon on tab suspend:
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Desaturate favicon on tab suspend:
+            </span>
+            <input type="checkbox" id="desaturate_favicon" />
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              (Experimental*) Non native discarding:
+              <br />
+              <span class="u-fs-13px u-c-default-text">
+                *improve stability but still not yet finished at all
               </span>
-              <input type="checkbox" id="desaturate_favicon" />
-            </li>
+            </span>
+            <input type="checkbox" id="non_native_discarding"/>
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Suspend option in tab's context menu:
+            </span>
+            <input type="checkbox" id="suspend_in_context_menu" />
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Suspend Others option in tab's context menu:
+            </span>
+            <input type="checkbox" id="suspend_others_in_context_menu" />
+          </li>
+          <li class="Layout Layout--row Layout--center Layout--space-between u-p-b-8px">
+            <span class="u-fs-16px u-c-default-text">
+              Suspend All to the Left/Right options in tab's context menu:
+            </span>
+            <input type="checkbox" id="suspend_left_right_in_context_menu" />
+          </li>
         </ul>
        <div class="Layout Layout--row Layout--start u-p-t-16px u-b-t-default">
           <input type="submit" name="action" value="Reset" class="Link u-m-r-16px"/>

@@ -81,13 +81,13 @@ $sides: (
 
 @mixin generateHeights($property) {
   .u-h-#{$property} {
-    width: $property !important;
+    height: $property !important;
   }
   .u-max-h-#{$property} {
-    max-width: $property !important;
+    max-height: $property !important;
   }
   .u-min-h-#{$property} {
-    min-width: $property !important;
+    min-height: $property !important;
   }
 }
 

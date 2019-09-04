@@ -2,9 +2,10 @@
 #define FTS_EVENT_H
 
 #include <stdint.h>
+#include "./events.h"
 
 struct Event {
-    uint32_t eventId;
+    enum Events enumEvents;
     uint32_t *buffer1D;
     uint32_t bufferSize1D;
     double **buffer2D;

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "array_utils.h"
+#include "array_service.h"
 
 static void swap(void **a, void **b) {
     void *t = *b;
@@ -11,7 +11,15 @@ static void swap(void **a, void **b) {
     *a = t;
 }
 
-static void push(void **array, void **value, uint32_t *size, uint32_t *capacity) {
+static void push(void **array, void **value, uint32_t *size, uint32_t *capacity, bool allowDuplicates) {
+    if (!allowDuplicates) {
+        uint32_t index = *size;
+        while (index--) {
+            if (array[index] == *value) {
+                return;
+            }
+        }
+    }
     if (*size == *capacity) {
         *capacity = *capacity * 2;
         void *ptr = realloc(*array, *capacity);
@@ -51,7 +59,7 @@ static void splice(void **array, uint32_t index, uint32_t *size, bool shouldFree
     }
 }
 
-array_utils_namespace const ArrayUtils = {
+array_service_namespace const ArrayService = {
         swap,
         push,
         splice

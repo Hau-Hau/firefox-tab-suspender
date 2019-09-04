@@ -1,5 +1,5 @@
-#ifndef FTS_JAVASCRIPT_PROVIDER_H
-#define FTS_JAVASCRIPT_PROVIDER_H
+#ifndef FTS_JAVASCRIPT_PROVIDER_SERVICE_H
+#define FTS_JAVASCRIPT_PROVIDER_SERVICE_H
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,7 +9,7 @@ typedef struct {
     void (*const initialize)(
             void (*fJsExpiredTabsWatcher)(void),
             void (*fJsClearInterval)(void),
-            void (*fJsChromeTabsDiscard)(uint32_t, uint8_t),
+            void (*fJsChromeTabsDiscard)(uint32_t),
             void (*fJsConsoleLog)(uint32_t)
     );
 
@@ -17,12 +17,12 @@ typedef struct {
 
     void (*const clearInterval)();
 
-    void (*const chromeTabsDiscard)(uint32_t tabId, bool desaturateFavicon);
+    void (*const chromeTabsDiscard)(uint32_t tabId);
 
     void (*const consoleLog)(uint32_t number);
-} javascript_provider_namespace;
+} javascript_provider_service_namespace;
 
-extern javascript_provider_namespace const JavaScriptProvider;
+extern javascript_provider_service_namespace const JavaScriptProviderService;
 
 #endif
 

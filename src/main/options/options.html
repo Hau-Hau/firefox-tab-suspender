@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="options-styles.css">
+</head>
+<body class="u-max-w-800px u-p-4px u-m-8px">
+<form class="u-fs-13px u-p-16px u-bgc-white">
+    <ul class="Layout Layout--column">
+        ${require('./components/_checkbox_row_with_hint.html')
+        id="automatic_suspend"
+        description="Automatic suspend*"
+        hint="*if disabled it is still possible to suspend tab from tab's context menu"}
+
+        ${require('./components/_number_row.html')
+        id="time_to_suspend"
+        description="Automatically suspend tabs after (seconds)"
+        min="1"
+        max="-1"
+        value="60"}
+
+        ${require('./components/_checkbox_row.html')
+        id="never_suspend_pinned"
+        description="Never suspend pinned tabs" }
+
+        ${require('./components/_checkbox_row.html')
+        id="never_suspend_playing_audio"
+        description="Never suspend tabs that are playing audio" }
+
+        ${require('./components/_checkbox_row.html')
+        id="loading_tabs_immediately"
+        description="Immediately restore page" }
+
+        ${require('./components/_checkbox_row.html')
+        id="discarded_page_dark_theme"
+        description="Dark theme for discarded page" }
+
+        ${require('./components/_checkbox_row.html')
+        id="suspend_in_context_menu"
+        description="Suspend option in tab's context menu" }
+
+        ${require('./components/_checkbox_row.html')
+        id="suspend_others_in_context_menu"
+        description="Suspend Others option in tab's context menu" }
+
+        ${require('./components/_checkbox_row.html')
+        id="suspend_left_right_in_context_menu"
+        description="Suspend All to the Left/Right options in tab's context menu" }
+
+        ${require('./components/_checkbox_row.html')
+        id="suspend_all_in_context_menu"
+        description="Suspend All (in every window) in tab's context menu" }
+    </ul>
+    <div class="Layout Layout--row Layout--start u-p-t-16px u-b-t-default">
+        <input type="submit" name="action" value="Reset" class="Link u-m-r-16px"/>
+        <input type="submit" name="action" value="Save" class="Link u-m-r-16px"/>
+    </div>
+</form>
+<script src="options.js"></script>
+</body>
+</html>
+

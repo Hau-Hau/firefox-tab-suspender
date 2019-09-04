@@ -1,19 +1,34 @@
 @import './mixins.scss';
 
-@for $i from 1 through 4 {
-    @include generatePaddings(4px * $i);
-    @include generateMargins(4px * $i);
-}
-
+// Borders
 @include generateBorders(default, 1px, solid, rgba(0, 0, 0, 0.2));
 
-@include generateFontSize(13px);
-@include generateFontSize(16px);
-
+// Colors
 @include generateColors(white, #fff);
 @include generateColors(default-text, #222);
 @include generateColors(hyperlink, #0087ff);
 @include generateColors(hyperlink-dark, #0052cc);
 
-@include generateWidths(800px);
+// Fonts
+@include generateFontSize(13px);
+@include generateFontSize(16px);
 
+@include generateWidths(800px);
+@include generateWidths(100vw);
+@include generateWidths(90vw);
+
+@include generateHeights(100vh);
+
+// Paddings and margins
+@for $i from 1 through 4 {
+    @include generatePaddings(4px * $i);
+    @include generateMargins(4px * $i);
+}
+
+.u-pointer {
+    cursor: pointer;
+}
+
+.u-ww-bw {
+    word-wrap: break-word;
+}
