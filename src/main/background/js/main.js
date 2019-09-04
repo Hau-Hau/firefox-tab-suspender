@@ -4,11 +4,12 @@ browser.storage.local.get({
   neverSuspendPinned: true,
   neverSuspendPlayingAudio: true,
   neverSuspendUnsavedFormInput: true,
-  desaturateFavicon: true,
-  nonNativeDiscarding: true,
+  loadingTabsImmediately: false,
+  discardedPageDarkTheme: false,
   suspendOptionInContextMenu: true,
   suspendOthersOptionInContextMenu: true,
   suspendLeftAndRightOptionsInContextMenu: true,
+  suspendAllOptionInContextMenu: true,
 }).then(function(value) {
   //= ../.tmp/service.js
   Module.onRuntimeInitialized = _ => {
@@ -132,9 +133,7 @@ browser.storage.local.get({
             tab.windowId,
             tab.id,
             tab.active & 1,
-            (Module['extension_settings'].nonNativeDiscarding ?
-                (tab.title.indexOf('- discarded') > 1) :
-                tab.discarded) & 1,
+            (tab.title.indexOf('- discarded') > 1) & 1,
             tab.pinned & 1,
             tab.audible & 1,
           ]);
@@ -183,9 +182,7 @@ browser.storage.local.get({
               tab.windowId,
               tab.id,
               tab.active & 1,
-              (Module['extension_settings'].nonNativeDiscarding ?
-                  (tab.title.indexOf('- discarded') > 1) :
-                  tab.discarded) & 1,
+              (tab.title.indexOf('- discarded') > 1) & 1,
               tab.pinned & 1,
               tab.audible & 1,
             ],
@@ -195,6 +192,22 @@ browser.storage.local.get({
         console.log({e: e, f: 'chrome.tabs.onCreated'});
         browser.runtime.reload();
       }
+    });
+
+    browser.tabs.onActivated.addListener(function(activeInfo) {
+      if (!value.loadingTabsImmediately) {
+        return;
+      }
+      chrome.tabs.get(activeInfo.tabId, function(tab) {
+        if (tab.title.indexOf('- discarded') <= 1) {
+          return;
+        }
+        const urlObj = new URL(tab.url);
+        const url = urlObj.searchParams.get('u');
+        browser.tabs.update(tab.id, {
+          url: url
+        });
+      });
     });
 
     chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
@@ -252,9 +265,7 @@ browser.storage.local.get({
                 tab.windowId,
                 tab.id,
                 tab.active & 1,
-                (Module['extension_settings'].nonNativeDiscarding ?
-                    (tab.title.indexOf('- discarded') > 1) :
-                    tab.discarded) & 1,
+                (tab.title.indexOf('- discarded') > 1) & 1,
                 tab.pinned & 1,
                 tab.audible & 1,
                 Math.floor(tab.lastAccessed / 1000),
