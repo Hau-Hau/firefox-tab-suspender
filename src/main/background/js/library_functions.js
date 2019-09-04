@@ -26,7 +26,9 @@ Module['jsChromeTabsDiscard'] = function(tabId) {
   var nonNativeDiscard = function(tabId, title, url) {
     browser.tabs.update(tabId, {
       url: browser.extension.getURL('./discarded.html') + '?t=' +
-          encodeURIComponent(title) + '&u=' + encodeURIComponent(url),
+          encodeURIComponent(title) + '&u=' + encodeURIComponent(url) +
+          '&h=' + Math.random().toString(8).substring(2) +
+          '&d=' + Module['extension_settings'].discardedPageDarkTheme,
     });
   };
 
@@ -76,37 +78,18 @@ Module['jsChromeTabsDiscard'] = function(tabId) {
     };
   };
 
-  if (!Module['extension_settings'].desaturateFavicon) {
-    if (Module['extension_settings'].nonNativeDiscarding) {
-      nonNativeDiscard(tabId, tab.title, tab.url);
-      return;
-    }
-    chrome.tabs.discard(tabId);
-    return;
-  }
-
   browser.tabs.query({}).then(function(tabs) {
     var tabsIndex = tabs.length;
     while (tabsIndex--) {
       if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].active === false &&
           tabs[tabsIndex].url.indexOf('about:') === -1) {
         (function(tab) {
-          if (Module['extension_settings'].nonNativeDiscarding) {
-            if (tabs[tabsIndex].title.indexOf('- discarded') < 1) {
-              nonNativeDiscard(tabId, tab.title, tab.url);
-            }
-          } else {
-            changeFavicon(tab.favIconUrl);
+          if (tabs[tabsIndex].title.indexOf('- discarded') < 1) {
+            nonNativeDiscard(tabId, tab.title, tab.url);
           }
           setTimeout(function() {
-            if (Module['extension_settings'].nonNativeDiscarding) {
-              if (tab.title.indexOf('- discarded') < 1) {
+            if (tab.title.indexOf('- discarded') < 1) {
                 changeFavicon(tab.favIconUrl);
-              }
-            } else {
-              browser.tabs.discard(tabId).then(
-                  null,
-                  processFavIconChange(tabId, tab.favIconUrl));
             }
           }, 1000);
         })(tabs[tabsIndex]);

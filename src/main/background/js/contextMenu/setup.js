@@ -1,6 +1,18 @@
+const suspendId = 'suspend';
+const suspendOthersId = 'suspend-others';
+const suspendLeftId = 'suspend-left';
+const suspendRightId = 'suspend-right';
+const suspendAllId = 'suspend-all';
+
+browser.menus.remove(suspendId);
+browser.menus.remove(suspendOthersId);
+browser.menus.remove(suspendLeftId);
+browser.menus.remove(suspendRightId);
+browser.menus.remove(suspendAllId);
+
 if (value.suspendOptionInContextMenu) {
   browser.menus.create({
-    id: 'suspend',
+    id: suspendId,
     contexts: ['tab'],
     title: 'Suspend',
   });
@@ -8,7 +20,7 @@ if (value.suspendOptionInContextMenu) {
 
 if (value.suspendOthersOptionInContextMenu) {
   browser.menus.create({
-    id: 'suspend-others',
+    id: suspendOthersId,
     contexts: ['tab'],
     title: 'Suspend Others',
   });
@@ -16,24 +28,32 @@ if (value.suspendOthersOptionInContextMenu) {
 
 if (value.suspendLeftAndRightOptionsInContextMenu) {
   browser.menus.create({
-    id: 'suspend-left',
+    id: suspendLeftId,
     contexts: ['tab'],
     title: 'Suspend All to the Left',
   });
 
   browser.menus.create({
-    id: 'suspend-right',
+    id: suspendRightId,
     contexts: ['tab'],
     title: 'Suspend All to the Right',
   });
 }
 
+if (value.suspendAllOptionInContextMenu) {
+  browser.menus.create({
+    id: suspendAllId,
+    contexts: ['tab'],
+    title: 'Suspend All',
+  });
+}
+
 browser.menus.onClicked.addListener(function(info, tab) {
-  if (info.menuItemId == 'suspend') {
+  if (info.menuItemId == suspendId) {
     Module['jsChromeTabsDiscard'](tab.id);
   }
 
-  if (info.menuItemId == 'suspend-others') {
+  if (info.menuItemId == suspendOthersId) {
     chrome.tabs.query({windowId: tab.windowId}, function(tabs) {
       let index = tabs.length;
       while (index--) {
@@ -45,7 +65,7 @@ browser.menus.onClicked.addListener(function(info, tab) {
     });
   }
 
-  if (info.menuItemId == 'suspend-left') {
+  if (info.menuItemId == suspendLeftId) {
     chrome.tabs.query({windowId: tab.windowId}, function(tabs) {
       let startSuspending = false;
       let index = tabs.length;
@@ -66,12 +86,24 @@ browser.menus.onClicked.addListener(function(info, tab) {
     });
   }
 
-  if (info.menuItemId == 'suspend-right') {
+  if (info.menuItemId == suspendRightId) {
     chrome.tabs.query({windowId: tab.windowId}, function(tabs) {
       let index = tabs.length;
       while (index--) {
         if (tabs[index].id === tab.id) {
           break;
+        }
+        Module['jsChromeTabsDiscard'](tabs[index].id);
+      }
+    });
+  }
+
+  if (info.menuItemId == suspendAllId) {
+    chrome.tabs.query({}, function(tabs) {
+      let index = tabs.length;
+      while (index--) {
+        if (tabs[index].active) {
+          continue;
         }
         Module['jsChromeTabsDiscard'](tabs[index].id);
       }
