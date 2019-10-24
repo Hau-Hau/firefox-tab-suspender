@@ -40,7 +40,7 @@ static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBuffer
     tab->pinned = pinned;
     tab->audible = audible;
 
-    if (!tab->active
+    if (!tab->active 
         && !tab->discarded
         && (!SettingsProviderService.getNeverSuspendPinned() || !tab->pinned)
         && (!SettingsProviderService.getNeverSuspendPlayingAudio() || !tab->audible)) {
@@ -212,7 +212,12 @@ static void discardTabs() {
     struct Tab *tab = tabs.items[index];
     JavaScriptProviderService.chromeTabsDiscard(tab->id);
     tab->discarded = true;
-    Vector.splice(CacheService.getLoadedTabs(), (uint32_t) Vector.getIndex(tabs, tab), false);
+    
+    int32_t tabIndex = Vector.getIndex(*CacheService.getLoadedTabs(), tab);
+    if (tabIndex == -1) {
+      continue;
+    }
+    Vector.splice(CacheService.getLoadedTabs(), (uint32_t) tabIndex, false);
   }
 
   if (CacheService.getLoadedTabs()->size == 0) {
