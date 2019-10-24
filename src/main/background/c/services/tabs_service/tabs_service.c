@@ -69,9 +69,9 @@ static struct Vector getTabsThatShouldBeDiscarded() {
   while (index--) {
     struct Tab *tab = CacheService.getLoadedTabs()->items[index];
     if (time(NULL) - tab->lastUsageTime >= SettingsProviderService.getTimeToDiscard()
-        && !tab->active && (!SettingsProviderService.getNeverSuspendPinned()
-        || !tab->pinned) && (!SettingsProviderService.getNeverSuspendPlayingAudio()
-        || !tab->audible)) {
+        && !tab->active 
+        && (!SettingsProviderService.getNeverSuspendPinned() || !tab->pinned) 
+        && (!SettingsProviderService.getNeverSuspendPlayingAudio() || !tab->audible)) {
       Vector.push(&output, (void **) &tab, false);
     }
   }
