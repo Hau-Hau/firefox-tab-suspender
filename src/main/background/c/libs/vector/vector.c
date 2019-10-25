@@ -17,6 +17,7 @@ static struct Vector constructor() {
 
 static void deconstructor(struct Vector self) {
   free(self.items);
+  self.items = NULL;
 }
 
 static void push(struct Vector *self, void **value, bool allowDuplicates) {
