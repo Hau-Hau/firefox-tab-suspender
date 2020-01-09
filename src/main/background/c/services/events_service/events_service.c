@@ -26,9 +26,11 @@ static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBuffer
     if (tab == NULL) {
       continue;
     }
+
     if ((discarded  && !active)
         || (SettingsProviderService.getNeverSuspendPinned() && tab->pinned)
         || (SettingsProviderService.getNeverSuspendPlayingAudio() && tab->audible)) {
+      tab->lastUsageTime = (double) time(NULL);
       continue;
     }
 
@@ -133,6 +135,7 @@ static void passTabToNextWindow(const uint32_t newWindowId,
   struct Tab *oldWindowTab = oldWindow->tabs.items[oldWindowTabIndex];
 
   oldWindowTab->windowId = newWindowId;
+  oldWindowTab->lastUsageTime = (double) time(NULL);
   Vector.push(&window->tabs, &oldWindow->tabs.items[oldWindowTabIndex], false);
   Vector.splice(&oldWindow->tabs, oldWindowTabIndex, false);
   JavaScriptProviderService.expiredTabsWatcher();
@@ -165,10 +168,12 @@ static void tabsOnUpdatedHandle(const uint32_t *buffer) {
 
   if (pinned <= 1) {
     tab->pinned = (bool) pinned;
+    tab->lastUsageTime = (double) time(NULL);
   }
 
   if (audible <= 1) {
     tab->audible = (bool) audible;
+    tab->lastUsageTime = (double) time(NULL);
   }
 }
 

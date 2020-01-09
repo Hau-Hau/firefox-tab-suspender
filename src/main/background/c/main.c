@@ -18,11 +18,6 @@ extern void jsChromeTabsDiscard(uint32_t);
 
 extern void jsConsoleLog(uint32_t);
 
-//0 uint32_t timeToDiscard,
-//1 bool neverSuspendPinned,
-//2 bool neverSuspendPlayingAudio,
-//3 bool neverSuspendUnsavedFormInput
-//4 bool desaturateFavicon
 EMSCRIPTEN_KEEPALIVE void cInitialize(const uint32_t *buffer, uint32_t bufferSize) {
   uint32_t timeToDiscard = buffer[0];
   bool neverSuspendPinned = (bool) buffer[1];
