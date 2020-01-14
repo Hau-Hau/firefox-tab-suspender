@@ -35,6 +35,14 @@ static void tabsOnActivatedHandle(const double **tabsBuffer, uint32_t tabsBuffer
     if (active || tab->active) {
       tab->lastUsageTime = (double) time(NULL);
     }
+
+    if (!tab->active && active) {
+      int32_t loadedTabIndex = Vector.getIndex(*CacheService.getLoadedTabs(), tab);
+      if (loadedTabIndex != -1) {
+        Vector.splice(CacheService.getLoadedTabs(), (uint32_t)loadedTabIndex, false);
+      }
+    }
+
     tab->active = active;
     tab->discarded = discarded;
     tab->pinned = pinned;
@@ -124,16 +132,24 @@ static void tabsOnCreatedHandle(const uint32_t *buffer, uint32_t bufferSize) {
 static void passTabToNextWindow(const uint32_t newWindowId,
                                 const uint32_t oldWindowIndex,
                                 const uint32_t oldWindowTabIndex) {
-  struct Window *window = WindowsService.getWindowById(newWindowId);
-  if (window == NULL) {
+
+  struct Window *newWindow = WindowsService.getWindowById(newWindowId);
+  if (newWindow == NULL) {
     return;
   }
 
   struct Window *oldWindow = CacheService.getWindows()->items[oldWindowIndex];
+  if (oldWindow == NULL) {
+    return;
+  }
+
   struct Tab *oldWindowTab = oldWindow->tabs.items[oldWindowTabIndex];
+  if (oldWindowTab == NULL) {
+    return;
+  }
 
   oldWindowTab->windowId = newWindowId;
-  Vector.push(&window->tabs, &oldWindow->tabs.items[oldWindowTabIndex], false);
+  Vector.push(&newWindow->tabs, &oldWindow->tabs.items[oldWindowTabIndex], false);
   Vector.splice(&oldWindow->tabs, oldWindowTabIndex, false);
   JavaScriptProviderService.expiredTabsWatcher();
 }
@@ -180,21 +196,19 @@ static void tabsOnRemovedHandle(const uint32_t *buffer) {
   if (tab == NULL) {
     return;
   }
+
   struct Window *window = WindowsService.getWindowById(tab->windowId);
   if (window == NULL) {
     return;
   }
 
-  int32_t index = Vector.getIndex(*CacheService.getLoadedTabs(), tab);
-  if (index == -1) {
+  int32_t loadedTabIndex = Vector.getIndex(*CacheService.getLoadedTabs(), tab);
+  int32_t index = Vector.getIndex(window->tabs, tab);
+  if (loadedTabIndex == -1 || index == -1) {
     return;
   }
-  Vector.splice(CacheService.getLoadedTabs(), (uint32_t) index, false);
 
-  index = Vector.getIndex(window->tabs, tab);
-  if (index == -1) {
-    return;
-  }
+  Vector.splice(CacheService.getLoadedTabs(), (uint32_t) loadedTabIndex, false);
   Vector.splice(&window->tabs, (uint32_t) index, true);
   JavaScriptProviderService.expiredTabsWatcher();
 }
@@ -235,4 +249,3 @@ events_service_namespace const EventsService = {
     tabsOnRemovedHandle,
     discardTabs
 };
-

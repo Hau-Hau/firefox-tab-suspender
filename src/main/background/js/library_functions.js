@@ -10,7 +10,7 @@ Module['jsExpiredTabsWatcher'] = function() {
     return;
   }
   Module['internalInterval'] = setInterval(function() {
-    if (!Module.cwrap('cAbleToPushEvent', 'number', ['number'])(6)) {
+    if (!Module.cwrap('cIsAbleToPushEvent', 'number', ['number'])(6)) {
       return;
     }
     Module.cwrap('cPushEvent', null, ['number'])(6);
@@ -81,8 +81,7 @@ Module['jsChromeTabsDiscard'] = function(tabId) {
   browser.tabs.query({}).then(function(tabs) {
     var tabsIndex = tabs.length;
     while (tabsIndex--) {
-      if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].active === false &&
-          tabs[tabsIndex].url.indexOf('about:') === -1) {
+      if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].url.indexOf('about:') === -1) {
         (function(tab) {
           if (tabs[tabsIndex].title.indexOf('- discarded') < 1) {
             nonNativeDiscard(tabId, tab.title, tab.url);

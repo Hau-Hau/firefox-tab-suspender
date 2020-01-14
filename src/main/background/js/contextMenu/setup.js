@@ -102,9 +102,6 @@ browser.menus.onClicked.addListener(function(info, tab) {
     chrome.tabs.query({}, function(tabs) {
       let index = tabs.length;
       while (index--) {
-        if (tabs[index].active) {
-          continue;
-        }
         Module['jsChromeTabsDiscard'](tabs[index].id);
       }
     });

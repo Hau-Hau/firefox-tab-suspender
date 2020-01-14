@@ -1,0 +1,27 @@
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+---
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+IndentWidth: 2
+Language: Cpp
+Standard: Auto
+UseTab: Never
+DerivePointerAlignment: false
+PointerAlignment: Left
+ColumnLimit: 120
+#BreakBeforeTernaryOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: true
+SpacesInCStyleCastParentheses: false
+SpaceInEmptyParentheses: false
+Cpp11BracedListStyle: false
+IncludeBlocks: Merge
+
+IncludeCategories:
+- Regex: '"*"'
+  Priority: 1
+- Regex: '<*>'
+  Priority: 0
+---
