@@ -1,0 +1,14 @@
+#ifndef FTS_EVENT_TYPE_H
+#define FTS_EVENT_TYPE_H
+
+typedef enum {
+  TABS_ON_ACTIVATED = 0,
+  WINDOWS_ON_CREATED = 1,
+  WINDOWS_ON_REMOVED = 2,
+  TABS_ON_CREATED = 3,
+  TABS_ON_UPDATED = 4,
+  TABS_ON_REMOVED = 5,
+  DISCARD_TABS = 6
+} EventType;
+
+#endif
