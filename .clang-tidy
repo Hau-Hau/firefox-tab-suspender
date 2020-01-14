@@ -1,0 +1,21 @@
+---
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*',
+  -*,
+  bugprone-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+WarningsAsErrors: "*"
+AnalyzeTemporaryDtors: false
+FormatStyle: none
+CheckOptions:
+    - { key: readability-identifier-naming.StructCase,             value: CamelCase }
+    - { key: readability-identifier-naming.FunctionCase,           value: camelBack }
+    - { key: readability-identifier-naming.VariableCase,           value: camelBack }
+    - { key: readability-identifier-naming.GlobalVariableCase,     value: CamelCase }
+    - { key: readability-identifier-naming.ParameterCase,          value: camelBack }
+
