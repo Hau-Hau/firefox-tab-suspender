@@ -23,17 +23,6 @@ Thanks to author of Chrome's
 
 Public development roadmap is avaible under this **[link](https://trello.com/b/BbbjVfl4/firefox-tab-suspender-public)**.
 
-Task list for contributors is in plans, for now this list should be enough.
-
-#### Structure
-
-Simplified project structure.
-
-![diagram project structure](./readme_assets/diagram.png "diagram project structure")
-
-#### Build process
-
-![diagram build process](./readme_assets/diagram_build_process.png "diagram build process")
 
 **Details worth to pay attention:**
 * Generating big amounts of styles in development has no cost in production because of that styles are cleaned up in build process. Final stylesheet contains only used styles
@@ -45,8 +34,7 @@ Simplified project structure.
 #### Informations for contributors
 if you are interested in contributing and developmenting of extension there are some tips:
 
-  * Always request merge to **'develop'** branch - **not to 'master' branch!**
-  * Work on branches which has prefix **'FTS-'** and number as suffix like **'FTS-3'**, exceptions are any small patches or small bugfixes
+  * Always request merge to **'develop'** branch - **not to 'master' branch**
   * List of tasks you can find under this **[link](https://trello.com/b/BbbjVfl4/firefox-tab-suspender-public)**
   * In case of any questions make issue or feel free and ask in way that you prefer
 
