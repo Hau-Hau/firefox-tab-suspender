@@ -79,7 +79,7 @@ module.exports = {
         parallel: false,
         scripts: [
           `del-cli -f  ${getOutputPath()}`,
-          `html-includes --src src/main/options --dest dist --minify`,
+          `html-includes --src src/main/options --dest ${getOutputPath()} --minify`,
           `del-cli -f ${getOutputPath()}*.tmp`,
         ],
       },

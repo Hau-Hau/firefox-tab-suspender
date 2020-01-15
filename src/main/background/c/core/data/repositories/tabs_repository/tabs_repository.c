@@ -6,6 +6,7 @@
 #include "../../models/window/window.h"
 #include "../cache_repository/cache_repository.h"
 #include "../settings_repository/settings_repository.h"
+#include "../windows_repository/windows_repository.h"
 #include "tabs_repository.h"
 
 static struct Tab* getTabById(int32_t id) {
@@ -24,7 +25,7 @@ static struct Tab* getTabById(int32_t id) {
 }
 
 static struct Tab* getTabByIdAndWindowId(int32_t tabId, int32_t windowId) {
-  struct Window* window = CacheRepository.getWindows().items[windowId];
+  struct Window* window = WindowsRepository.getWindowById(windowId);
   if (window == NULL) {
     return NULL;
   }
