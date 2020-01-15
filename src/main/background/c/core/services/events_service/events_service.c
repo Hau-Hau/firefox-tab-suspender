@@ -181,6 +181,9 @@ static void discardTabs() {
   uint32_t index = tabs.size;
   while (index--) {
     struct Tab* tab = tabs.items[index];
+    if (tab->active) {
+      continue;
+    }
     JavascriptFunctionsProvider.chromeTabsDiscard(tab->id);
     tab->discarded = true;
   }

@@ -177,24 +177,35 @@ browser.storage.local.get({
     });
 
     chrome.tabs.onCreated.addListener(function(tab) {
-      try {
-        passArrayToWasm(
-            3,
-            pushEvent1D,
-            [
-              tab.windowId,
-              tab.id,
-              tab.active & 1,
-              (tab.title.indexOf('- discarded') > 1) & 1,
-              tab.pinned & 1,
-              tab.audible & 1,
-            ],
-            'HEAP32',
-        );
-      } catch (e) {
-        console.log({e: e, f: 'chrome.tabs.onCreated'});
-        browser.runtime.reload();
-      }
+      // Bugfix - Newly created tabs sometimes return active=false when they are active
+      setTimeout(function() {
+        chrome.tabs.query({windowId: tab.windowId}, function(tabs) {
+          let index = tabs.length;
+          while (index--) {
+            if (tabs[index].id === tab.id) {
+              try {
+                passArrayToWasm(
+                  3,
+                  pushEvent1D,
+                  [
+                    tabs[index].windowId,
+                    tabs[index].id,
+                    tabs[index].active & 1,
+                    (tabs[index].title.indexOf('- discarded') > 1) & 1,
+                    tabs[index].pinned & 1,
+                    tabs[index].audible & 1,
+                  ],
+                  'HEAP32',
+                );
+              } catch (e) {
+                console.log({e: e, f: 'chrome.tabs.onCreated'});
+                browser.runtime.reload();
+              }
+              return;
+            }
+          }
+        });
+      }, 250);
     });
 
     browser.tabs.onActivated.addListener(function(activeInfo) {
