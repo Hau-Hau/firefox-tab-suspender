@@ -1,7 +1,7 @@
 {
   "name": "Tab Suspender",
   "author": "Michalewicz Piotr",
-  "version": "3.6.3",
+  "version": "3.6.4",
   "description": "Lightweight and performant open source extension that reduce Firefox's memory usage.",
   "manifest_version": 2,
   "icons": {
