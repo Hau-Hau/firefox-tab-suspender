@@ -88,17 +88,17 @@ browser.storage.local.get({
         }
         const typedArray = new heapMap[heap](arrays[arraysIndex]);
         arrayOfPointers.push(
-            Module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT),
+          Module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT),
         );
         setHeap(
-            typedArray,
-            arrayOfPointers[arrayOfPointers.length - 1],
-            heap,
+          typedArray,
+          arrayOfPointers[arrayOfPointers.length - 1],
+          heap,
         );
       }
       const typedArrayOfPointers = new Int32Array(arrayOfPointers);
       var ptr = Module._malloc(
-          typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT,
+        typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT,
       );
       Module.HEAP32.set(typedArrayOfPointers, ptr >> 2);
       if (eventId == null) {
@@ -116,7 +116,7 @@ browser.storage.local.get({
     function passArrayToWasm(eventId, fn, array, heap) {
       const typedArray = new heapMap[heap](array);
       const ptr = Module._malloc(
-          typedArray.length * typedArray.BYTES_PER_ELEMENT,
+        typedArray.length * typedArray.BYTES_PER_ELEMENT,
       );
       setHeap(typedArray, ptr, heap);
       fn(eventId, ptr, array.length);
@@ -159,21 +159,11 @@ browser.storage.local.get({
     });
 
     chrome.windows.onCreated.addListener(function(window) {
-      try {
-        passArrayToWasm(1, pushEvent1D, [window.id], 'HEAP32');
-      } catch (e) {
-        console.log({e: e, f: 'chrome.windows.onCreated'});
-        browser.runtime.reload();
-      }
+      passArrayToWasm(1, pushEvent1D, [window.id], 'HEAP32');
     });
 
     chrome.windows.onRemoved.addListener(function(windowId) {
-      try {
-        passArrayToWasm(2, pushEvent1D, [windowId], 'HEAP32');
-      } catch (e) {
-        console.log({e: e, f: 'chrome.windows.onRemoved'});
-        browser.runtime.reload();
-      }
+      passArrayToWasm(2, pushEvent1D, [windowId], 'HEAP32');
     });
 
     chrome.tabs.onCreated.addListener(function(tab) {
@@ -183,24 +173,19 @@ browser.storage.local.get({
           let index = tabs.length;
           while (index--) {
             if (tabs[index].id === tab.id) {
-              try {
-                passArrayToWasm(
-                  3,
-                  pushEvent1D,
-                  [
-                    tabs[index].windowId,
-                    tabs[index].id,
-                    tabs[index].active & 1,
-                    (tabs[index].title.indexOf('- discarded') > 1) & 1,
-                    tabs[index].pinned & 1,
-                    tabs[index].audible & 1,
-                  ],
-                  'HEAP32',
-                );
-              } catch (e) {
-                console.log({e: e, f: 'chrome.tabs.onCreated'});
-                browser.runtime.reload();
-              }
+              passArrayToWasm(
+                3,
+                pushEvent1D,
+                [
+                  tabs[index].windowId,
+                  tabs[index].id,
+                  tabs[index].active & 1,
+                  (tabs[index].title.indexOf('- discarded') > 1) & 1,
+                  tabs[index].pinned & 1,
+                  tabs[index].audible & 1,
+                ],
+                'HEAP32',
+              );
               return;
             }
           }
@@ -219,80 +204,65 @@ browser.storage.local.get({
         const urlObj = new URL(tab.url);
         const url = urlObj.searchParams.get('u');
         browser.tabs.update(tab.id, {
-          url: url
+          url: url,
         });
       });
     });
 
     chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-      try {
-        if (tab.url.indexOf('about:') >= 0) {
-          return;
-        }
-        passArrayToWasm(
-            4,
-            pushEvent1D,
-            [
-              tab.windowId,
-              tab.id,
-              changeInfo.pinned === undefined || changeInfo.pinned === null
-                  ? 2
-                  : changeInfo.pinned & 1,
-              changeInfo.audible === undefined || changeInfo.audible === null
-                  ? 2
-                  : changeInfo.audible & 1,
-            ],
-            'HEAP32',
-        );
-      } catch (e) {
-        console.log({e: e, f: 'chrome.tabs.onUpdated'});
-        browser.runtime.reload();
+      if (tab.url.indexOf('about:') >= 0) {
+        return;
       }
+      passArrayToWasm(
+        4,
+        pushEvent1D,
+        [
+          tab.windowId,
+          tab.id,
+          changeInfo.pinned === undefined || changeInfo.pinned === null
+            ? 2
+            : changeInfo.pinned & 1,
+          changeInfo.audible === undefined || changeInfo.audible === null
+            ? 2
+            : changeInfo.audible & 1,
+        ],
+        'HEAP32',
+      );
     });
 
     chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-      try {
-        passArrayToWasm(
-            5,
-            pushEvent1D,
-            [removeInfo.windowId, tabId],
-            'HEAP32',
-        );
-      } catch (e) {
-        console.log({e: e, f: 'chrome.tabs.onRemoved'});
-        browser.runtime.reload();
-      }
+      passArrayToWasm(
+        5,
+        pushEvent1D,
+        [removeInfo.windowId, tabId],
+        'HEAP32',
+      );
     });
 
     let lastOnActivatedCall = undefined;
     chrome.tabs.onActivated.addListener(function(activeInfo) {
       if (lastOnActivatedCall !== undefined && new Date().getTime() -
-          lastOnActivatedCall <= 400) {
+        lastOnActivatedCall <= 400) {
         return;
       }
-      try {
-        chrome.tabs.query({}, function(tabs) {
-          const tabsToPass = [];
-          for (const tab of tabs) {
-            if (tab.url.indexOf('about:') === -1) {
-              tabsToPass.push([
-                tab.windowId,
-                tab.id,
-                tab.active & 1,
-                (tab.title.indexOf('- discarded') > 1) & 1,
-                tab.pinned & 1,
-                tab.audible & 1,
-                Math.floor(tab.lastAccessed / 1000),
-              ]);
-              pass2DArrayToWasm(0, pushEvent2D, tabsToPass, 'HEAPF64');
-              lastOnActivatedCall = new Date().getTime();
-            }
+      chrome.tabs.query({}, function(tabs) {
+        const tabsToPass = [];
+        for (const tab of tabs) {
+          if (tab.url.indexOf('about:') === -1) {
+            tabsToPass.push([
+              tab.windowId,
+              tab.id,
+              tab.active & 1,
+              (tab.title.indexOf('- discarded') > 1) & 1,
+              tab.pinned & 1,
+              tab.audible & 1,
+              Math.floor(tab.lastAccessed / 1000),
+            ]);
+            pass2DArrayToWasm(0, pushEvent2D, tabsToPass, 'HEAPF64');
+            lastOnActivatedCall = new Date().getTime();
           }
-        });
-      } catch (e) {
-        console.log({e: e, f: 'chrome.tabs.onActivated'});
-        browser.runtime.reload();
-      }
+        }
+      });
     });
   };
 });

@@ -83,11 +83,12 @@ Module['jsChromeTabsDiscard'] = function(tabId) {
     while (tabsIndex--) {
       if (tabs[tabsIndex].id === tabId && tabs[tabsIndex].url.indexOf('about:') === -1) {
         (function(tab) {
-          if (tabs[tabsIndex].title.indexOf('- discarded') < 1) {
+          var isDiscarded = tab.title.indexOf('- discarded') >= 1;
+          if (!isDiscarded) {
             nonNativeDiscard(tabId, tab.title, tab.url);
           }
           setTimeout(function() {
-            if (tab.title.indexOf('- discarded') < 1) {
+            if (!isDiscarded) {
                 changeFavicon(tab.favIconUrl);
             }
           }, 1000);
