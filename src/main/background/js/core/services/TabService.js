@@ -5,6 +5,7 @@ import HeapType from '~/main/background/js/core/data/HeapType';
 import ImageService from '~/main/background/js/core/services/ImageService';
 import WasmService from '~/main/background/js/core/services/WasmService';
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
+import EventType from '~/main/background/js/core/data/EventType';
 
 export default @Injector.register(
   [WasmService, CFunctionsProvider, SettingsRepository, ImageService],
@@ -90,35 +91,30 @@ class TabService {
     };
   }
 
-  async tabsDiscard (tabs, size, isForce) {
+  async tabsDiscard (tabId, isForce) {
+    console.log({tab: tabId});
     // eslint-disable-next-line no-param-reassign,no-implicit-coercion
-    isForce = !!isForce;
+    isForce = true;
+    // isForce = !!isForce;
 
-    const allTabs = await browser.tabs.query({});
-    const discardedTabIds = [];
-    let tabsIndex = allTabs.length;
-    let count = 0;
+    const tabs = await browser.tabs.query({});
+    console.log(tabs);
+    let tabsIndex = tabs.length;
     while (tabsIndex--) {
-      if (!tabs.includes(allTabs[tabsIndex].id)) {
+      if (tabs[tabsIndex].id !== tabId) {
         continue;
       }
-      count++;
 
-      if (allTabs[tabsIndex].title.indexOf('- discarded') < 1 &&
-          !allTabs[tabsIndex].url.includes('about:') &&
-          (isForce === true || allTabs[tabsIndex].active === false)) {
-        discardedTabIds.push(allTabs[tabsIndex].id);
+      if (tabs[tabsIndex].title.indexOf('- discarded') < 1 &&
+          !tabs[tabsIndex].url.includes('about:') &&
+          (isForce === true || tabs[tabsIndex].active === false)) {
         ((tab) => {
           this._nonNativeDiscard(tab.id, tab.title, tab.url);
           setTimeout(() => {
             this._changeFavicon(tab.id, tab.favIconUrl);
           }, 1000);
-        })(allTabs[tabsIndex]);
-        if (count >= size) {
-          // discardedTabIds
-          // Module.cwrap('cPushEvent', null, ['number'])(7);
-          return;
-        }
+        })(tabs[tabsIndex]);
+        break;
       }
     }
   }

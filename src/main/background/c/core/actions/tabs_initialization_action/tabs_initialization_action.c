@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "../../../core/providers/javascript_functions_provider/javascript_functions_provider.h"
+#include "../../providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "../../services/events_service/events_service.h"
 #include "tabs_initialization_action.h"
 

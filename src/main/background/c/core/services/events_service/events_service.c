@@ -3,15 +3,14 @@
 #include <stdio.h>
 #include <time.h>
 #include "../../../infrastructure/libs/vector/vector.h"
-#include "../../../core/providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "../../data/models/tab/tab.h"
 #include "../../data/models/window/window.h"
 #include "../../data/repositories/cache_repository/cache_repository.h"
 #include "../../data/repositories/settings_repository/settings_repository.h"
 #include "../../data/repositories/tabs_repository/tabs_repository.h"
 #include "../../data/repositories/windows_repository/windows_repository.h"
+#include "../../providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "events_service.h"
-
 
 static void tabsOnActivatedHandle(const double** tabsBuffer, uint32_t tabsBufferSize) {
   while (tabsBufferSize--) {
@@ -177,16 +176,24 @@ static void tabsOnRemovedHandle(const uint32_t* buffer) {
 }
 
 static void discardTabs() {
-  struct Vector vectorOfUint32 = TabsRepository.getIdFromTabsToDiscard();
+  struct Vector tabs = TabsRepository.getTabsToDiscard();
 
-  JavascriptFunctionsProvider.consoleLog(vectorOfUint32.size);
-  JavascriptFunctionsProvider.chromeTabsDiscard((uint32_t*) vectorOfUint32.items, vectorOfUint32.size, false);
+  uint32_t index = tabs.size;
+  while (index--) {
+    struct Tab* tab = tabs.items[index];
+    if (tab->active) {
+      continue;
+    }
+    JavascriptFunctionsProvider.chromeTabsDiscard(tab->id);
+    tab->discarded = true;
+  }
 
-  Vector.destructor(vectorOfUint32);
-//  uint32_t count = TabsRepository.getNotDiscardedTabsCount(false);
-//  if (isWaitingForIntervalClear && count == 0) {
+  struct Vector notDiscardedTabs = TabsRepository.getNotDiscardedTabs(false);
+  if (notDiscardedTabs.size == 0) {
     JavascriptFunctionsProvider.clearInterval();
-//  }
+  }
+  Vector.destructor(notDiscardedTabs);
+  Vector.destructor(tabs);
 }
 
 events_service_namespace const EventsService = { tabsOnActivatedHandle,

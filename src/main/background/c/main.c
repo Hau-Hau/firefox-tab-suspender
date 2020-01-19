@@ -14,20 +14,17 @@
 #include "core/services/event_loop_service/event_loop_service.h"
 #include "core/services/events_service/events_service.h"
 #include "infrastructure/libs/vector/vector.h"
-#include "core/providers/javascript_functions_provider/javascript_functions_provider.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
 
-extern void jsChromeTabsDiscard(uint32_t*, uint32_t, bool);
+extern void jsChromeTabsDiscard(uint32_t);
 
 extern void jsConsoleLog(uint32_t);
 
 EMSCRIPTEN_KEEPALIVE void cWasmInitialization(const uint32_t* buffer, uint32_t bufferSize) {
+
   WasmInitializationAction.run(buffer, bufferSize, jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard,
                                jsConsoleLog);
 }
@@ -52,5 +49,3 @@ EMSCRIPTEN_KEEPALIVE void cPushEvent2D(const uint32_t eventId, double** buffer, 
                                        const uint32_t segmentSize) {
   PushEvent2dAction.run(eventId, buffer, bufferSize, segmentSize);
 }
-
-#pragma clang diagnostic pop

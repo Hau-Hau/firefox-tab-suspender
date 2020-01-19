@@ -18,33 +18,33 @@ class TabsOnActivatedListener {
   }
 
   run () {
-    browser.tabs.onActivated.addListener(async (activeInfo) => {
-      if (!this._settingsRepository.loadingTabsImmediately) {
-        // chrome.tabs.get(activeInfo.tabId, function(tab) {
-        //   if (tab.title.indexOf('- discarded') <= 1) {
-        //     return;
-        //   }
-        //   const urlObj = new URL(tab.url);
-        //   const url = urlObj.searchParams.get('u');
-        //   browser.tabs.update(tab.id, {
-        //     url: url
-        //   });
-        //   // TODO push scroll function
-        // });
-      }
-      const tab = await browser.tabs.get(activeInfo.tabId);
-      if (tab.title.indexOf('- discarded') <= 1) {
-        return;
-      }
-      const urlObject = new URL(tab.url);
-      const url = urlObject.searchParams.get('u');
-      browser.tabs.update(tab.id, {
-        loadReplace: true,
-        url,
-      });
-
-      // TODO push scroll function
-    });
+    // browser.tabs.onActivated.addListener(async (activeInfo) => {
+    //   if (!this._settingsRepository.loadingTabsImmediately) {
+    //     // chrome.tabs.get(activeInfo.tabId, function(tab) {
+    //     //   if (tab.title.indexOf('- discarded') <= 1) {
+    //     //     return;
+    //     //   }
+    //     //   const urlObj = new URL(tab.url);
+    //     //   const url = urlObj.searchParams.get('u');
+    //     //   browser.tabs.update(tab.id, {
+    //     //     url: url
+    //     //   });
+    //     //   // TODO push scroll function
+    //     // });
+    //   }
+    //   const tab = await browser.tabs.get(activeInfo.tabId);
+    //   if (tab.title.indexOf('- discarded') <= 1) {
+    //     return;
+    //   }
+    //   const urlObject = new URL(tab.url);
+    //   const url = urlObject.searchParams.get('u');
+    //   browser.tabs.update(tab.id, {
+    //     loadReplace: true,
+    //     url,
+    //   });
+    //
+    //   // TODO push scroll function
+    // });
 
     browser.tabs.onActivated.addListener(async () => {
       if (this._lastOnActivatedCall != null &&
