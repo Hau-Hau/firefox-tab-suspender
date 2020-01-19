@@ -8,9 +8,9 @@ typedef struct {
 
   struct Vector (*const getAllTabs)();
 
-  struct Vector (*const getNotDiscardedTabs)(bool includeActiveTabs);
+  uint32_t (*const getNotDiscardedTabsCount)(bool includeActiveTabs);
 
-  struct Vector (*const getTabsToDiscard)();
+  struct Vector (*const getIdFromTabsToDiscard)();
 } tabs_repository_namespace;
 
 extern tabs_repository_namespace const TabsRepository;

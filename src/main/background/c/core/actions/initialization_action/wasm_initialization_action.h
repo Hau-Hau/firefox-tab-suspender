@@ -3,7 +3,7 @@
 
 typedef struct {
   void (*const run)(const uint32_t* buffer, uint32_t bufferSize, void (*jsExpiredTabsWatcher)(void),
-                    void (*jsClearInterval)(void), void (*jsChromeTabsDiscard)(uint32_t),
+                    void (*jsClearInterval)(void), void (*jsChromeTabsDiscard)(uint32_t*, uint32_t, bool),
                     void (*jsConsoleLog)(uint32_t));
 } wasm_initialization_action_namespace;
 

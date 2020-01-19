@@ -55,33 +55,42 @@ static struct Vector getAllTabs() {
   return output;
 }
 
-static struct Vector getNotDiscardedTabs(bool includeActiveTabs) {
-  struct Vector output = getAllTabs();
-
-  uint32_t index = output.size;
+static uint32_t getNotDiscardedTabsCount(bool includeActiveTabs) {
+  uint32_t count = 0;
+  struct Vector tabs = getAllTabs();
+  uint32_t index = tabs.size;
   while (index--) {
-    struct Tab* tab = output.items[index];
-    if (tab->discarded || (!includeActiveTabs && tab->active)) {
-      Vector.splice(&output, index, false);
+    struct Tab* tab = tabs.items[index];
+    if (!tab->discarded && (includeActiveTabs || !tab->active)) {
+      count++;
     }
   }
-  return output;
+
+  Vector.destructor(tabs);
+  return count;
 }
 
-static struct Vector getTabsToDiscard() {
-  struct Vector output = getAllTabs();
+/**
+ * @return Vector, items = uint32_t*
+ */
+static struct Vector getIdFromTabsToDiscard() {
+  struct Vector tabs = getAllTabs();
+  struct Vector output = Vector.constructor();
 
-  uint32_t index = output.size;
+  uint32_t index = tabs.size;
   while (index--) {
-    struct Tab* tab = output.items[index];
+    struct Tab* tab = tabs.items[index];
     if (time(NULL) - tab->lastUsageTime < SettingsRepository.getTimeToDiscard() || tab->active || tab->discarded ||
         (SettingsRepository.getNeverSuspendPinned() && tab->pinned) ||
         (SettingsRepository.getNeverSuspendPlayingAudio() && tab->audible)) {
-      Vector.splice(&output, index, false);
+      continue;
     }
+    uint32_t* id = &tab->id;
+    Vector.push(&output, (void**) id, false);
   }
+  Vector.destructor(tabs);
   return output;
 }
 
-tabs_repository_namespace const TabsRepository = { getTabById, getTabByIdAndWindowId, getAllTabs, getNotDiscardedTabs,
-                                                   getTabsToDiscard };
+tabs_repository_namespace const TabsRepository = { getTabById, getTabByIdAndWindowId, getAllTabs,
+                                                   getNotDiscardedTabsCount, getIdFromTabsToDiscard };

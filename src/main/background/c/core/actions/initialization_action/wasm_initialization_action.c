@@ -1,12 +1,12 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "../../../infrastructure/providers/javascript_functions_provider/javascript_functions_provider.h"
+#include "../../../core/providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "../../data/data_sources/cache_data_source/cache_data_source.h"
 #include "../../data/data_sources/settings_data_source/settings_data_source.h"
 #include "wasm_initialization_action.h"
 
 static void run(const uint32_t* buffer, uint32_t bufferSize, void (*jsExpiredTabsWatcher)(void),
-                void (*jsClearInterval)(void), void (*jsChromeTabsDiscard)(uint32_t), void (*jsConsoleLog)(uint32_t)) {
+                void (*jsClearInterval)(void), void (*jsChromeTabsDiscard)(uint32_t*, uint32_t, bool), void (*jsConsoleLog)(uint32_t)) {
   JavascriptFunctionsProvider.initialize(jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard, jsConsoleLog);
 
   CacheDataSource.initialize();

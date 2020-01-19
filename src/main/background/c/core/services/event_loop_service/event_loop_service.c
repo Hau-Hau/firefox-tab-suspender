@@ -1,9 +1,6 @@
 #include <stdbool.h>
-#include <stdint.h>
 #include "../../../infrastructure/libs/vector/vector.h"
-#include "../../../infrastructure/providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "../../data/models/event/event.h"
-#include "../../data/models/event_type.h"
 #include "../../data/repositories/cache_repository/cache_repository.h"
 #include "../events_service/events_service.h"
 #include "event_loop_service.h"

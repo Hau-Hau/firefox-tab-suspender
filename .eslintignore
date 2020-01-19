@@ -1,0 +1,14 @@
+*.iml
+.idea/
+.gradle
+.DS_Store
+/build
+/out
+dist/
+dev/
+/captures
+cmake-build-debug/
+assets/
+.externalNativeBuild
+node_modules
+.tmp
