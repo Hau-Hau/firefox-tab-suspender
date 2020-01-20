@@ -66,7 +66,6 @@ class TabsOnActivatedListener {
         ]);
         this._stateManager.lastOnActivatedCallTime = new Date().getTime();
       }
-      console.log(tabsToPass);
       this._wasmService.passArray2dToWasm(
         EventType.TABS_ON_ACTIVATED,
         this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),

@@ -49,4 +49,8 @@ class SettingsRepository {
   get suspendOthersOptionInContextMenu () {
     return this._settings.suspendOthersOptionInContextMenu;
   }
+
+  get timeToDiscard () {
+    return this._settings.timeToDiscard;
+  }
 }

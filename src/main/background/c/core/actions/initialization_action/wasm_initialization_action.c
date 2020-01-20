@@ -11,6 +11,17 @@ static void run(const uint32_t* buffer, uint32_t bufferSize, void (*jsExpiredTab
 
   CacheDataSource.initialize();
 
+  JavascriptFunctionsProvider.consoleLog(66660);
+  JavascriptFunctionsProvider.consoleLog(buffer[0]);
+  JavascriptFunctionsProvider.consoleLog(66661);
+  JavascriptFunctionsProvider.consoleLog(buffer[1]);
+  JavascriptFunctionsProvider.consoleLog(66662);
+  JavascriptFunctionsProvider.consoleLog(buffer[2]);
+  JavascriptFunctionsProvider.consoleLog(66663);
+  JavascriptFunctionsProvider.consoleLog(buffer[3]);
+  JavascriptFunctionsProvider.consoleLog(66664);
+  JavascriptFunctionsProvider.consoleLog(buffer[4]);
+
   uint32_t timeToDiscard = buffer[0];
   bool neverSuspendPinned = (bool) buffer[1];
   bool neverSuspendUnsavedFormInput = (bool) buffer[2];

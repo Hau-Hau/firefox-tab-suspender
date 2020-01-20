@@ -15,7 +15,6 @@
 static void tabsOnActivatedHandle(const double** tabsBuffer, uint32_t tabsBufferSize) {
   while (tabsBufferSize--) {
     uint32_t tabId = (uint32_t) tabsBuffer[tabsBufferSize][1];
-    JavascriptFunctionsProvider.consoleLog(tabId);
     bool active = (bool) tabsBuffer[tabsBufferSize][2];
     bool discarded = (bool) tabsBuffer[tabsBufferSize][3];
     bool pinned = (bool) tabsBuffer[tabsBufferSize][4];
@@ -181,9 +180,6 @@ static void discardTabs() {
   uint32_t index = tabs.size;
   while (index--) {
     struct Tab* tab = tabs.items[index];
-    if (tab->active) {
-      continue;
-    }
     JavascriptFunctionsProvider.chromeTabsDiscard(tab->id, false);
     tab->discarded = true;
   }

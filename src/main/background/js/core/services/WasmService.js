@@ -91,11 +91,8 @@ class WasmService {
   passArrayToWasm (eventId, fn, array, heap) {
     const typedArray = new HeapMap[heap](array);
     // eslint-disable-next-line private-props/no-use-outside
-    const ptr = this._stateManager.module._malloc(
-      typedArray.length * typedArray.BYTES_PER_ELEMENT,
-    );
+    const ptr = this._stateManager.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
     this._setHeap(typedArray, ptr, heap);
-    fn(eventId, ptr, array.length);
     if (eventId == null) {
       fn(ptr, array.length);
     } else {
