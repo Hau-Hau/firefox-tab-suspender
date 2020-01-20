@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <time.h>
 #include "../../../infrastructure/libs/vector/vector.h"
-#include "../../../infrastructure/providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "../../data/models/tab/tab.h"
 #include "../../data/models/window/window.h"
 #include "../../data/repositories/cache_repository/cache_repository.h"
 #include "../../data/repositories/settings_repository/settings_repository.h"
 #include "../../data/repositories/tabs_repository/tabs_repository.h"
 #include "../../data/repositories/windows_repository/windows_repository.h"
+#include "../../providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "events_service.h"
 
 static void tabsOnActivatedHandle(const double** tabsBuffer, uint32_t tabsBufferSize) {
@@ -19,7 +19,6 @@ static void tabsOnActivatedHandle(const double** tabsBuffer, uint32_t tabsBuffer
     bool discarded = (bool) tabsBuffer[tabsBufferSize][3];
     bool pinned = (bool) tabsBuffer[tabsBufferSize][4];
     bool audible = (bool) tabsBuffer[tabsBufferSize][5];
-    double lastAccessed = tabsBuffer[tabsBufferSize][6];
 
     struct Tab* tab = TabsRepository.getTabById(tabId);
     if (tab == NULL) {
@@ -171,6 +170,7 @@ static void tabsOnRemovedHandle(const uint32_t* buffer) {
   if (index == -1) {
     return;
   }
+
   Vector.splice(&window->tabs, (uint32_t) index, true);
   JavascriptFunctionsProvider.expiredTabsWatcher();
 }
@@ -181,19 +181,16 @@ static void discardTabs() {
   uint32_t index = tabs.size;
   while (index--) {
     struct Tab* tab = tabs.items[index];
-    if (tab->active) {
-      continue;
-    }
-    JavascriptFunctionsProvider.chromeTabsDiscard(tab->id);
+    JavascriptFunctionsProvider.chromeTabsDiscard(tab->id, false);
     tab->discarded = true;
   }
+  Vector.destructor(tabs);
 
   struct Vector notDiscardedTabs = TabsRepository.getNotDiscardedTabs(false);
   if (notDiscardedTabs.size == 0) {
     JavascriptFunctionsProvider.clearInterval();
   }
   Vector.destructor(notDiscardedTabs);
-  Vector.destructor(tabs);
 }
 
 events_service_namespace const EventsService = { tabsOnActivatedHandle,

@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "core/actions/initialization_action/wasm_initialization_action.h"
+#include "core/actions/wasm_initialization_action/wasm_initialization_action.h"
 #include "core/actions/is_able_to_push_event_action/is_able_to_push_event_action.h"
 #include "core/actions/push_event_1d_action/push_event_1d_action.h"
 #include "core/actions/push_event_2d_action/push_event_2d_action.h"
@@ -14,18 +14,16 @@
 #include "core/services/event_loop_service/event_loop_service.h"
 #include "core/services/events_service/events_service.h"
 #include "infrastructure/libs/vector/vector.h"
-#include "infrastructure/providers/javascript_functions_provider/javascript_functions_provider.h"
 
 extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
 
-extern void jsChromeTabsDiscard(uint32_t);
+extern void jsChromeTabsDiscard(uint32_t, bool);
 
 extern void jsConsoleLog(uint32_t);
 
 EMSCRIPTEN_KEEPALIVE void cWasmInitialization(const uint32_t* buffer, uint32_t bufferSize) {
-
   WasmInitializationAction.run(buffer, bufferSize, jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard,
                                jsConsoleLog);
 }

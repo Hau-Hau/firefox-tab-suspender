@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <time.h>
 #include "../../../../infrastructure/libs/vector/vector.h"
+#include "../../../providers/javascript_functions_provider/javascript_functions_provider.h"
 #include "../../models/tab/tab.h"
 #include "../../models/window/window.h"
 #include "../cache_repository/cache_repository.h"
