@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "core/actions/initialization_action/wasm_initialization_action.h"
+#include "core/actions/wasm_initialization_action/wasm_initialization_action.h"
 #include "core/actions/is_able_to_push_event_action/is_able_to_push_event_action.h"
 #include "core/actions/push_event_1d_action/push_event_1d_action.h"
 #include "core/actions/push_event_2d_action/push_event_2d_action.h"

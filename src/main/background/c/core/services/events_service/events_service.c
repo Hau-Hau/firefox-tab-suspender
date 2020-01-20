@@ -170,6 +170,7 @@ static void tabsOnRemovedHandle(const uint32_t* buffer) {
   if (index == -1) {
     return;
   }
+
   Vector.splice(&window->tabs, (uint32_t) index, true);
   JavascriptFunctionsProvider.expiredTabsWatcher();
 }

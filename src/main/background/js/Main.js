@@ -18,6 +18,8 @@ import WindowsOnRemovedListener
 import IntervalService
   from '~/main/background/js/core/services/IntervalService';
 import StateManager from '~/main/background/js/core/managers/StateManager';
+import ContextMenuListener
+  from '~/main/background/js/core/listeners/ContextMenuListener';
 
 browser.storage.local.get({
   automaticSuspend: true,
@@ -40,6 +42,8 @@ browser.storage.local.get({
     Module.jsChromeTabsDiscard = Injector.get(TabService).discardTab.bind(Injector.get(TabService));
     Module.jsClearInterval = Injector.get(IntervalService).clearInterval.bind(Injector.get(IntervalService));
     Module.jsExpiredTabsWatcher = Injector.get(IntervalService).expiredTabsWatcher.bind(Injector.get(IntervalService));
+
+    Injector.get(ContextMenuListener).run();
 
     if (!Injector.get(SettingsRepository).automaticSuspend) {
       return;
