@@ -11,7 +11,6 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin-next');
 const ZipFilesPlugin = require('webpack-zip-files-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -26,8 +25,8 @@ module.exports = {
   entry: {
     'background.js': './src/main/background/.tmp/background.js',
     'discarded.js': './src/main/discarded/main.js',
-    'options-styles': './src/main/options/styles/options-styles.scss',
     'options.js': './src/main/options/main.js',
+    'options-styles': './src/main/options/styles/options-styles.scss',
   },
   module: {
     rules: [
@@ -48,9 +47,7 @@ module.exports = {
         options: {
           plugins: [
             'add-filehash',
-            'babel-plugin-bulk-import',
-
-            // 'istanbul' <- use only in dev mode
+            // 'istanbul' <- TODO use only in test mode
             ['@babel/plugin-transform-runtime', {regenerator: true}],
             ['babel-plugin-root-import', {rootPathSuffix: 'src/'}],
             ['@babel/plugin-proposal-decorators', {legacy: true}],

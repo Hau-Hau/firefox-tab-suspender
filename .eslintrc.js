@@ -5,7 +5,6 @@ module.exports = {
   },
   'extends': [
     'canonical',
-    'canonical/lodash',
     'canonical/mocha',
   ],
   'plugins': [

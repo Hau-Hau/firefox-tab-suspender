@@ -27,9 +27,9 @@
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-add-filehash": "^6.10.0",
-    "babel-plugin-bulk-import": "^2.0.0",
     "babel-plugin-istanbul": "^5.2.0",
     "babel-plugin-root-import": "^6.4.1",
+    "chai": "^4.2.0",
     "copy-webpack-plugin": "^4.6.0",
     "cross-zip-cli": "^1.0.0",
     "css-loader": "^2.1.1",
@@ -49,8 +49,11 @@
     "make-dir": "^2.1.0",
     "make-dir-cli": "^1.0.0",
     "mini-css-extract-plugin": "^0.9.0",
+    "mocha": "^6.2.1",
+    "mochapack": "^1.1.4",
     "mve": "^0.1.2",
     "node-sass": "^4.11.0",
+    "nyc": "^14.1.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "purgecss-webpack-plugin": "^1.6.0",
     "remove-files-webpack-plugin": "^1.2.1",
@@ -58,7 +61,6 @@
     "rigger": "^1.0.1",
     "sass-loader": "^7.3.1",
     "terser-webpack-plugin": "^2.3.2",
-    "uglifyjs-webpack-plugin": "^2.2.0",
     "webextension-polyfill": "^0.6.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
@@ -67,7 +69,6 @@
   },
   "dependencies": {
     "inversify": "^5.0.1",
-    "inversify-express-utils": "^6.3.2",
     "inversify-vanillajs-helpers": "^2.0.0",
     "reflect-metadata": "^0.1.13"
   }
