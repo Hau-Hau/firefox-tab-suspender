@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const reloading = sessionStorage.getItem(hash);
   if (reloading) {
     sessionStorage.removeItem(reloading);
-    window.location.replace(url);
+    location.replace(url);
   }
 
   sessionStorage.setItem(hash, 'true');
@@ -21,6 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('t').innerHTML = title;
   document.getElementById('u').innerHTML = url;
   document.body.addEventListener('click', () => {
-    window.location.replace(url);
+    location.replace(url);
   }, true);
 });
