@@ -71,14 +71,13 @@ static struct Vector getNotDiscardedTabs(bool includeActiveTabs) {
 
 static struct Vector getTabsToDiscard() {
   struct Vector output = getAllTabs();
-  JavascriptFunctionsProvider.consoleLog(SettingsRepository.getTimeToDiscard());
+
   uint32_t index = output.size;
   while (index--) {
     struct Tab* tab = output.items[index];
     if (time(NULL) - tab->lastUsageTime < SettingsRepository.getTimeToDiscard() || tab->active || tab->discarded ||
         (SettingsRepository.getNeverSuspendPinned() && tab->pinned) ||
         (SettingsRepository.getNeverSuspendPlayingAudio() && tab->audible)) {
-      JavascriptFunctionsProvider.consoleLog(tab->id);
       Vector.splice(&output, index, false);
     }
   }
