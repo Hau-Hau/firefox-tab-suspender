@@ -1,6 +1,9 @@
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 
-export default @Injector.register([])
+export default @Injector.register(
+  [],
+  x => x.inSingletonScope()
+)
 class ImageService {
   contrastImage (imageData) {
     const data = imageData.data;

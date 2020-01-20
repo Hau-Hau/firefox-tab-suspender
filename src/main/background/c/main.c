@@ -19,12 +19,11 @@ extern void jsExpiredTabsWatcher(void);
 
 extern void jsClearInterval(void);
 
-extern void jsChromeTabsDiscard(uint32_t);
+extern void jsChromeTabsDiscard(uint32_t, bool);
 
 extern void jsConsoleLog(uint32_t);
 
 EMSCRIPTEN_KEEPALIVE void cWasmInitialization(const uint32_t* buffer, uint32_t bufferSize) {
-
   WasmInitializationAction.run(buffer, bufferSize, jsExpiredTabsWatcher, jsClearInterval, jsChromeTabsDiscard,
                                jsConsoleLog);
 }

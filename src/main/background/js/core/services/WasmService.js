@@ -5,23 +5,17 @@ import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
 import SettingsRepository
   from '~/main/background/js/core/data/repositories/SettingsRepository';
+import HeapMap from '~/main/background/js/core/data/HeapMap';
 
-export default @Injector.register([StateManager, SettingsRepository, CFunctionsProvider])
+export default @Injector.register(
+  [StateManager, SettingsRepository, CFunctionsProvider],
+  x => x.inSingletonScope()
+)
 class WasmService {
   constructor (stateManager, settingsRepository, cFunctionsProvider) {
     this._stateManager = stateManager;
     this._settingsRepository = settingsRepository;
     this._cFunctionsProvider = cFunctionsProvider;
-    this.heapMap = {
-      HEAP16: Int16Array,
-      HEAP32: Int32Array,
-      HEAP8: Int8Array,
-      HEAPF32: Float32Array,
-      HEAPF64: Float64Array,
-      HEAPU16: Uint16Array,
-      HEAPU32: Uint32Array,
-      HEAPU8: Uint8Array,
-    };
   }
 
   _setHeap (typedArray, ptr, heap) {
@@ -64,32 +58,22 @@ class WasmService {
 
   passArray2dToWasm (eventId, fn, arrays, heap) {
     const arrayOfPointers = [];
-    let segmentSize;
+    let segmentSize = null;
 
     let arraysIndex = arrays.length;
     while (arraysIndex--) {
-      if (segmentSize === undefined) {
+      if (segmentSize == null) {
         segmentSize = arrays[arraysIndex].length;
       }
-      const typedArray = new this.heapMap[heap](arrays[arraysIndex]);
-      arrayOfPointers.push(
-        // eslint-disable-next-line private-props/no-use-outside
-        this._stateManager.module._malloc(
-          typedArray.length * typedArray.BYTES_PER_ELEMENT
-        ),
-      );
-      this._setHeap(
-        typedArray,
-        arrayOfPointers[arrayOfPointers.length - 1],
-        heap,
-      );
+      const typedArray = new HeapMap[heap](arrays[arraysIndex]);
+      // eslint-disable-next-line private-props/no-use-outside
+      arrayOfPointers.push(this._stateManager.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT));
+      this._setHeap(typedArray, arrayOfPointers[arrayOfPointers.length - 1], heap);
     }
     const typedArrayOfPointers = new Int32Array(arrayOfPointers);
     // eslint-disable-next-line private-props/no-use-outside
-    const ptr = this._stateManager.module._malloc(
-      typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT,
-    );
-    this._stateManager.module[heap].set(typedArrayOfPointers, ptr >> 2);
+    const ptr = this._stateManager.module._malloc(typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT);
+    this._stateManager.module.HEAP32.set(typedArrayOfPointers, ptr >> 2);
     if (eventId == null) {
       fn(ptr, arrayOfPointers.length, segmentSize);
     } else {
@@ -105,7 +89,7 @@ class WasmService {
   }
 
   passArrayToWasm (eventId, fn, array, heap) {
-    const typedArray = new this.heapMap[heap](array);
+    const typedArray = new HeapMap[heap](array);
     // eslint-disable-next-line private-props/no-use-outside
     const ptr = this._stateManager.module._malloc(
       typedArray.length * typedArray.BYTES_PER_ELEMENT,

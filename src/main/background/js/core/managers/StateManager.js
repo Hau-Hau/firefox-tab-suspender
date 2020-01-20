@@ -5,6 +5,7 @@ class StateManager {
   constructor () {
     this._module = null;
     this._interval = null;
+    this._lastOnActivatedCallTime = null;
   }
 
   get module () {
@@ -21,5 +22,13 @@ class StateManager {
 
   set interval (value) {
     this._interval = value;
+  }
+
+  get lastOnActivatedCallTime () {
+    return this._lastOnActivatedCallTime;
+  }
+
+  set lastOnActivatedCallTime (value) {
+    this._lastOnActivatedCallTime = value;
   }
 }

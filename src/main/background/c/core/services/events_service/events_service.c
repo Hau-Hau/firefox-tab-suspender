@@ -15,11 +15,11 @@
 static void tabsOnActivatedHandle(const double** tabsBuffer, uint32_t tabsBufferSize) {
   while (tabsBufferSize--) {
     uint32_t tabId = (uint32_t) tabsBuffer[tabsBufferSize][1];
+    JavascriptFunctionsProvider.consoleLog(tabId);
     bool active = (bool) tabsBuffer[tabsBufferSize][2];
     bool discarded = (bool) tabsBuffer[tabsBufferSize][3];
     bool pinned = (bool) tabsBuffer[tabsBufferSize][4];
     bool audible = (bool) tabsBuffer[tabsBufferSize][5];
-    double lastAccessed = tabsBuffer[tabsBufferSize][6];
 
     struct Tab* tab = TabsRepository.getTabById(tabId);
     if (tab == NULL) {
@@ -184,16 +184,16 @@ static void discardTabs() {
     if (tab->active) {
       continue;
     }
-    JavascriptFunctionsProvider.chromeTabsDiscard(tab->id);
+    JavascriptFunctionsProvider.chromeTabsDiscard(tab->id, false);
     tab->discarded = true;
   }
+  Vector.destructor(tabs);
 
   struct Vector notDiscardedTabs = TabsRepository.getNotDiscardedTabs(false);
   if (notDiscardedTabs.size == 0) {
     JavascriptFunctionsProvider.clearInterval();
   }
   Vector.destructor(notDiscardedTabs);
-  Vector.destructor(tabs);
 }
 
 events_service_namespace const EventsService = { tabsOnActivatedHandle,

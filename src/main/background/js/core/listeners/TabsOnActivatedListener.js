@@ -5,16 +5,14 @@ import WasmService from '~/main/background/js/core/services/WasmService';
 import HeapType from '~/main/background/js/core/data/HeapType';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
-import SettingsRepository
-  from '~/main/background/js/core/data/repositories/SettingsRepository';
+import StateManager from '~/main/background/js/core/managers/StateManager';
 
-export default @Injector.register([WasmService, SettingsRepository, CFunctionsProvider], x => x.inSingletonScope())
+export default @Injector.register([WasmService, StateManager, CFunctionsProvider])
 class TabsOnActivatedListener {
-  constructor (wasmService, settingsRepository, cFunctionsProvider) {
+  constructor (wasmService, stateManager, cFunctionsProvider) {
     this._wasmService = wasmService;
-    this._settingsRepository = settingsRepository;
+    this._stateManager = stateManager;
     this._cFunctionsProvider = cFunctionsProvider;
-    this._lastOnActivatedCall = null;
   }
 
   run () {
@@ -47,32 +45,34 @@ class TabsOnActivatedListener {
     // });
 
     browser.tabs.onActivated.addListener(async () => {
-      if (this._lastOnActivatedCall != null &&
-        new Date().getTime() - this._lastOnActivatedCall <= 400) {
+      if (this._stateManager.lastOnActivatedCallTime != null &&
+        new Date().getTime() - this._stateManager.lastOnActivatedCallTime <= 400) {
         return;
       }
       const tabs = await browser.tabs.query({});
       const tabsToPass = [];
       for (const tab of tabs) {
-        if (!tab.url.includes('about:')) {
-          tabsToPass.push([
-            tab.windowId,
-            tab.id,
-            tab.active & 1,
-            tab.title.indexOf('- discarded') > 1 & 1,
-            tab.pinned & 1,
-            tab.audible & 1,
-            Math.floor(tab.lastAccessed / 1000),
-          ]);
-          this._wasmService.passArray2dToWasm(
-            EventType.TABS_ON_ACTIVATED,
-            this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),
-            tabsToPass,
-            HeapType.HEAPF64
-          );
-          this._lastOnActivatedCall = new Date().getTime();
+        if (tab.url.includes('about:')) {
+          continue;
         }
+        tabsToPass.push([
+          tab.windowId,
+          tab.id,
+          tab.active & 1,
+          tab.title.indexOf('- discarded') > 1 & 1,
+          tab.pinned & 1,
+          tab.audible & 1,
+          Math.floor(tab.lastAccessed / 1000),
+        ]);
+        this._stateManager.lastOnActivatedCallTime = new Date().getTime();
       }
+      console.log(tabsToPass);
+      this._wasmService.passArray2dToWasm(
+        EventType.TABS_ON_ACTIVATED,
+        this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),
+        tabsToPass,
+        HeapType.HEAPF64
+      );
     });
   }
 }

@@ -1,16 +1,8 @@
-/* eslint-disable */
+/* eslint-disable object-shorthand,no-console,import/unambiguous */
 // noinspection ES6ModulesDependencies,JSUnresolvedFunction,JSUnresolvedVariable,JSUnusedGlobalSymbols
 mergeInto(LibraryManager.library, {
-  jsChromeTabsDiscard: function (tabId, isForce) {
-    // if (typeof tabs === 'number') {
-    //   var ptr = tabs;
-    //   tabs = [];
-    //   var index = size;
-    //   while (index--) {
-    //     tabs.push(Module.HEAPU32[ptr/HEAPU32.BYTES_PER_ELEMENT + index])
-    //   }
-    // }
-    Module.jsChromeTabsDiscard(tabId, isForce);
+  jsChromeTabsDiscard: function (tabId, isForced) {
+    Module.jsChromeTabsDiscard(tabId, isForced);
   },
   jsClearInterval: function () {
     Module.jsClearInterval();

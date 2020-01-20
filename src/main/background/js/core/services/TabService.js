@@ -5,7 +5,6 @@ import HeapType from '~/main/background/js/core/data/HeapType';
 import ImageService from '~/main/background/js/core/services/ImageService';
 import WasmService from '~/main/background/js/core/services/WasmService';
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
-import EventType from '~/main/background/js/core/data/EventType';
 
 export default @Injector.register(
   [WasmService, CFunctionsProvider, SettingsRepository, ImageService],
@@ -91,31 +90,24 @@ class TabService {
     };
   }
 
-  async tabsDiscard (tabId, isForce) {
-    console.log({tab: tabId});
+  async discardTab (tabId, isForced) {
     // eslint-disable-next-line no-param-reassign,no-implicit-coercion
-    isForce = true;
-    // isForce = !!isForce;
+    isForced = true;
 
-    const tabs = await browser.tabs.query({});
-    console.log(tabs);
-    let tabsIndex = tabs.length;
-    while (tabsIndex--) {
-      if (tabs[tabsIndex].id !== tabId) {
-        continue;
-      }
+    // isForced = !!isForced;
 
-      if (tabs[tabsIndex].title.indexOf('- discarded') < 1 &&
-          !tabs[tabsIndex].url.includes('about:') &&
-          (isForce === true || tabs[tabsIndex].active === false)) {
-        ((tab) => {
-          this._nonNativeDiscard(tab.id, tab.title, tab.url);
-          setTimeout(() => {
-            this._changeFavicon(tab.id, tab.favIconUrl);
-          }, 1000);
-        })(tabs[tabsIndex]);
-        break;
-      }
+    const tab = await browser.tabs.get(tabId);
+    if (tab == null || tab.id === browser.tabs.TAB_ID_NONE) {
+      return;
+    }
+
+    if (tab.title.indexOf('- discarded') < 1 &&
+          !tab.url.includes('about:') &&
+          (isForced === true || tab.active === false)) {
+      this._nonNativeDiscard(tab.id, tab.title, tab.url);
+      setTimeout(() => {
+        this._changeFavicon(tab.id, tab.favIconUrl);
+      }, 1000);
     }
   }
 }

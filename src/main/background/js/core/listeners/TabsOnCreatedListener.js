@@ -17,27 +17,23 @@ class TabsOnCreatedListener {
     browser.tabs.onCreated.addListener((tab) => {
       // Bugfix - Newly created tabs sometimes return active=false when they are active
       setTimeout(async () => {
-        const tabs = await browser.tabs.query({windowId: tab.windowId});
-        let index = tabs.length;
-        while (index--) {
-          if (tabs[index].id === tab.id) {
-            this._wasmService.passArrayToWasm(
-              EventType.TABS_ON_CREATED,
-              this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),
-              [
-                tabs[index].windowId,
-                tabs[index].id,
-                tabs[index].active & 1,
-                tabs[index].title.indexOf('- discarded') > 1 & 1,
-                tabs[index].pinned & 1,
-                tabs[index].audible & 1,
-              ],
-              HeapType.HEAP32,
-            );
-
-            return;
-          }
+        tab = await browser.tabs.get(tab.id);
+        if (tab == null || tab.id === browser.tabs.TAB_ID_NONE) {
+          return;
         }
+        this._wasmService.passArrayToWasm(
+          EventType.TABS_ON_CREATED,
+          this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),
+          [
+            tab.windowId,
+            tab.id,
+            tab.active & 1,
+            tab.title.indexOf('- discarded') > 1 & 1,
+            tab.pinned & 1,
+            tab.audible & 1,
+          ],
+          HeapType.HEAP32,
+        );
       }, 250);
     });
   }

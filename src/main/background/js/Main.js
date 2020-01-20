@@ -37,12 +37,9 @@ browser.storage.local.get({
   //= ../.tmp/service.js
   Injector.get(StateManager).module = Module;
   Module.onRuntimeInitialized = () => {
-    Module.jsChromeTabsDiscard = Injector.get(TabService).tabsDiscard.bind(Injector.get(TabService));
+    Module.jsChromeTabsDiscard = Injector.get(TabService).discardTab.bind(Injector.get(TabService));
     Module.jsClearInterval = Injector.get(IntervalService).clearInterval.bind(Injector.get(IntervalService));
     Module.jsExpiredTabsWatcher = Injector.get(IntervalService).expiredTabsWatcher.bind(Injector.get(IntervalService));
-
-    // eslint-disable-next-line spaced-comment
-    // ./core/contextMenu/setup.js
 
     if (!Injector.get(SettingsRepository).automaticSuspend) {
       return;

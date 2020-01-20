@@ -18,6 +18,7 @@ module.exports = {
     'require-jsdoc': 1,
     'no-trailing-spaces': 1,
     'no-undef': 0,
+    'no-param-reassign': 0,
     'promise/always-return': 0,
     'promise/catch-or-return': 0,
     'id-length': 0,
