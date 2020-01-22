@@ -1,7 +1,7 @@
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 
 export default @Injector.register([], x => x.inSingletonScope())
-class StateManager {
+class ContextProvider {
   constructor () {
     this._module = null;
     this._interval = null;

@@ -5,14 +5,16 @@ import WasmService from '~/main/background/js/core/services/WasmService';
 import HeapType from '~/main/background/js/core/data/HeapType';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
-import StateManager from '~/main/background/js/core/managers/StateManager';
+import ContextProvider from '~/main/background/js/core/providers/ContextProvider';
+import IListener from '~/main/background/js/infrastructure/parents/IListener';
+import TabsOnActivatedAction
+  from '~/main/background/js/core/actions/TabsOnActivatedAction';
 
-export default @Injector.register([WasmService, StateManager, CFunctionsProvider])
-class TabsOnActivatedListener {
-  constructor (wasmService, stateManager, cFunctionsProvider) {
-    this._wasmService = wasmService;
-    this._stateManager = stateManager;
-    this._cFunctionsProvider = cFunctionsProvider;
+export default @Injector.register([TabsOnActivatedAction])
+class TabsOnActivatedListener extends IListener {
+  constructor (tabsOnActivatedAction) {
+    super();
+    this._tabsOnActivatedAction = tabsOnActivatedAction;
   }
 
   run () {
@@ -44,34 +46,6 @@ class TabsOnActivatedListener {
     //   // TODO push scroll function
     // });
 
-    browser.tabs.onActivated.addListener(async () => {
-      if (this._stateManager.lastOnActivatedCallTime != null &&
-        new Date().getTime() - this._stateManager.lastOnActivatedCallTime <= 400) {
-        return;
-      }
-      const tabs = await browser.tabs.query({});
-      const tabsToPass = [];
-      for (const tab of tabs) {
-        if (tab.url.includes('about:')) {
-          continue;
-        }
-        tabsToPass.push([
-          tab.windowId,
-          tab.id,
-          tab.active & 1,
-          tab.title.indexOf('- discarded') > 1 & 1,
-          tab.pinned & 1,
-          tab.audible & 1,
-          Math.floor(tab.lastAccessed / 1000),
-        ]);
-        this._stateManager.lastOnActivatedCallTime = new Date().getTime();
-      }
-      this._wasmService.passArray2dToWasm(
-        EventType.TABS_ON_ACTIVATED,
-        this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),
-        tabsToPass,
-        HeapType.HEAPF64
-      );
-    });
+    browser.tabs.onActivated.addListener(() => this._tabsOnActivatedAction.run());
   }
 }

@@ -1,5 +1,5 @@
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
-import StateManager from '~/main/background/js/core/managers/StateManager';
+import ContextProvider from '~/main/background/js/core/providers/ContextProvider';
 import HeapType from '~/main/background/js/core/data/HeapType';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
@@ -8,12 +8,12 @@ import SettingsRepository
 import HeapMap from '~/main/background/js/core/data/HeapMap';
 
 export default @Injector.register(
-  [StateManager, SettingsRepository, CFunctionsProvider],
+  [ContextProvider, SettingsRepository, CFunctionsProvider],
   x => x.inSingletonScope()
 )
 class WasmService {
-  constructor (stateManager, settingsRepository, cFunctionsProvider) {
-    this._stateManager = stateManager;
+  constructor (contextProvider, settingsRepository, cFunctionsProvider) {
+    this._contextProvider = contextProvider;
     this._settingsRepository = settingsRepository;
     this._cFunctionsProvider = cFunctionsProvider;
   }
@@ -22,19 +22,19 @@ class WasmService {
     switch (heap) {
     case HeapType.HEAP8:
     case HeapType.HEAPU8:
-      this._stateManager.module[heap].set(typedArray, ptr);
+      this._contextProvider.module[heap].set(typedArray, ptr);
       break;
     case HeapType.HEAP16:
     case HeapType.HEAPU16:
-      this._stateManager.module[heap].set(typedArray, ptr >> 1);
+      this._contextProvider.module[heap].set(typedArray, ptr >> 1);
       break;
     case HeapType.HEAP32:
     case HeapType.HEAPU32:
     case HeapType.HEAPF32:
-      this._stateManager.module[heap].set(typedArray, ptr >> 2);
+      this._contextProvider.module[heap].set(typedArray, ptr >> 2);
       break;
     case HeapType.HEAPF64:
-      this._stateManager.module[heap].set(typedArray, ptr >> 3);
+      this._contextProvider.module[heap].set(typedArray, ptr >> 3);
       break;
     }
   }
@@ -67,13 +67,13 @@ class WasmService {
       }
       const typedArray = new HeapMap[heap](arrays[arraysIndex]);
       // eslint-disable-next-line private-props/no-use-outside
-      arrayOfPointers.push(this._stateManager.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT));
+      arrayOfPointers.push(this._contextProvider.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT));
       this._setHeap(typedArray, arrayOfPointers[arrayOfPointers.length - 1], heap);
     }
     const typedArrayOfPointers = new Int32Array(arrayOfPointers);
     // eslint-disable-next-line private-props/no-use-outside
-    const ptr = this._stateManager.module._malloc(typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT);
-    this._stateManager.module.HEAP32.set(typedArrayOfPointers, ptr >> 2);
+    const ptr = this._contextProvider.module._malloc(typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT);
+    this._contextProvider.module.HEAP32.set(typedArrayOfPointers, ptr >> 2);
     if (eventId == null) {
       fn(ptr, arrayOfPointers.length, segmentSize);
     } else {
@@ -82,16 +82,16 @@ class WasmService {
     let arrayOfPointersIndex = arrayOfPointers.length;
     while (arrayOfPointersIndex--) {
       // eslint-disable-next-line private-props/no-use-outside
-      this._stateManager.module._free(arrayOfPointers[arrayOfPointersIndex]);
+      this._contextProvider.module._free(arrayOfPointers[arrayOfPointersIndex]);
     }
     // eslint-disable-next-line private-props/no-use-outside
-    this._stateManager.module._free(ptr);
+    this._contextProvider.module._free(ptr);
   }
 
   passArrayToWasm (eventId, fn, array, heap) {
     const typedArray = new HeapMap[heap](array);
     // eslint-disable-next-line private-props/no-use-outside
-    const ptr = this._stateManager.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
+    const ptr = this._contextProvider.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
     this._setHeap(typedArray, ptr, heap);
     if (eventId == null) {
       fn(ptr, array.length);
@@ -99,6 +99,6 @@ class WasmService {
       fn(eventId, ptr, array.length);
     }
     // eslint-disable-next-line private-props/no-use-outside
-    this._stateManager.module._free(ptr);
+    this._contextProvider.module._free(ptr);
   }
 }

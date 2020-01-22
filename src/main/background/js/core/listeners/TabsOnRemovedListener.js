@@ -1,26 +1,19 @@
 import browser from 'webextension-polyfill';
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
-import EventType from '~/main/background/js/core/data/EventType';
-import WasmService from '~/main/background/js/core/services/WasmService';
-import HeapType from '~/main/background/js/core/data/HeapType';
-import CFunctionsProvider
-  from '~/main/background/js/core/providers/CFunctionsProvider';
+import IListener from '~/main/background/js/infrastructure/parents/IListener';
+import TabsOnRemovedAction
+  from '~/main/background/js/core/actions/TabsOnRemovedAction';
 
-export default @Injector.register([WasmService, CFunctionsProvider])
-class TabsOnRemovedListener {
-  constructor (wasmService, cFunctionsProvider) {
-    this._wasmService = wasmService;
-    this._cFunctionsProvider = cFunctionsProvider;
+export default @Injector.register([TabsOnRemovedAction])
+class TabsOnRemovedListener extends IListener {
+  constructor (tabsOnRemovedAction) {
+    super();
+    this._tabsOnRemovedAction = tabsOnRemovedAction;
   }
 
   run () {
     browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
-      this._wasmService.passArrayToWasm(
-        EventType.TABS_ON_REMOVED,
-        this._cFunctionsProvider.cPushEvent.bind(this._cFunctionsProvider),
-        [removeInfo.windowId, tabId],
-        HeapType.HEAP32,
-      );
+      this._tabsOnRemovedAction.run(tabId, removeInfo.windowId);
     });
   }
 }

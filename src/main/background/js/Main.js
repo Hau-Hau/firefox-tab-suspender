@@ -17,7 +17,7 @@ import WindowsOnRemovedListener
   from '~/main/background/js/core/listeners/WindowsOnRemovedListener';
 import IntervalService
   from '~/main/background/js/core/services/IntervalService';
-import StateManager from '~/main/background/js/core/managers/StateManager';
+import ContextProvider from '~/main/background/js/core/providers/ContextProvider';
 import ContextMenuListener
   from '~/main/background/js/core/listeners/ContextMenuListener';
 
@@ -37,7 +37,7 @@ browser.storage.local.get({
   Injector.get(SettingsRepository).dataSource = value;
   // eslint-disable-next-line spaced-comment
   //= ../.tmp/service.js
-  Injector.get(StateManager).module = Module;
+  Injector.get(ContextProvider).module = Module;
   Module.onRuntimeInitialized = () => {
     Module.jsChromeTabsDiscard = Injector.get(TabService).discardTab.bind(Injector.get(TabService));
     Module.jsClearInterval = Injector.get(IntervalService).clearInterval.bind(Injector.get(IntervalService));
