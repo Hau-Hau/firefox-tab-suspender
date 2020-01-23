@@ -47,10 +47,12 @@ class TabService {
     // noinspection JSUnresolvedVariable,JSUnresolvedFunction,ES6ModulesDependencies
     browser.tabs.update(tabId, {
       loadReplace: true,
-      url: browser.extension.getURL('./discarded.html') + '?t=' +
-        encodeURIComponent(title) + '&u=' + encodeURIComponent(url) +
+      url: browser.extension.getURL('./discarded.html') +
+        '?t=' + encodeURIComponent(title) +
+        '&u=' + encodeURIComponent(url) +
         '&h=' + Math.random().toString(8).substring(2) +
-        '&d=' + this._settingsRepository.discardedPageDarkTheme,
+        '&d=' + this._settingsRepository.discardedPageDarkTheme
+      ,
     });
   }
 
@@ -91,12 +93,12 @@ class TabService {
   }
 
   async discardTab (tabId, isForced) {
-    // eslint-disable-next-line no-param-reassign,no-implicit-coercion
-    isForced = true;
-
-    // isForced = !!isForced;
+    // eslint-disable-next-line no-implicit-coercion
+    isForced = !!isForced;
 
     const tab = await browser.tabs.get(tabId);
+
+    // noinspection JSUnresolvedVariable
     if (tab == null || tab.id === browser.tabs.TAB_ID_NONE) {
       return;
     }

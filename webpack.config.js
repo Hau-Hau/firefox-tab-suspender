@@ -15,6 +15,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
+const isTestEnv = process.env.APP_ENV === 'test';
 
 const getOutputPath = () => {
   return isProduction ? './dist/' : './dev/';
@@ -24,9 +25,9 @@ module.exports = {
   devtool: isProduction ? false : 'source-map',
   entry: {
     'background.js': './src/main/background/.tmp/background.js',
-    'discarded.js': './src/main/discarded/main.js',
-    'options.js': './src/main/options/main.js',
+    'discarded.js': './src/main/discarded/Main.js',
     'options-styles': './src/main/options/styles/options-styles.scss',
+    'options.js': './src/main/options/Main.js',
   },
   module: {
     rules: [
@@ -45,14 +46,21 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader',
         options: {
-          plugins: [
-            'add-filehash',
-            // 'istanbul' <- TODO use only in test mode
-            ['@babel/plugin-transform-runtime', {regenerator: true}],
-            ['babel-plugin-root-import', {rootPathSuffix: 'src/'}],
-            ['@babel/plugin-proposal-decorators', {legacy: true}],
-            '@babel/plugin-transform-spread',
-          ],
+          plugins: (() => {
+            const output = [
+              'add-filehash',
+              ['@babel/plugin-transform-runtime', {regenerator: true}],
+              ['babel-plugin-root-import', {rootPathSuffix: 'src/'}],
+              ['@babel/plugin-proposal-decorators', {legacy: true}],
+              '@babel/plugin-transform-spread',
+            ];
+
+            if (isTestEnv) {
+              output.push('istanbul');
+            }
+
+            return output;
+          })(),
           presets: ['@babel/preset-env'],
         },
         test: /\.js$/,

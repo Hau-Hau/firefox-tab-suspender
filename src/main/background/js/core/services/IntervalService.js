@@ -1,24 +1,24 @@
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 import EventType from '~/main/background/js/core/data/EventType';
-import StateManager from '~/main/background/js/core/managers/StateManager';
+import ContextProvider from '~/main/background/js/core/providers/ContextProvider';
 import CFunctionsProvider from '~/main/background/js/core/providers/CFunctionsProvider';
 
 export default @Injector.register(
-  [StateManager, CFunctionsProvider],
+  [ContextProvider, CFunctionsProvider],
   x => x.inSingletonScope()
 )
 class IntervalService {
-  constructor (stateManager, cFunctionsProvider) {
-    this._stateManager = stateManager;
+  constructor (contextProvider, cFunctionsProvider) {
+    this._contextProvider = contextProvider;
     this._cFunctionsProvider = cFunctionsProvider;
   }
 
   expiredTabsWatcher () {
-    if (this._stateManager.interval != null) {
+    if (this._contextProvider.interval != null) {
       return;
     }
 
-    this._stateManager.interval = setInterval(() => {
+    this._contextProvider.interval = setInterval(() => {
       if (!this._cFunctionsProvider.cIsAbleToPushEvent(EventType.DISCARD_TABS)) {
         return;
       }
@@ -28,7 +28,7 @@ class IntervalService {
   }
 
   clearInterval () {
-    clearInterval(this._stateManager.interval);
-    this._stateManager.interval = null;
+    clearInterval(this._contextProvider.interval);
+    this._contextProvider.interval = null;
   }
 }

@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 import SettingsRepository
   from '~/main/background/js/core/data/repositories/SettingsRepository';
@@ -17,9 +18,11 @@ import WindowsOnRemovedListener
   from '~/main/background/js/core/listeners/WindowsOnRemovedListener';
 import IntervalService
   from '~/main/background/js/core/services/IntervalService';
-import StateManager from '~/main/background/js/core/managers/StateManager';
+import ContextProvider from '~/main/background/js/core/providers/ContextProvider';
 import ContextMenuListener
   from '~/main/background/js/core/listeners/ContextMenuListener';
+import RuntimeOnMessage
+  from '~/main/background/js/core/listeners/RuntimeOnMessage';
 
 browser.storage.local.get({
   automaticSuspend: true,
@@ -37,12 +40,16 @@ browser.storage.local.get({
   Injector.get(SettingsRepository).dataSource = value;
   // eslint-disable-next-line spaced-comment
   //= ../.tmp/service.js
-  Injector.get(StateManager).module = Module;
   Module.onRuntimeInitialized = () => {
-    Module.jsChromeTabsDiscard = Injector.get(TabService).discardTab.bind(Injector.get(TabService));
-    Module.jsClearInterval = Injector.get(IntervalService).clearInterval.bind(Injector.get(IntervalService));
-    Module.jsExpiredTabsWatcher = Injector.get(IntervalService).expiredTabsWatcher.bind(Injector.get(IntervalService));
+    Injector.get(ContextProvider).module = Module;
+    const tabService = Injector.get(TabService);
+    const intervalService = Injector.get(IntervalService);
 
+    Module.jsChromeTabsDiscard = tabService.discardTab.bind(tabService);
+    Module.jsClearInterval = intervalService.clearInterval.bind(intervalService);
+    Module.jsExpiredTabsWatcher = intervalService.expiredTabsWatcher.bind(intervalService);
+
+    Injector.get(RuntimeOnMessage).run();
     Injector.get(ContextMenuListener).run();
 
     if (!Injector.get(SettingsRepository).automaticSuspend) {

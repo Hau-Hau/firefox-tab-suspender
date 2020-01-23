@@ -1,30 +1,30 @@
 class ContextMenuActionType {
   constructor () {
-    this._suspend = 'SUSPEND';
-    this._suspendOthers = 'SUSPEND_OTHERS';
-    this._suspendLeft = 'SUSPEND_LEFT';
-    this._suspendRight = 'SUSPEND_RIGHT';
-    this._suspendAll = 'SUSPEND_ALL';
+    this._SUSPEND = 'SUSPEND';
+    this._SUSPEND_OTHERS = 'SUSPEND_OTHERS';
+    this._SUSPEND_LEFT = 'SUSPEND_LEFT';
+    this._SUSPEND_RIGHT = 'SUSPEND_RIGHT';
+    this._SUSPEND_ALL = 'SUSPEND_ALL';
   }
 
-  get suspend () {
-    return this._suspend;
+  get SUSPEND () {
+    return this._SUSPEND;
   }
 
-  get suspendOthers () {
-    return this._suspendOthers;
+  get SUSPEND_OTHERS () {
+    return this._SUSPEND_OTHERS;
   }
 
-  get suspendLeft () {
-    return this._suspendLeft;
+  get SUSPEND_LEFT () {
+    return this._SUSPEND_LEFT;
   }
 
-  get suspendRight () {
-    return this._suspendRight;
+  get SUSPEND_RIGHT () {
+    return this._SUSPEND_RIGHT;
   }
 
-  get suspendAll () {
-    return this._suspendAll;
+  get SUSPEND_ALL () {
+    return this._SUSPEND_ALL;
   }
 }
 

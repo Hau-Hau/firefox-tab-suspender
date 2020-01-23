@@ -1,31 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const UINT32_MAX = 0xFFFFFFFF;
 
-  let elements = {
-    automaticSuspend: this.getElementById('automatic_suspend'),
-    timeToSuspend: this.getElementById('time_to_suspend'),
-    neverSuspendPinned: this.getElementById('never_suspend_pinned'),
-    neverSuspendPlayingAudio: this.getElementById('never_suspend_playing_audio'),
-    loadingTabsImmediately: this.getElementById('loading_tabs_immediately'),
-    discardedPageDarkTheme: this.getElementById('discarded_page_dark_theme'),
-    suspendOptionInContextMenu: this.getElementById('suspend_in_context_menu'),
-    suspendOthersOptionInContextMenu: this.getElementById('suspend_others_in_context_menu'),
-    suspendLeftAndRightOptionsInContextMenu: this.getElementById('suspend_left_right_in_context_menu'),
-    suspendAllOptionInContextMenu: this.getElementById('suspend_all_in_context_menu'),
+  const elements = {
+    automaticSuspend: this.querySelector('#automatic_suspend'),
+    discardedPageDarkTheme: this.querySelector('#discarded_page_dark_theme'),
+    loadingTabsImmediately: this.querySelector('#loading_tabs_immediately'),
+    neverSuspendPinned: this.querySelector('#never_suspend_pinned'),
+    neverSuspendPlayingAudio: this.querySelector('#never_suspend_playing_audio'),
+    suspendAllOptionInContextMenu: this.querySelector('#suspend_all_in_context_menu'),
+    suspendLeftAndRightOptionsInContextMenu: this.querySelector('#suspend_left_right_in_context_menu'),
+    suspendOptionInContextMenu: this.querySelector('#suspend_in_context_menu'),
+    suspendOthersOptionInContextMenu: this.querySelector('#suspend_others_in_context_menu'),
+    timeToSuspend: this.querySelector('#time_to_suspend'),
   };
 
   browser.storage.local.get({
     automaticSuspend: true,
-    timeToDiscard: 60,
+    discardedPageDarkTheme: false,
+    loadingTabsImmediately: false,
     neverSuspendPinned: true,
     neverSuspendPlayingAudio: true,
-    loadingTabsImmediately: false,
-    discardedPageDarkTheme: false,
+    suspendAllOptionInContextMenu: true,
+    suspendLeftAndRightOptionsInContextMenu: true,
     suspendOptionInContextMenu: true,
     suspendOthersOptionInContextMenu: true,
-    suspendLeftAndRightOptionsInContextMenu: true,
-    suspendAllOptionInContextMenu: true,
-  }).then(function(value) {
+    timeToDiscard: 60,
+  }).then((value) => {
     elements.automaticSuspend.checked = value.automaticSuspend;
     elements.timeToSuspend.value = value.timeToDiscard;
     elements.neverSuspendPinned.checked = value.neverSuspendPinned;
@@ -39,29 +39,29 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.timeToSuspend.disabled = !value.automaticSuspend;
   });
 
-  elements.automaticSuspend.addEventListener('change', function() {
+  elements.automaticSuspend.addEventListener('change', function () {
     elements.timeToSuspend.disabled = !this.checked;
   });
 
   elements.timeToSuspend.max = UINT32_MAX;
-  elements.timeToSuspend.addEventListener('input', function() {
+  elements.timeToSuspend.addEventListener('input', function () {
     if (isNaN(this.value) || this.value <= 0 || this.value > UINT32_MAX) {
       this.value = 60 * 5;
     }
   });
 
-  for (let element of this.getElementsByName('action')) {
+  for (const element of this.getElementsByName('action')) {
     switch (element.value) {
-      case 'Reset':
-        element.addEventListener('click', resetOptions);
-        break;
-      case 'Save':
-        element.addEventListener('click', saveOptions);
-        break;
+    case 'Reset':
+      element.addEventListener('click', resetOptions);
+      break;
+    case 'Save':
+      element.addEventListener('click', saveOptions);
+      break;
     }
   }
 
-  function resetOptions(e) {
+  function resetOptions (e) {
     e.preventDefault();
     elements.automaticSuspend.checked = true;
     elements.timeToSuspend.value = 60;
@@ -76,20 +76,20 @@ document.addEventListener('DOMContentLoaded', function() {
     saveOptions(e);
   }
 
-  function saveOptions(e) {
+  function saveOptions (e) {
     e.preventDefault();
     browser.storage.local.set({
       automaticSuspend: elements.automaticSuspend.checked === true,
-      timeToDiscard: parseInt(elements.timeToSuspend.value),
+      discardedPageDarkTheme: elements.discardedPageDarkTheme.checked === true,
+      loadingTabsImmediately: elements.loadingTabsImmediately.checked === true,
       neverSuspendPinned: elements.neverSuspendPinned.checked === true,
       neverSuspendPlayingAudio: elements.neverSuspendPlayingAudio.checked === true,
-      loadingTabsImmediately: elements.loadingTabsImmediately.checked === true,
-      discardedPageDarkTheme: elements.discardedPageDarkTheme.checked === true,
+      suspendAllOptionInContextMenu: elements.suspendAllOptionInContextMenu.checked === true,
+      suspendLeftAndRightOptionsInContextMenu: elements.suspendLeftAndRightOptionsInContextMenu.checked === true,
       suspendOptionInContextMenu: elements.suspendOptionInContextMenu.checked === true,
       suspendOthersOptionInContextMenu: elements.suspendOthersOptionInContextMenu.checked === true,
-      suspendLeftAndRightOptionsInContextMenu: elements.suspendLeftAndRightOptionsInContextMenu.checked === true,
-      suspendAllOptionInContextMenu: elements.suspendAllOptionInContextMenu.checked === true,
-    }, function() {
+      timeToDiscard: parseInt(elements.timeToSuspend.value),
+    }, () => {
       browser.extension.getBackgroundPage().window.location.reload();
     });
   }
