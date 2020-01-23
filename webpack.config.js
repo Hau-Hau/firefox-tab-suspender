@@ -22,6 +22,8 @@ const getOutputPath = () => {
 };
 
 module.exports = {
+  target: 'web',
+  mode: 'production',
   devtool: isProduction ? false : 'source-map',
   entry: {
     'background.js': './src/main/background/.tmp/background.js',
@@ -61,12 +63,20 @@ module.exports = {
 
             return output;
           })(),
-          presets: ['@babel/preset-env'],
+          presets: [
+            [
+              "@babel/preset-env",
+              {
+                targets: {
+                  firefox: '59'
+                }
+              }
+            ]
+          ]
         },
         test: /\.js$/,
       },
       {
-        test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
           {loader: 'css-loader'},
@@ -75,6 +85,7 @@ module.exports = {
             options: {sourceMap: !isProduction},
           },
         ],
+        test: /\.scss$/,
       },
       {
         loader: [
@@ -82,10 +93,20 @@ module.exports = {
           'image-webpack-loader'],
         test: /\.(png|ico)$/,
       },
+      {
+        enforce: 'post',
+        loader: 'string-replace-loader',
+        options: {
+          search: 'Function("return this;")()',
+          replace: 'null',
+        },
+        test: /\.js$/,
+      }
     ],
   },
   node: {
     fs: 'empty',
+    global: false
   },
   optimization: {
     minimizer: isProduction ? [

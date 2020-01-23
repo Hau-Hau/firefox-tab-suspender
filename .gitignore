@@ -8,3 +8,4 @@ npm-debug.log
 /src/main/background/c/.idea
 cmake-build-debug/
 /c_files.txt
+build-instructions.txt
