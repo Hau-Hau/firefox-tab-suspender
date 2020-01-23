@@ -2,7 +2,6 @@ import browser from 'webextension-polyfill';
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 import EventType from '~/main/background/js/core/data/EventType';
 import HeapType from '~/main/background/js/core/data/HeapType';
-import IAction from '~/main/background/js/infrastructure/parents/IAction';
 import WasmService from '~/main/background/js/core/services/WasmService';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
@@ -10,9 +9,8 @@ import ContextProvider
   from '~/main/background/js/core/providers/ContextProvider';
 
 export default @Injector.register([ContextProvider, WasmService, CFunctionsProvider])
-class TabsOnActivatedAction extends IAction {
+class TabsOnActivatedAction {
   constructor (contextProvider, wasmService, cFunctionsProvider) {
-    super();
     this._contextProvider = contextProvider;
     this._wasmService = wasmService;
     this._cFunctionsProvider = cFunctionsProvider;

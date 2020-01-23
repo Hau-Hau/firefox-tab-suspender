@@ -2,20 +2,18 @@ import browser from 'webextension-polyfill';
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 import EventType from '~/main/background/js/core/data/EventType';
 import HeapType from '~/main/background/js/core/data/HeapType';
-import IAction from '~/main/background/js/infrastructure/parents/IAction';
 import WasmService from '~/main/background/js/core/services/WasmService';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
 
 export default @Injector.register([WasmService, CFunctionsProvider])
-class TabsOnCreatedAction extends IAction {
+class TabsOnCreatedAction {
   constructor (wasmService, cFunctionsProvider) {
-    super();
     this._wasmService = wasmService;
     this._cFunctionsProvider = cFunctionsProvider;
   }
 
-  run (tabId) {
+  async run (tabId) {
     // Bugfix - Newly created tabs sometimes return active=false when they are active
     setTimeout(async () => {
       const tab = await browser.tabs.get(tabId);

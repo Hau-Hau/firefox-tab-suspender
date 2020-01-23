@@ -7,23 +7,23 @@ class ContextMenuActionType {
     this._SUSPEND_ALL = 'SUSPEND_ALL';
   }
 
-  get SUSPEND() {
+  get SUSPEND () {
     return this._SUSPEND;
   }
 
-  get SUSPEND_OTHERS() {
+  get SUSPEND_OTHERS () {
     return this._SUSPEND_OTHERS;
   }
 
-  get SUSPEND_LEFT() {
+  get SUSPEND_LEFT () {
     return this._SUSPEND_LEFT;
   }
 
-  get SUSPEND_RIGHT() {
+  get SUSPEND_RIGHT () {
     return this._SUSPEND_RIGHT;
   }
 
-  get SUSPEND_ALL() {
+  get SUSPEND_ALL () {
     return this._SUSPEND_ALL;
   }
 }

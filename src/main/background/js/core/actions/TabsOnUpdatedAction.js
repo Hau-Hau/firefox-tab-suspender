@@ -1,20 +1,18 @@
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
 import EventType from '~/main/background/js/core/data/EventType';
 import HeapType from '~/main/background/js/core/data/HeapType';
-import IAction from '~/main/background/js/infrastructure/parents/IAction';
 import WasmService from '~/main/background/js/core/services/WasmService';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
 
 export default @Injector.register([WasmService, CFunctionsProvider])
-class TabsOnUpdatedAction extends IAction {
+class TabsOnUpdatedAction {
   constructor (wasmService, cFunctionsProvider) {
-    super();
     this._wasmService = wasmService;
     this._cFunctionsProvider = cFunctionsProvider;
   }
 
-  run (tab) {
+  async run (changeInfo, tab) {
     if (tab.url.includes('about:')) {
       return;
     }

@@ -1,5 +1,6 @@
 import Injector from '~/main/background/js/infrastructure/injector/Injector';
-import ContextProvider from '~/main/background/js/core/providers/ContextProvider';
+import ContextProvider
+  from '~/main/background/js/core/providers/ContextProvider';
 import HeapType from '~/main/background/js/core/data/HeapType';
 import CFunctionsProvider
   from '~/main/background/js/core/providers/CFunctionsProvider';
@@ -9,7 +10,7 @@ import HeapMap from '~/main/background/js/core/data/HeapMap';
 
 export default @Injector.register(
   [ContextProvider, SettingsRepository, CFunctionsProvider],
-  x => x.inSingletonScope()
+  x => x.inSingletonScope(),
 )
 class WasmService {
   constructor (contextProvider, settingsRepository, cFunctionsProvider) {
@@ -42,7 +43,9 @@ class WasmService {
   initializeWasm () {
     this.passArrayToWasm(
       null,
-      this._cFunctionsProvider.cWasmInitialization.bind(this._cFunctionsProvider),
+      this._cFunctionsProvider.cWasmInitialization.bind(
+        this._cFunctionsProvider
+      ),
       [
         this._settingsRepository.timeToDiscard,
         this._settingsRepository.neverSuspendPinned & 1,
@@ -67,12 +70,17 @@ class WasmService {
       }
       const typedArray = new HeapMap[heap](arrays[arraysIndex]);
       // eslint-disable-next-line private-props/no-use-outside
-      arrayOfPointers.push(this._contextProvider.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT));
-      this._setHeap(typedArray, arrayOfPointers[arrayOfPointers.length - 1], heap);
+      arrayOfPointers.push(this._contextProvider.module._malloc(
+        typedArray.length * typedArray.BYTES_PER_ELEMENT
+      ));
+      this._setHeap(typedArray, arrayOfPointers[arrayOfPointers.length - 1],
+        heap);
     }
     const typedArrayOfPointers = new Int32Array(arrayOfPointers);
     // eslint-disable-next-line private-props/no-use-outside
-    const ptr = this._contextProvider.module._malloc(typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT);
+    const ptr = this._contextProvider.module._malloc(
+      typedArrayOfPointers.length * typedArrayOfPointers.BYTES_PER_ELEMENT
+    );
     this._contextProvider.module.HEAP32.set(typedArrayOfPointers, ptr >> 2);
     if (eventId == null) {
       fn(ptr, arrayOfPointers.length, segmentSize);
@@ -91,7 +99,9 @@ class WasmService {
   passArrayToWasm (eventId, fn, array, heap) {
     const typedArray = new HeapMap[heap](array);
     // eslint-disable-next-line private-props/no-use-outside
-    const ptr = this._contextProvider.module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
+    const ptr = this._contextProvider.module._malloc(
+      typedArray.length * typedArray.BYTES_PER_ELEMENT
+    );
     this._setHeap(typedArray, ptr, heap);
     if (eventId == null) {
       fn(ptr, array.length);

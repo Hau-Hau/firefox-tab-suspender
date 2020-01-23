@@ -14,7 +14,6 @@ import ContextMenuSuspendRightAction
   from '~/main/background/js/core/actions/ContextMenuSuspendRightAction';
 import ContextMenuSuspendAllAction
   from '~/main/background/js/core/actions/ContextMenuSuspendAllAction';
-import IListener from '~/main/background/js/infrastructure/parents/IListener';
 
 export default @Injector.register(
   [
@@ -26,12 +25,11 @@ export default @Injector.register(
     ContextMenuSuspendAllAction,
   ]
 )
-class ContextMenuListener extends IListener {
+class ContextMenuListener {
   constructor (
     settingsRepository, contextMenuSuspendAction, contextMenuSuspendOthersAction,
     contextMenuSuspendLeftAction, contextMenuSuspendRightAction, contextMenuSuspendAllAction
   ) {
-    super();
     this._settingsRepository = settingsRepository;
     this._contextMenuSuspendAction = contextMenuSuspendAction;
     this._contextMenuSuspendOthersAction = contextMenuSuspendOthersAction;

@@ -3,12 +3,10 @@ import Injector from '~/main/background/js/infrastructure/injector/Injector';
 import TabService from '~/main/background/js/core/services/TabService';
 import SettingsRepository
   from '~/main/background/js/core/data/repositories/SettingsRepository';
-import IAction from '~/main/background/js/infrastructure/parents/IAction';
 
 export default @Injector.register([TabService, SettingsRepository])
-class ContextMenuSuspendLeftAction extends IAction {
+class ContextMenuSuspendLeftAction {
   constructor (tabService, settingsRepository) {
-    super();
     this._tabService = tabService;
     this._settingsRepository = settingsRepository;
   }
