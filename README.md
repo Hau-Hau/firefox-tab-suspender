@@ -11,6 +11,8 @@
 
 _Firefox Tab Suspender_ is an open source (only source code, see license) extension for Firefox Browser 59+.
 
+❗️ Currently extension is developing in another (private) repository. After finishing works changes will be merged to this repository. It is highly possible that any changes in this repository will be not compatible with new version so please don't contributing to this version for a while. ❗️
+
 
 Extension's target are people who use older computers or just want to reduce browser's ram usage. For this reasons I strive to make _Firefox Tab Suspender_ lightweight and performant as much as it is possible.
 
