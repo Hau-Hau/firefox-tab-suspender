@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sessionStorage.setItem(hash, 'true');
   document.title = title + ' - discarded';
-  document.querySelector('#t').innerHTML = title;
+  const titleNode = document.querySelector('#t');
+  titleNode.innerHTML = '';
+  titleNode.appendChild(document.createTextNode(title));
   document.querySelector('#u').innerHTML = url;
 
   document.body.addEventListener('click', () => {
